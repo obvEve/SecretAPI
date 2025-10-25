@@ -11,6 +11,7 @@
     /// <summary>
     /// Extensions related to <see cref="RoleTypeId"/>.
     /// </summary>
+    [Obsolete("This no longer provides anything that basegame/LabAPI does not")]
     public static class RoleExtensions
     {
         /// <summary>
