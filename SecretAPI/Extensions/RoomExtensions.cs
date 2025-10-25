@@ -14,7 +14,9 @@
         [
             RoomName.HczTesla, // Instant death
             RoomName.EzEvacShelter, // Stuck permanently
-            RoomName.EzCollapsedTunnel // Stuck permanently
+            RoomName.EzCollapsedTunnel, // Stuck permanently
+            RoomName.HczWaysideIncinerator, // Death
+            RoomName.Hcz096, // Void
         ];
 
         /// <summary>
