@@ -1,15 +1,14 @@
 ﻿namespace SecretAPI.Attribute
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
+    using SecretAPI.Features;
 
     /// <summary>
     /// Defines the attribute for methods to call on unload.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class CallOnUnloadAttribute : Attribute
+    public class CallOnUnloadAttribute : Attribute, IPriority
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CallOnUnloadAttribute"/> class.
@@ -32,26 +31,7 @@
         public static void Unload(Assembly? assembly = null)
         {
             assembly ??= Assembly.GetCallingAssembly();
-
-            const BindingFlags methodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-            Dictionary<CallOnUnloadAttribute, MethodInfo> methods = new();
-
-            // get all types
-            foreach (Type type in assembly.GetTypes())
-            {
-                // get all static methods
-                foreach (MethodInfo method in type.GetMethods(methodFlags))
-                {
-                    CallOnUnloadAttribute? attribute = method.GetCustomAttribute<CallOnUnloadAttribute>();
-                    if (attribute == null)
-                        continue;
-
-                    methods.Add(attribute, method);
-                }
-            }
-
-            foreach (KeyValuePair<CallOnUnloadAttribute, MethodInfo> method in methods.OrderBy(static v => v.Key.Priority))
-                method.Value.Invoke(null, null);
+            CallOnLoadAttribute.CallAttributeMethodPriority<CallOnUnloadAttribute>(assembly);
         }
 
         /// <inheritdoc/>

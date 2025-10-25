@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Extensions
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -16,6 +17,7 @@
         /// <param name="collection">The collection to pull from.</param>
         /// <typeparam name="T">The Type contained by the collection.</typeparam>
         /// <returns>A random value, default value when empty collection.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Will occur if the collection is empty.</exception>
         public static T GetRandomValue<T>(this IEnumerable<T> collection)
         {
             TryGetRandomValue(collection, out T? value);

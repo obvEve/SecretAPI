@@ -4,12 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using SecretAPI.Features;
 
     /// <summary>
     /// Defines the attribute for methods to call on load.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class CallOnLoadAttribute : Attribute
+    public class CallOnLoadAttribute : Attribute, IPriority
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CallOnLoadAttribute"/> class.
@@ -32,26 +33,7 @@
         public static void Load(Assembly? assembly = null)
         {
             assembly ??= Assembly.GetCallingAssembly();
-
-            const BindingFlags methodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-            Dictionary<CallOnLoadAttribute, MethodInfo> methods = new();
-
-            // get all types
-            foreach (Type type in assembly.GetTypes())
-            {
-                // get all static methods
-                foreach (MethodInfo method in type.GetMethods(methodFlags))
-                {
-                    CallOnLoadAttribute? attribute = method.GetCustomAttribute<CallOnLoadAttribute>();
-                    if (attribute == null)
-                        continue;
-
-                    methods.Add(attribute, method);
-                }
-            }
-
-            foreach (KeyValuePair<CallOnLoadAttribute, MethodInfo> method in methods.OrderBy(static v => v.Key.Priority))
-                method.Value.Invoke(null, null);
+            CallAttributeMethodPriority<CallOnLoadAttribute>(assembly);
         }
 
         /// <inheritdoc/>
@@ -59,5 +41,34 @@
 
         /// <inheritdoc/>
         public override int GetHashCode() => base.GetHashCode();
+
+        /// <summary>
+        /// Calls the method associated with a Attribute implementing <see cref="IPriority"/>.
+        /// </summary>
+        /// <param name="assembly">The assembly to handle calls from.</param>
+        /// <typeparam name="TAttribute">The attribute required for this to be called.</typeparam>
+        internal static void CallAttributeMethodPriority<TAttribute>(Assembly assembly)
+            where TAttribute : Attribute, IPriority
+        {
+            const BindingFlags methodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+            Dictionary<TAttribute, MethodInfo> methods = new();
+
+            // get all types
+            foreach (Type type in assembly.GetTypes())
+            {
+                // get all static methods
+                foreach (MethodInfo method in type.GetMethods(methodFlags))
+                {
+                    TAttribute? attribute = method.GetCustomAttribute<TAttribute>();
+                    if (attribute == null)
+                        continue;
+
+                    methods.Add(attribute, method);
+                }
+            }
+
+            foreach (KeyValuePair<TAttribute, MethodInfo> method in methods.OrderBy(static v => v.Key.Priority))
+                method.Value.Invoke(null, null);
+        }
     }
 }
