@@ -1,5 +1,6 @@
 namespace SecretAPI.Examples.Settings
 {
+    using LabApi.Features.Wrappers;
     using SecretAPI.Features.UserSettings;
     using UnityEngine;
 
@@ -18,6 +19,9 @@ namespace SecretAPI.Examples.Settings
 
         /// <inheritdoc />
         public override CustomHeader Header => CustomHeader.Examples;
+
+        /// <inheritdoc/>
+        protected override bool CanView(Player player) => player.RemoteAdminAccess;
 
         /// <inheritdoc />
         protected override CustomSetting CreateDuplicate() => new ExampleKeybindSetting();

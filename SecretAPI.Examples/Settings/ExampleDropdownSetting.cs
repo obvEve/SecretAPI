@@ -38,7 +38,7 @@
         /// <inheritdoc/>
         protected override void HandleSettingUpdate()
         {
-            Logger.Info($"{KnownOwner?.DisplayName ?? "null reference"} selected {SelectedOption} (Index {ValidatedSelectedIndex}/{Options.Length})");
+            Logger.Info($"{KnownOwner?.DisplayName ?? "(Null Owner - What went wrong?)"} selected {SelectedOption} (Index {ValidatedSelectedIndex}/{Options.Length - 1})");
         }
     }
 }
