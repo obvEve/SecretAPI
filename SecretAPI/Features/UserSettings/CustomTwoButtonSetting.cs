@@ -45,7 +45,7 @@
         public bool IsOptionB => Base.SyncIsB;
 
         /// <summary>
-        /// Gets a value indicating whether the selected option is currently the default.
+        /// Gets a value indicating whether the selected option is currently set to the default.
         /// </summary>
         public bool IsDefault => Base.DefaultIsB ? IsOptionB : IsOptionA;
     }

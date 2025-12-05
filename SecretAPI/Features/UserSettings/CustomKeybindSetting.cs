@@ -1,6 +1,5 @@
 ﻿namespace SecretAPI.Features.UserSettings
 {
-    using System;
     using global::UserSettings.ServerSpecific;
     using UnityEngine;
 
@@ -17,25 +16,6 @@
             : base(setting)
         {
             Base = setting;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CustomKeybindSetting"/> class.
-        /// </summary>
-        /// <param name="id">The ID of the setting.</param>
-        /// <param name="label">The setting's label.</param>
-        /// <param name="suggestedKey">The suggested key.</param>
-        /// <param name="preventInteractionOnGui">Whether to prevent interaction in a GUI.</param>
-        /// <param name="hint">The hint to show.</param>
-        [Obsolete("Use CustomKeybindSetting(int?, string, KeyCode, bool, bool, string?)")]
-        protected CustomKeybindSetting(
-            int? id,
-            string label,
-            KeyCode suggestedKey = KeyCode.None,
-            bool preventInteractionOnGui = true,
-            string? hint = null)
-            : this(id, label, suggestedKey, preventInteractionOnGui, true, hint)
-        {
         }
 
         /// <summary>

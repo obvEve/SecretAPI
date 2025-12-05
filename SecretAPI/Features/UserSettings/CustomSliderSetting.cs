@@ -1,6 +1,5 @@
 ﻿namespace SecretAPI.Features.UserSettings
 {
-    using System;
     using global::UserSettings.ServerSpecific;
 
     /// <summary>
@@ -63,7 +62,6 @@
         public float MinimumValue
         {
             get => Base.MinValue;
-            [Obsolete("Setting this value is not currently supported.")]
             set => Base.MinValue = value;
         }
 
@@ -73,18 +71,17 @@
         public float MaximumValue
         {
             get => Base.MaxValue;
-            [Obsolete("Setting this value is not currently supported.")]
             set => Base.MaxValue = value;
         }
 
         /// <summary>
-        /// Gets or sets the default value of the setting.
+        /// Gets the default value of the setting.
         /// </summary>
-        public float DefaultValue
-        {
-            get => Base.DefaultValue;
-            [Obsolete("Setting this value is not currently supported.")]
-            set => Base.DefaultValue = value;
-        }
+        public float DefaultValue => Base.DefaultValue;
+
+        /// <summary>
+        /// Gets a value indicating whether to use integer. False will use float.
+        /// </summary>
+        public bool UseInteger => Base.Integer;
     }
 }

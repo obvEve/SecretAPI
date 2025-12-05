@@ -70,7 +70,7 @@
         /// </summary>
         /// <param name="writer">The writer to write the object to.</param>
         /// <param name="obj">The object to write.</param>
-        public static void ProperWrite(NetworkWriter writer, object obj)
+        public static void ProperWrite(this NetworkWriter writer, object obj)
         {
             Type genericType = typeof(Writer<>).MakeGenericType(obj.GetType());
             FieldInfo? writeField = genericType.GetField("write", BindingFlags.Static | BindingFlags.Public);

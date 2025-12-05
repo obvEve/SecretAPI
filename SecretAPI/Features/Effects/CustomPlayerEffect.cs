@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using CustomPlayerEffects;
     using LabApi.Features.Wrappers;
-    using Mirror;
+    using SecretAPI.Attribute;
     using SecretAPI.Extensions;
     using UnityEngine;
     using UnityEngine.SceneManagement;
@@ -42,6 +42,7 @@
         /// <summary>
         /// Initializes the <see cref="CustomPlayerEffect"/> to implement <see cref="EffectsToRegister"/>.
         /// </summary>
+        [CallOnLoad]
         internal static void Initialize()
         {
             SecretApi.Harmony?.PatchCategory(nameof(CustomPlayerEffect), SecretApi.Assembly);

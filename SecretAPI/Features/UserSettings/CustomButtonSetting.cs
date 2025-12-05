@@ -40,23 +40,13 @@
         public TimeSpan LastPress => Base.SyncLastPress.Elapsed;
 
         /// <summary>
-        /// Gets or sets the text of the button.
+        /// Gets the text of the button.
         /// </summary>
-        public string Text
-        {
-            get => Base.ButtonText;
-            [Obsolete("Setting this value is not currently supported.")]
-            set => Base.ButtonText = value;
-        }
+        public string Text => Base.ButtonText;
 
         /// <summary>
-        /// Gets or sets the amount of time to hold the button in seconds.
+        /// Gets the amount of time to hold the button in seconds.
         /// </summary>
-        public float HoldTime
-        {
-            get => Base.HoldTimeSeconds;
-            [Obsolete("Setting this value is not currently supported.")]
-            set => Base.HoldTimeSeconds = value;
-        }
+        public float HoldTime => Base.HoldTimeSeconds;
     }
 }

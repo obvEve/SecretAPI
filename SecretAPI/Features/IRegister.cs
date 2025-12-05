@@ -5,7 +5,7 @@
     using System.Reflection;
 
     /// <summary>
-    /// Interface used to define a type that should auto register. TODO: Move to Features.
+    /// Interface used to define a type that should auto register.
     /// </summary>
     public interface IRegister
     {
@@ -20,7 +20,7 @@
         public void TryRegister();
 
         /// <summary>
-        /// Attemps to unregister the object.
+        /// Attempts to unregister the object.
         /// </summary>
         public void TryUnregister()
         {
@@ -63,9 +63,7 @@
             assembly ??= Assembly.GetCallingAssembly();
 
             foreach (IRegister register in registerables[assembly])
-            {
                 register.TryUnregister();
-            }
 
             registerables.Remove(assembly);
         }

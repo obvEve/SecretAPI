@@ -30,14 +30,9 @@ jobs:
         run: |
           Rename-Item -Path "${{ env.REFERENCES_PATH }}\Assembly-CSharp-Publicized.dll" -NewName "Assembly-CSharp.dll"
 
-      - name: Build
+      - name: Build and Pack NuGet
         env:
           SL_REFERENCES: ${{ env.REFERENCES_PATH }}
-        shell: pwsh
-        run: | 
-          dotnet build -c Release
-
-      - name: Pack NuGet package
         run: dotnet pack -c Release --output ${GITHUB_WORKSPACE}/nupkgs
 
       - name: Push NuGet package

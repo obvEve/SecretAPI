@@ -1,6 +1,10 @@
 ﻿namespace SecretAPI.Extensions
 {
+    using CustomPlayerEffects;
     using Interactables.Interobjects.DoorUtils;
+    using InventorySystem;
+    using InventorySystem.Items;
+    using InventorySystem.Items.Usables.Scp330;
     using LabApi.Features.Wrappers;
     using SecretAPI.Enums;
 
@@ -10,19 +14,13 @@
     public static class PlayerExtensions
     {
         /// <summary>
-        /// Checks if a player has the permission.
+        /// Gets an effect of a player based on the effect name.
         /// </summary>
-        /// <param name="player">The player to check.</param>
-        /// <param name="permission">The permission to check.</param>
-        /// <returns>If player has permission.</returns>
-        public static bool HasGamePermission(this Player player, PlayerPermissions permission)
-        {
-            if (player.UserGroup == null)
-                return false;
-
-            PlayerPermissions currentPerms = (PlayerPermissions)player.UserGroup.Permissions;
-            return currentPerms.HasFlag(permission);
-        }
+        /// <param name="player">The player to get effect from.</param>
+        /// <param name="name">Name of the effect to find.</param>
+        /// <returns>The effect.</returns>
+        public static StatusEffectBase GetEffect(this Player player, string name)
+            => player.ReferenceHub.playerEffectsController.TryGetEffect(name, out StatusEffectBase? effect) ? effect : null!;
 
         /// <summary>
         /// Checks whether a player has permission to access a <see cref="IDoorPermissionRequester"/>.

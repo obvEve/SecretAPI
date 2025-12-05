@@ -48,7 +48,12 @@
                 .Do(type => SafePatch(harmony, type));
         }
 
-        private static void SafePatch(Harmony harmony, Type type)
+        /// <summary>
+        /// Attempts to safely patch a <see cref="Type"/>, logging any errors.
+        /// </summary>
+        /// <param name="harmony">The harmony to use for the patch.</param>
+        /// <param name="type">The <see cref="Type"/> to attempt to patch.</param>
+        public static void SafePatch(this Harmony harmony, Type type)
         {
             try
             {
@@ -56,7 +61,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"[GlobalPatcher] failed to safely patch {harmony.Id} ({type.FullName}): {ex}");
+                Logger.Error($"[HarmonyExtensions] failed to safely patch {harmony.Id} ({type.FullName}): {ex}");
             }
         }
     }

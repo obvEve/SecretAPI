@@ -1,6 +1,5 @@
 ﻿namespace SecretAPI.Features.UserSettings
 {
-    using System;
     using global::UserSettings.ServerSpecific;
     using TMPro;
 
@@ -43,43 +42,23 @@
         public new SSPlaintextSetting Base { get; }
 
         /// <summary>
-        /// Gets or sets the synced input text.
+        /// Gets the synced input text.
         /// </summary>
-        public string InputText
-        {
-            get => Base.SyncInputText;
-            [Obsolete("Setting this value is not currently supported.")]
-            set => Base.SyncInputText = value;
-        }
+        public string InputText => Base.SyncInputText;
 
         /// <summary>
-        /// Gets or sets the content type.
+        /// Gets the content type.
         /// </summary>
-        public TMP_InputField.ContentType ContentType
-        {
-            get => Base.ContentType;
-            [Obsolete("Setting this value is not currently supported.")]
-            set => Base.ContentType = value;
-        }
+        public TMP_InputField.ContentType ContentType => Base.ContentType;
 
         /// <summary>
-        /// Gets or sets the placeholder.
+        /// Gets the placeholder.
         /// </summary>
-        public string Placeholder
-        {
-            get => Base.Placeholder;
-            [Obsolete("Setting this value is not currently supported.")]
-            set => Base.Placeholder = value;
-        }
+        public string Placeholder => Base.Placeholder;
 
         /// <summary>
-        /// Gets or sets the character limit.
+        /// Gets the character limit.
         /// </summary>
-        public int CharacterLimit
-        {
-            get => Base.CharacterLimit;
-            [Obsolete("This is not supported and is unlikely to.")]
-            set => Base.CharacterLimit = value;
-        }
+        public int CharacterLimit => Base.CharacterLimit;
     }
 }
