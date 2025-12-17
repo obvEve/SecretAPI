@@ -8,6 +8,7 @@
     using LabApi.Features.Wrappers;
     using NorthwoodLib.Pools;
     using SecretAPI.Attribute;
+    using SecretAPI.Features.Commands.Parsing;
 
     /// <summary>
     /// Handles parsing <see cref="CustomCommand"/>.

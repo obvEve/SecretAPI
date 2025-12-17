@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands
+﻿namespace SecretAPI.Features.Commands.Parsing
 {
     /// <summary>
     /// Gets the result of a <see cref="CustomCommandHandler.TryParse"/>.

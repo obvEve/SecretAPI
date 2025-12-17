@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands
+﻿namespace SecretAPI.Features.Commands.Parsing
 {
     using System.Reflection;
 
