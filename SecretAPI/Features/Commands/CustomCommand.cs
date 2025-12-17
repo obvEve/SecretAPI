@@ -12,10 +12,10 @@
         public abstract string Command { get; }
 
         /// <inheritdoc />
-        public abstract string[] Aliases { get; }
+        public abstract string Description { get; }
 
         /// <inheritdoc />
-        public abstract string Description { get; }
+        public virtual string[] Aliases { get; } = [];
 
         /// <summary>
         /// Gets an array of the sub commands for this command.
