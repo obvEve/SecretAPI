@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands
+﻿/*namespace SecretAPI.Features.Commands
 {
     using System;
     using System.Collections.Generic;
@@ -178,4 +178,4 @@
             return methods;
         }
     }
-}
+}*/

@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Attribute
+﻿namespace SecretAPI.Features.Commands.Attributes
 {
     using System;
 

@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands.Parsing
+﻿/*namespace SecretAPI.Features.Commands.Parsing
 {
     /// <summary>
     /// Defines the return type of <see cref="CustomCommandHandler.ValidateAllMethodParameters"/>.
@@ -12,4 +12,4 @@
 
         internal object[]? Arguments;
     }
-}
+}*/

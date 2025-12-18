@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands.Parsing
+﻿/*namespace SecretAPI.Features.Commands.Parsing
 {
     using System.Reflection;
 
@@ -27,4 +27,4 @@
         /// </summary>
         public object[]? ProvidedArguments;
     }
-}
+}*/

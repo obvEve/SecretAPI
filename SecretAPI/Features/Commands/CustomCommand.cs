@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands
+﻿/*namespace SecretAPI.Features.Commands
 {
     using System;
     using CommandSystem;
@@ -6,7 +6,7 @@
     /// <summary>
     /// Defines the base of a custom <see cref="ICommand"/>.
     /// </summary>
-    public abstract class CustomCommand : ICommand
+    public abstract partial class CustomCommand : ICommand
     {
         /// <inheritdoc />
         public abstract string Command { get; }
@@ -24,6 +24,9 @@
 
         /// <inheritdoc />
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
-            => CustomCommandHandler.TryCall(this, sender, arguments, out response);
+            => ExecuteGenerated(arguments, sender, out response); // CustomCommandHandler.TryCall(this, sender, arguments, out response);
+
+        /// <inheritdoc cref="Execute(ArraySegment{string}, ICommandSender, out string)" />
+        protected abstract partial bool ExecuteGenerated(ArraySegment<string> arguments, ICommandSender sender, out string response);
     }
-}
+}*/

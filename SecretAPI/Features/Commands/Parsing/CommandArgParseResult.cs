@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands.Parsing
+﻿/*namespace SecretAPI.Features.Commands.Parsing
 {
     /// <summary>
     /// Gets the result of a <see cref="CustomCommandHandler.TryParse"/>.
@@ -20,4 +20,4 @@
         /// </summary>
         public object ParamArgument;
     }
-}
+}*/

@@ -1,27 +1,22 @@
-﻿namespace SecretAPI.Examples.Commands
+﻿/*namespace SecretAPI.Examples.Commands
 {
     using LabApi.Features.Wrappers;
-    using SecretAPI.Attribute;
     using SecretAPI.Features.Commands;
+    using SecretAPI.Features.Commands.Attributes;
 
     /// <summary>
-    /// An example of a <see cref="CustomCommand"/> that explodes a player.
+    /// An example subcommand for <see cref="ExampleParentCommand"/>.
     /// </summary>
     public class ExampleExplodeCommand : CustomCommand
     {
         /// <inheritdoc/>
-        public override string Command { get; } = "explode";
+        public override string Command => "explode";
 
         /// <inheritdoc/>
-        public override string[] Aliases { get; } = [];
-
-        /// <inheritdoc/>
-        public override string Description { get; } = "Explodes a player";
+        public override string Description => "Explodes a player!";
 
         [ExecuteCommand]
-        private void Run(Player sender, Player target)
-        {
-            TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
-        }
+        private void Explode(Player sender, Player target)
+            => TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
     }
-}
+}*/
