@@ -27,6 +27,8 @@ jobs:
           Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
 
       - name: Build
+        env:
+          SL_REFERENCES: ${{ env.REFERENCES_PATH }}
         shell: pwsh
         run: dotnet build -c Release
 
@@ -34,4 +36,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Build Result
-          path: **/bin/Release/net48/SecretAPI.*
+          path: ${{ github.workspace }}/**/bin/Release/net48/*SecretAPI*.dll
+          retention-days: 7
