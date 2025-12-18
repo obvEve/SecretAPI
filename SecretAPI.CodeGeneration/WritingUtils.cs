@@ -33,10 +33,7 @@ public static class WritingUtils
         
         writer.WriteLine($"namespace {symbol.ContainingNamespace}");
         if (startBrace)
-        {
-            writer.WriteLine("{");
-            writer.Indent++;
-        }
+            WriteStartBrace(writer);
 
         return writer;
     }
@@ -62,6 +59,49 @@ public static class WritingUtils
             writer.Indent++;
         }
 
+        return writer;
+    }
+
+    public static IndentedTextWriter WriteMethod(
+        this IndentedTextWriter writer,
+        string methodName,
+        string returnType,
+        bool isOverride,
+        Accessibility accessibility,
+        bool startBrace,
+        params string[] parameters)
+    {
+        writer.Write(GetAccessibilityString(accessibility));
+        if (isOverride)
+            writer.Write(" override ");
+        writer.Write(returnType);
+        writer.Write(" " +  methodName);
+        writer.WriteLine("(");
+        writer.Indent++;
+
+        for (int index = 0; index < parameters.Length; index++)
+        {
+            string parameter = parameters[index];
+            if (parameters.Length > index + 1)
+                writer.WriteLine(parameter + ",");
+            else if (!startBrace)
+                writer.Write(parameter + ")");
+            else
+                writer.WriteLine(parameter + ")");
+        }
+
+        writer.Indent--;
+
+        if (startBrace)
+            writer.WriteStartBrace();
+
+        return writer;
+    }
+
+    public static IndentedTextWriter WriteStartBrace(this IndentedTextWriter writer)
+    {
+        writer.WriteLine("{");
+        writer.Indent++;
         return writer;
     }
 

@@ -23,12 +23,8 @@
         public virtual CustomCommand[] SubCommands { get; } = [];
 
         /// <inheritdoc />
-        public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
-            => ExecuteGenerated(arguments, sender, out response);
-
-        /// <inheritdoc cref="Execute(ArraySegment{string}, ICommandSender, out string)" />
         /// <remarks>This should not be overwritten except by source generation.</remarks>
-        protected virtual bool ExecuteGenerated(ArraySegment<string> arguments, ICommandSender commandSender, out string response)
+        public virtual bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             throw new NotImplementedException($"Command {Command} not implemented. Did source generation fail? - If this is not intentional, submit a bugreport!");
         }

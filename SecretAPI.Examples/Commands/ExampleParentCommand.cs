@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Examples.Commands
 {
+    using System;
     using LabApi.Features.Console;
     using LabApi.Features.Wrappers;
     using SecretAPI.Features.Commands;
