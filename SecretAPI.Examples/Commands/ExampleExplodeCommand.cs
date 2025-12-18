@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Examples.Commands
 {
+    using LabApi.Features.Console;
     using LabApi.Features.Wrappers;
     using SecretAPI.Features.Commands;
     using SecretAPI.Features.Commands.Attributes;
@@ -16,7 +17,10 @@
         public override string Description => "Explodes a player!";
 
         [ExecuteCommand]
-        private void Explode(Player sender, Player target)
-            => TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
+        private void Explode([CommandSender] Player sender, Player target)
+        {
+            Logger.Debug($"Example explode command run by {sender.Nickname} - Target: {target.Nickname}");
+            TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
+        }
     }
 }

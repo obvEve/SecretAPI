@@ -28,6 +28,9 @@ public static class WritingUtils
 
     public static IndentedTextWriter WriteNamespace(this IndentedTextWriter writer, INamedTypeSymbol symbol, bool startBrace)
     {
+        if (symbol.ContainingNamespace == null)
+            return writer;
+        
         writer.WriteLine($"namespace {symbol.ContainingNamespace}");
         if (startBrace)
         {
@@ -42,12 +45,34 @@ public static class WritingUtils
     {
         if (usings.Length == 0)
             return writer;
-        
+
         foreach (string @using in usings)
             writer.WriteLine($"using {@using};");
 
         writer.WriteLine();
+        return writer;
+    }
+
+    public static IndentedTextWriter WritePartialClass(this IndentedTextWriter writer, string className, bool startBrace)
+    {
+        writer.WriteLine($"partial class {className}");
+        if (startBrace)
+        {
+            writer.WriteLine("{");
+            writer.Indent++;
+        }
 
         return writer;
+    }
+
+    public static IndentedTextWriter FinishAllIndentations(this IndentedTextWriter writer)
+    {
+        while (writer.Indent > 0)
+        {
+            writer.Indent--;
+            writer.WriteLine("}");
+        }
+
+        return writer; 
     }
 }

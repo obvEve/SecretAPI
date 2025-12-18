@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Examples.Commands
 {
+    using LabApi.Features.Console;
     using LabApi.Features.Wrappers;
     using SecretAPI.Features.Commands;
     using SecretAPI.Features.Commands.Attributes;
@@ -22,9 +23,9 @@
         public override CustomCommand[] SubCommands { get; } = [new ExampleExplodeCommand()];
 
         [ExecuteCommand]
-        private void Run([CommandSender] Player sender, Player target)
+        private void Run([CommandSender] Player sender)
         {
-            TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
+            Logger.Debug($"Example parent was run by {sender.Nickname}");
         }
     }
 }

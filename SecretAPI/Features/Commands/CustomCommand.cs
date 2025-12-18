@@ -27,10 +27,10 @@
             => ExecuteGenerated(arguments, sender, out response);
 
         /// <inheritdoc cref="Execute(ArraySegment{string}, ICommandSender, out string)" />
-        protected virtual bool ExecuteGenerated(ArraySegment<string> arguments, ICommandSender sender, out string response)
+        /// <remarks>This should not be overwritten except by source generation.</remarks>
+        protected virtual bool ExecuteGenerated(ArraySegment<string> arguments, ICommandSender commandSender, out string response)
         {
-            response = "Command not implemented.";
-            return false;
+            throw new NotImplementedException($"Command {Command} not implemented. Did source generation fail? - If this is not intentional, submit a bugreport!");
         }
     }
 }

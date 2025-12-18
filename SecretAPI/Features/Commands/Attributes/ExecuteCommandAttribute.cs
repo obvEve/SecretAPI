@@ -5,7 +5,7 @@
     /// <summary>
     /// Attribute used to identify a method as a possible execution result.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method)]
     public class ExecuteCommandAttribute : Attribute
     {
     }

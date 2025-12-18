@@ -13,7 +13,7 @@ public class CustomCommandGenerator : IIncrementalGenerator
 {
     private const string CommandName = "CustomCommand";
     private const string ExecuteMethodName = "ExecuteGenerated";
-    
+
     /// <inheritdoc/>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -47,11 +47,8 @@ public class CustomCommandGenerator : IIncrementalGenerator
 
         indentWriter.WriteGeneratedText()
             .WriteNamespace(symbol, true)
-            .WriteUsings("System", "CommandSystem");
-
-        indentWriter.WriteLine($"partial class {symbol.Name}");
-        indentWriter.WriteLine("{");
-        indentWriter.Indent++;
+            .WriteUsings("System", "CommandSystem")
+            .WritePartialClass(symbol.Name, true);
 
         indentWriter.WriteLine($"protected override bool {ExecuteMethodName}(");
         indentWriter.Indent++;
@@ -65,14 +62,7 @@ public class CustomCommandGenerator : IIncrementalGenerator
         indentWriter.WriteLine("response = \"Command not implemented.\";");
         indentWriter.WriteLine("return false;");
 
-        indentWriter.Indent--;
-        indentWriter.WriteLine("}");
-
-        indentWriter.Indent--;
-        indentWriter.WriteLine("}");
-
-        indentWriter.Indent--;
-        indentWriter.WriteLine("}");
+        indentWriter.FinishAllIndentations();
 
         ctx.AddSource($"{symbol.ContainingNamespace}.{symbol.Name}.g.cs", writer.ToString());
     }
