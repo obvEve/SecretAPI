@@ -3,6 +3,7 @@
     using System;
     using System.Reflection;
     using HarmonyLib;
+    using LabApi.Features;
     using LabApi.Loader.Features.Plugins;
     using LabApi.Loader.Features.Plugins.Enums;
     using SecretAPI.Attribute;
@@ -19,7 +20,7 @@
         public override string Description => "API for SCP:SL";
 
         /// <inheritdoc/>
-        public override string Author => "@misfiy";
+        public override string Author => "@misfiy / @obvEvelyn";
 
         /// <inheritdoc/>
         public override LoadPriority Priority => LoadPriority.Highest;
@@ -28,7 +29,11 @@
         public override Version Version { get; } = Assembly.GetName().Version;
 
         /// <inheritdoc/>
-        public override Version RequiredApiVersion { get; } = new(LabApi.Features.LabApiProperties.CompiledVersion);
+        public override Version RequiredApiVersion => LabApiProperties.CurrentVersion;
+
+        /// <inheritdoc />
+        /// <remarks>We use transparent here because this is an API and should not interfere by itself with game logic.</remarks>
+        public override bool IsTransparent => true;
 
         /// <summary>
         /// Gets the harmony to use for the API.

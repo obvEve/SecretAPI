@@ -14,15 +14,6 @@
     public static class PlayerExtensions
     {
         /// <summary>
-        /// Adds regeneration to a player.
-        /// </summary>
-        /// <param name="player">The player to add regeneration to.</param>
-        /// <param name="rate">The rate to heal per second.</param>
-        /// <param name="duration">How long the regen should last.</param>
-        public static void AddRegeneration(this Player player, float rate, float duration)
-            => Scp330Bag.AddSimpleRegeneration(player.ReferenceHub, rate, duration);
-
-        /// <summary>
         /// Gets an effect of a player based on the effect name.
         /// </summary>
         /// <param name="player">The player to get effect from.</param>
@@ -30,35 +21,6 @@
         /// <returns>The effect.</returns>
         public static StatusEffectBase GetEffect(this Player player, string name)
             => player.ReferenceHub.playerEffectsController.TryGetEffect(name, out StatusEffectBase? effect) ? effect : null!;
-
-        /// <summary>
-        /// Gives a random candy to a player.
-        /// </summary>
-        /// <param name="player">The player to give candy to.</param>
-        /// <param name="reason">The reason to give the candy.</param>
-        public static void GiveRandomCandy(this Player player, ItemAddReason reason)
-            => GiveCandy(player, Scp330Candies.GetRandom(), reason);
-
-        /// <summary>
-        /// Gives a candy to a player.
-        /// </summary>
-        /// <param name="player">The player to give candy to.</param>
-        /// <param name="candy">The candy to give.</param>
-        /// <param name="reason">The reason to give candy.</param>
-        public static void GiveCandy(this Player player, CandyKindID candy, ItemAddReason reason)
-            => player.ReferenceHub.GrantCandy(candy, reason);
-
-        /// <summary>
-        /// Checks if a player has the permission.
-        /// </summary>
-        /// <param name="player">The player to check.</param>
-        /// <param name="permission">The permission to check.</param>
-        /// <returns>If player has permission.</returns>
-        public static bool HasGamePermission(this Player player, PlayerPermissions permission)
-        {
-            PlayerPermissions currentPerms = (PlayerPermissions)player.ReferenceHub.serverRoles.Permissions;
-            return currentPerms.HasFlag(permission);
-        }
 
         /// <summary>
         /// Checks whether a player has permission to access a <see cref="IDoorPermissionRequester"/>.

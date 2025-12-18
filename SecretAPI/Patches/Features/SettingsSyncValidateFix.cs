@@ -16,6 +16,7 @@
         private static void Postfix(SSSClientResponse msg, ref bool __result)
 #pragma warning restore SA1313
         {
+            // prevent overriding already validated settings
             if (__result)
                 return;
 

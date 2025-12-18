@@ -1,6 +1,5 @@
 ﻿namespace SecretAPI.Features.UserSettings
 {
-    using System;
     using global::UserSettings.ServerSpecific;
 
     /// <summary>

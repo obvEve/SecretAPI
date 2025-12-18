@@ -5,7 +5,7 @@
     using MapGeneration;
 
     /// <summary>
-    /// Manages prefabs that don't work properly in <see cref="PrefabStore{TPrefab}"/>.
+    /// Manages prefabs that have variants and cannot be easily used within <see cref="PrefabStore{TPrefab}"/>.
     /// </summary>
     public static class PrefabManager
     {

@@ -24,7 +24,7 @@
                 return;
             }
 
-            foreach (Item? item in player.Items.ToList())
+            foreach (Item item in player.Items.ToList())
                 Process914Item(item, setting);
         }
 

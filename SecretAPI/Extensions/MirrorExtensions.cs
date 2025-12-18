@@ -5,7 +5,6 @@
     using LabApi.Features.Console;
     using LabApi.Features.Wrappers;
     using Mirror;
-    using Respawning;
 
     /// <summary>
     /// Extensions related to Mirror.
@@ -21,6 +20,7 @@
         /// <param name="isNoisy">Whether the cassie is noisy.</param>
         /// <param name="isSubtitles">Whether there is subtitles on the cassie.</param>
         /// <param name="customSubtitles">The custom subtitles to use for the cassie.</param>
+        [Obsolete("Due to NW changes to Cassie, this is no longer functional.")]
         public static void SendFakeCassieMessage(
             this Player target,
             string message,
@@ -29,13 +29,6 @@
             bool isSubtitles = true,
             string customSubtitles = "")
         {
-            foreach (RespawnEffectsController allController in RespawnEffectsController.AllControllers)
-            {
-                if (!allController)
-                    continue;
-
-                SendFakeRpcMessage(target, allController, typeof(RespawnEffectsController), nameof(RespawnEffectsController.RpcCassieAnnouncement), message, isHeld, isNoisy, isSubtitles, customSubtitles);
-            }
         }
 
         /// <summary>

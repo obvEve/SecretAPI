@@ -42,9 +42,15 @@
         public new SSDropdownSetting Base { get; }
 
         /// <summary>
+        /// Gets the index the client is claiming to have selected.
+        /// </summary>
+        /// <remarks>This is not validated, if you need it validated use <see cref="ValidatedSelectedIndex"/>.</remarks>
+        public int SyncedIndex => Base.SyncSelectionIndexRaw;
+
+        /// <summary>
         /// Gets the selected index after validation.
         /// </summary>
-        public int ValidatedSelectedIndex => Math.Clamp(Base.SyncSelectionIndexRaw, 0, Options.Length - 1);
+        public int ValidatedSelectedIndex => Math.Clamp(SyncedIndex, 0, Options.Length - 1);
 
         /// <summary>
         /// Gets or sets the options.

@@ -6,6 +6,7 @@
     using System.Linq;
     using global::UserSettings.ServerSpecific;
     using LabApi.Events.Handlers;
+    using LabApi.Features.Enums;
     using LabApi.Features.Wrappers;
     using Mirror;
     using NorthwoodLib.Pools;
@@ -23,7 +24,7 @@
             SecretApi.Harmony?.PatchCategory(nameof(CustomSetting));
 
             ServerSpecificSettingsSync.SendOnJoinFilter = null;
-            ServerSpecificSettingsSync.DefinedSettings ??= []; // fix nw issue
+            ServerSpecificSettingsSync.DefinedSettings ??= []; // fix null ref
             ServerSpecificSettingsSync.ServerOnSettingValueReceived += OnSettingsUpdated;
 
             PlayerEvents.Joined += ev => SendSettingsToPlayer(ev.Player);
@@ -65,14 +66,61 @@
         public abstract CustomHeader Header { get; }
 
         /// <summary>
-        /// Gets the current label.
+        /// Gets or sets a value indicating whether the setting is server side only.
         /// </summary>
-        public string Label => Base.Label;
+        /// <remarks>The setting value cannot be updated from client side and can be used to indicate server features being toggled.</remarks>
+        public bool IsServerOnly
+        {
+            get => Base.IsServerOnly;
+            set => Base.IsServerOnly = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the current label.
+        /// </summary>
+        public string Label
+        {
+            get => Base.Label;
+            set => Base.Label = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the description hint to show.
+        /// </summary>
+        public string DescriptionHint
+        {
+            get => Base.HintDescription;
+            set => Base.HintDescription = value;
+        }
 
         /// <summary>
         /// Gets the current id.
         /// </summary>
-        public int Id => Base.SettingId;
+        public int Id
+        {
+            get => Base.SettingId;
+            init => Base.SettingId = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the Collection ID for the setting. Defaults to <see cref="byte.MaxValue"/>.
+        /// </summary>
+        /// <remarks>Setting value between 0-20 will allow sharing between servers on the same Account ID.</remarks>
+        public byte CollectionId
+        {
+            get => Base.CollectionId;
+            set => Base.CollectionId = value;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the setting should be shared between servers.
+        /// </summary>
+        /// <remarks><see cref="CollectionId"/> should be used if you are using different settings with the same ID and need extra control.</remarks>
+        public bool IsShared
+        {
+            get => CollectionId < ServerSpecificSettingBase.MaxCollections;
+            set => CollectionId = value ? byte.MinValue : byte.MaxValue;
+        }
 
         /// <summary>
         /// Registers a collection of settings.
@@ -161,7 +209,8 @@
         /// <param name="version">The version of the setting. If null will use <see cref="ServerSpecificSettingsSync.Version"/>.</param>
         public static void ResyncServer(int? version = null)
         {
-            foreach (Player player in Player.ReadyList)
+            // only update to real players that are authenticated
+            foreach (Player player in Player.GetAll(PlayerSearchFlags.AuthenticatedPlayers))
                 SendSettingsToPlayer(player, version);
         }
 
@@ -173,7 +222,7 @@
         /// <remarks>This will be automatically called on <see cref="PlayerEvents.Joined"/> and <see cref="PlayerEvents.GroupChanged"/>.</remarks>
         public static void SendSettingsToPlayer(Player player, int? version = null)
         {
-            if (player.IsHost)
+            if (player.IsHost || player.IsNpc)
                 return;
 
             List<CustomSetting> playerSettings = ListPool<CustomSetting>.Shared.Rent();
@@ -183,7 +232,7 @@
                     continue;
 
                 CustomSetting playerSpecific = EnsurePlayerSpecificSetting(player, setting);
-                playerSpecific.UpdatePlayerSetting();
+                playerSpecific.PersonalizeSetting();
                 playerSettings.Add(playerSpecific);
             }
 
@@ -208,8 +257,10 @@
         /// </summary>
         protected void ResyncToOwner()
         {
-            if (KnownOwner != null)
-                SendSettingsToPlayer(KnownOwner);
+            if (KnownOwner == null)
+                return;
+
+            SendSettingsToPlayer(KnownOwner);
         }
 
         /// <summary>
@@ -226,9 +277,10 @@
         protected abstract CustomSetting CreateDuplicate();
 
         /// <summary>
-        /// Called before setting is sent to a player. Should be used to create player specific options.
+        /// Called before setting is sent to a player.
         /// </summary>
-        protected virtual void UpdatePlayerSetting()
+        /// <remarks>This should be used to personalize a setting per player, such as supporters having more options.</remarks>
+        protected virtual void PersonalizeSetting()
         {
         }
 
@@ -250,14 +302,12 @@
             if (setting == null || !setting.CanView(player))
                 return;
 
+            // validate setting existence and then write data from client
             CustomSetting newSettingPlayer = EnsurePlayerSpecificSetting(player, setting);
-
-            // NetworkWriter entryWriter = new();
-            // settingBase.SerializeEntry(entryWriter);
-            // newSettingPlayer.Base.DeserializeEntry(new NetworkReader(entryWriter.buffer));
             NetworkWriterPooled valueWriter = NetworkWriterPool.Get();
             settingBase.SerializeValue(valueWriter);
             newSettingPlayer.Base.DeserializeValue(new NetworkReader(valueWriter.buffer));
+
             NetworkWriterPool.Return(valueWriter);
 
             newSettingPlayer.HandleSettingUpdate();
@@ -265,7 +315,7 @@
 
         private static CustomSetting EnsurePlayerSpecificSetting(Player player, CustomSetting toMatch)
         {
-            List<CustomSetting> settings = ReceivedPlayerSettings.GetOrAdd(player, () => []);
+            List<CustomSetting> settings = ReceivedPlayerSettings.GetOrAdd(player, static () => []);
             CustomSetting? currentSetting = settings.FirstOrDefault(s => s.Id == toMatch.Id);
             if (currentSetting == null)
             {

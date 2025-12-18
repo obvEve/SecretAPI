@@ -4,13 +4,14 @@
     using System.Linq;
     using Interactables.Interobjects;
     using Mirror;
+    using NorthwoodLib.Pools;
     using UnityEngine;
 
     /// <summary>
     /// Handles the storing of a prefab.
     /// </summary>
     /// <typeparam name="TPrefab">The prefab to use.</typeparam>
-    /// <remarks>For Ragdolls and Doors use <see cref="PrefabManager"/>.</remarks>
+    /// <remarks>For Doors use <see cref="PrefabManager"/>.</remarks>
     public static class PrefabStore<TPrefab>
         where TPrefab : NetworkBehaviour
     {
@@ -45,7 +46,7 @@
                 if (collection != null)
                     return collection;
 
-                List<TPrefab> allPrefabs = new();
+                List<TPrefab> allPrefabs = ListPool<TPrefab>.Shared.Rent();
 
                 foreach (GameObject gameObject in NetworkClient.prefabs.Values)
                 {
@@ -54,6 +55,8 @@
                 }
 
                 collection = allPrefabs.ToArray();
+                ListPool<TPrefab>.Shared.Return(allPrefabs);
+
                 return collection;
             }
         }
