@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Build Result
-          path: "${{ env.BUILD_OUTPUT }}\bin\Release\net48\SecretAPI.*"
+          path: ${{ env.BUILD_OUTPUT }}\bin\Release\net48\SecretAPI.*
           retention-days: 7
