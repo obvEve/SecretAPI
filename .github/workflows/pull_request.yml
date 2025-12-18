@@ -12,6 +12,7 @@ jobs:
     env:
       REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
       REFERENCES_PATH: ${{ github.workspace }}/References
+      BUILD_OUTPUT: ${{ github.workspace }}/Builds
 
     steps:
       - name: Checkout
@@ -31,11 +32,11 @@ jobs:
           SL_REFERENCES: ${{ env.REFERENCES_PATH }}
         shell: pwsh
         run: |
-          dotnet build -c Release
+          dotnet build -c Release --output ${{ env.BUILD_OUTPUT }}
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Build Result
-          path: ${{ github.workspace }}\SecretAPI\bin\Release\net48\SecretAPI.dll
+          path: "${{ env.BUILD_OUTPUT }}\bin\Release\net48\SecretAPI.*"
           retention-days: 7

@@ -11,6 +11,7 @@ jobs:
     env:
       REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
       REFERENCES_PATH: ${{ github.workspace }}/References
+      PACKAGED_PATH: ${{ github.workspace }}/Package
 
     steps:
       - name: Checkout
@@ -28,7 +29,7 @@ jobs:
       - name: Build and Pack NuGet
         env:
           SL_REFERENCES: ${{ env.REFERENCES_PATH }}
-        run: dotnet pack -c Release --output ${GITHUB_WORKSPACE}/nupkgs
+        run: dotnet pack -c Release --output ${PACKAGED_PATH}
 
       - name: Push NuGet package
         run: |
