@@ -12,7 +12,6 @@ jobs:
     env:
       REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
       REFERENCES_PATH: ${{ github.workspace }}/References
-      BUILD_OUTPUT: ${{ github.workspace }}/Builds
 
     steps:
       - name: Checkout
@@ -28,15 +27,11 @@ jobs:
           Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
 
       - name: Build
-        env:
-          SL_REFERENCES: ${{ env.REFERENCES_PATH }}
         shell: pwsh
-        run: |
-          dotnet build -c Release --output ${{ env.BUILD_OUTPUT }}
+        run: dotnet build -c Release
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Build Result
-          path: ${{ env.BUILD_OUTPUT }}\bin\Release\net48\SecretAPI.*
-          retention-days: 7
+          path: **/bin/Release/net48/SecretAPI.*
