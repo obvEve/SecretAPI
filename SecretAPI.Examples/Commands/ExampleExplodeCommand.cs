@@ -1,4 +1,4 @@
-﻿/*namespace SecretAPI.Examples.Commands
+﻿namespace SecretAPI.Examples.Commands
 {
     using LabApi.Features.Wrappers;
     using SecretAPI.Features.Commands;
@@ -7,7 +7,7 @@
     /// <summary>
     /// An example subcommand for <see cref="ExampleParentCommand"/>.
     /// </summary>
-    public class ExampleExplodeCommand : CustomCommand
+    public partial class ExampleExplodeCommand : CustomCommand
     {
         /// <inheritdoc/>
         public override string Command => "explode";
@@ -19,4 +19,4 @@
         private void Explode(Player sender, Player target)
             => TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
     }
-}*/
+}

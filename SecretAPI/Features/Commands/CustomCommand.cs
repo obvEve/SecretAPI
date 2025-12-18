@@ -1,4 +1,4 @@
-﻿/*namespace SecretAPI.Features.Commands
+﻿namespace SecretAPI.Features.Commands
 {
     using System;
     using CommandSystem;
@@ -24,9 +24,13 @@
 
         /// <inheritdoc />
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
-            => ExecuteGenerated(arguments, sender, out response); // CustomCommandHandler.TryCall(this, sender, arguments, out response);
+            => ExecuteGenerated(arguments, sender, out response);
 
         /// <inheritdoc cref="Execute(ArraySegment{string}, ICommandSender, out string)" />
-        protected abstract partial bool ExecuteGenerated(ArraySegment<string> arguments, ICommandSender sender, out string response);
+        protected virtual bool ExecuteGenerated(ArraySegment<string> arguments, ICommandSender sender, out string response)
+        {
+            response = "Command not implemented.";
+            return false;
+        }
     }
-}*/
+}

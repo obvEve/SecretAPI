@@ -6,11 +6,14 @@ using System.IO;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 /// <summary>
-/// Hello.
+/// Code generator for custom commands, creating validation etc.
 /// </summary>
 [Generator]
 public class CustomCommandGenerator : IIncrementalGenerator
 {
+    private const string CommandName = "CustomCommand";
+    private const string ExecuteMethodName = "ExecuteGenerated";
+    
     /// <inheritdoc/>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -33,12 +36,44 @@ public class CustomCommandGenerator : IIncrementalGenerator
         if (symbol == null)
             return;
 
+        if (symbol.IsAbstract)
+            return;
+
+        if (symbol.BaseType?.Name != CommandName)
+            return;
+
         using StringWriter writer = new();
         using IndentedTextWriter indentWriter = new(writer);
 
-        indentWriter.WriteLine($"// {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-        indentWriter.Write($"//{DateTime.Now::yyyy-MM-dd HH:mm:ss}");
+        indentWriter.WriteGeneratedText()
+            .WriteNamespace(symbol, true)
+            .WriteUsings("System", "CommandSystem");
 
-        // ctx.AddSource($"{symbol.ContainingNamespace}.{symbol.Name}.g.cs", writer.ToString());
+        indentWriter.WriteLine($"partial class {symbol.Name}");
+        indentWriter.WriteLine("{");
+        indentWriter.Indent++;
+
+        indentWriter.WriteLine($"protected override bool {ExecuteMethodName}(");
+        indentWriter.Indent++;
+        indentWriter.WriteLine("ArraySegment<string> arguments,");
+        indentWriter.WriteLine("ICommandSender sender,");
+        indentWriter.WriteLine("out string response)");
+        indentWriter.Indent--;
+        indentWriter.WriteLine("{");
+        indentWriter.Indent++;
+
+        indentWriter.WriteLine("response = \"Command not implemented.\";");
+        indentWriter.WriteLine("return false;");
+
+        indentWriter.Indent--;
+        indentWriter.WriteLine("}");
+
+        indentWriter.Indent--;
+        indentWriter.WriteLine("}");
+
+        indentWriter.Indent--;
+        indentWriter.WriteLine("}");
+
+        ctx.AddSource($"{symbol.ContainingNamespace}.{symbol.Name}.g.cs", writer.ToString());
     }
 }

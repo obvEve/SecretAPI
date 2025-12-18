@@ -1,4 +1,4 @@
-﻿/*namespace SecretAPI.Examples.Commands
+﻿namespace SecretAPI.Examples.Commands
 {
     using LabApi.Features.Wrappers;
     using SecretAPI.Features.Commands;
@@ -7,7 +7,7 @@
     /// <summary>
     /// An example of a <see cref="CustomCommand"/> that explodes a player.
     /// </summary>
-    public class ExampleParentCommand : CustomCommand
+    public partial class ExampleParentCommand : CustomCommand
     {
         /// <inheritdoc/>
         public override string Command => "exampleparent";
@@ -27,4 +27,4 @@
             TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
         }
     }
-}*/
+}
