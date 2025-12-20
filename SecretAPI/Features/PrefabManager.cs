@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Features
 {
+    using System;
     using System.Linq;
     using Interactables.Interobjects;
     using MapGeneration;
@@ -14,11 +15,6 @@
         private const string HczBulkDoorName = "HCZ BulkDoor";
         private const string EzDoorName = "EZ BreakableDoor";
 
-        private static BasicDoor? lczDoor;
-        private static BasicDoor? hczDoor;
-        private static BasicDoor? hczBulkDoor;
-        private static BasicDoor? ezDoor;
-
         /// <summary>
         /// Gets the <see cref="ReferenceHub"/> prefab.
         /// </summary>
@@ -27,24 +23,25 @@
         /// <summary>
         /// Gets the <see cref="BasicDoor"/> found in <see cref="FacilityZone.LightContainment"/>.
         /// </summary>
-        public static BasicDoor LczDoorPrefab => lczDoor ??= GetDoor(LczDoorName);
+        public static BasicDoor LczDoorPrefab => field ??= GetDoor(LczDoorName);
 
         /// <summary>
         /// Gets the <see cref="BasicDoor"/> found in <see cref="FacilityZone.HeavyContainment"/>.
         /// </summary>
-        public static BasicDoor HczDoorPrefab => hczDoor ??= GetDoor(HczDoorName);
+        public static BasicDoor HczDoorPrefab => field ??= GetDoor(HczDoorName);
 
         /// <summary>
         /// Gets the <see cref="BasicDoor"/> found in <see cref="FacilityZone.HeavyContainment"/>.
         /// </summary>
-        public static BasicDoor HczBulkDoorPrefab => hczBulkDoor ??= GetDoor(HczBulkDoorName);
+        public static BasicDoor HczBulkDoorPrefab => field ??= GetDoor(HczBulkDoorName);
 
         /// <summary>
         /// Gets the <see cref="BasicDoor"/> found in <see cref="FacilityZone.Entrance"/>.
         /// </summary>
-        public static BasicDoor EzDoorPrefab => ezDoor ??= GetDoor(EzDoorName);
+        public static BasicDoor EzDoorPrefab => field ??= GetDoor(EzDoorName);
 
         private static BasicDoor GetDoor(string name)
-            => PrefabStore<BasicDoor>.AllComponentPrefabs.FirstOrDefault(d => d.name == name)!;
+            => PrefabStore<BasicDoor>.AllComponentPrefabs.FirstOrDefault(d => d.name == name)
+               ?? throw new InvalidOperationException($"[PrefabManager] Failed to get door named {name} | Report this as a bug!");
     }
 }
