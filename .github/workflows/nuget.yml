@@ -11,7 +11,7 @@ jobs:
     env:
       REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
       REFERENCES_PATH: ${{ github.workspace }}/References
-      PACKAGED_PATH: ${{ github.workspace }}/Package
+      NUGET_PACKAGED_PATH: ${{ github.workspace }}/nupkgs
 
     steps:
       - name: Checkout
@@ -29,9 +29,9 @@ jobs:
       - name: Build and Pack NuGet
         env:
           SL_REFERENCES: ${{ env.REFERENCES_PATH }}
-        run: dotnet pack -c Release --output ${PACKAGED_PATH}
+        run: dotnet pack -c Release --output ${NUGET_PACKAGED_PATH}
 
       - name: Push NuGet package
         run: |
-          $PackageFile = (Get-ChildItem -Path "${GITHUB_WORKSPACE}/nupkgs" -Include 'SecretAPI.*.nupkg' -Recurse | Select-Object -First 1).FullName
+          $PackageFile = (Get-ChildItem -Path "${NUGET_PACKAGED_PATH}" -Include 'SecretAPI.*.nupkg' -Recurse | Select-Object -First 1).FullName
           dotnet nuget push $PackageFile --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

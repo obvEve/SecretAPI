@@ -99,23 +99,5 @@ public class CustomCommandGenerator : IIncrementalGenerator
             .Build();
 
         ctx.AddSource($"{namedClassSymbol.Name}.g.cs", compilation.ToFullString());
-
-        /*using StringWriter writer = new();
-        using IndentedTextWriter indentWriter = new(writer);
-
-        indentWriter.WriteGeneratedText()
-            .WriteNamespace(namedClassSymbol, true)
-            .WriteUsings("System", "CommandSystem")
-            .WritePartialClass(namedClassSymbol.Name, true)
-            .WriteMethod(ExecuteMethodName, "bool", true, Accessibility.Public, true, "ArraySegment<string> arguments",
-                "ICommandSender sender", "out string response");
-
-        indentWriter.WriteLine("response = \"Command not implemented.\";");
-        indentWriter.WriteLine("return false;");
-        indentWriter.WriteLine($"// {string.Join(" -> ", executeMethods.Select(m => m.Identifier))}");
-
-        indentWriter.FinishAllIndentations();
-
-        ctx.AddSource($"{namedClassSymbol.Name}.g.cs", writer.ToString());*/
     }
 }
