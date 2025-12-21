@@ -4,6 +4,8 @@ using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using System.IO;
+using CodeBuilders;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 /// <summary>
@@ -25,7 +27,7 @@ public class CustomCommandGenerator : IIncrementalGenerator
             static (ctx, cancel) =>
             {
                 ClassDeclarationSyntax classSyntax = (ClassDeclarationSyntax)ctx.Node;
-                INamedTypeSymbol? typeSymbol = ctx.SemanticModel.GetDeclaredSymbol(classSyntax, cancel) as INamedTypeSymbol;
+                INamedTypeSymbol? typeSymbol = ModelExtensions.GetDeclaredSymbol(ctx.SemanticModel, classSyntax, cancel) as INamedTypeSymbol;
                 return (typeSymbol, GetExecuteMethods(ctx, classSyntax));
             }).Where(tuple => tuple is { typeSymbol: not null, Item2.IsEmpty: false });
 
@@ -54,7 +56,7 @@ public class CustomCommandGenerator : IIncrementalGenerator
         {
             foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
             {
-                ITypeSymbol? attributeTypeSymbol = context.SemanticModel.GetTypeInfo(attributeSyntax).Type;
+                ITypeSymbol? attributeTypeSymbol = ModelExtensions.GetTypeInfo(context.SemanticModel, attributeSyntax).Type;
                 if (attributeTypeSymbol != null && attributeTypeSymbol.ToDisplayString() == ExecuteCommandMethodAttributeLocation)
                     return true;
             }
@@ -74,7 +76,17 @@ public class CustomCommandGenerator : IIncrementalGenerator
         if (namedClassSymbol.BaseType?.Name != CommandName)
             return;
 
-        using StringWriter writer = new();
+        CompilationUnitSyntax compilation = ClassBuilder.CreateBuilder(namedClassSymbol)
+            .AddUsingStatement("System")
+            .AddUsingStatement("System.Collections.Generic")
+            .AddModifier(SyntaxKind.PartialKeyword)
+            .AddMethodDefinition()
+            .FinishMethodBuild()
+            .Build();
+
+        ctx.AddSource($"{namedClassSymbol.Name}.g.cs", compilation.ToFullString());
+
+        /*using StringWriter writer = new();
         using IndentedTextWriter indentWriter = new(writer);
 
         indentWriter.WriteGeneratedText()
@@ -90,6 +102,6 @@ public class CustomCommandGenerator : IIncrementalGenerator
 
         indentWriter.FinishAllIndentations();
 
-        ctx.AddSource($"{namedClassSymbol.Name}.g.cs", writer.ToString());
+        ctx.AddSource($"{namedClassSymbol.Name}.g.cs", writer.ToString());*/
     }
 }
