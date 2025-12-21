@@ -5,6 +5,7 @@ internal class MethodBuilder
     private readonly ClassBuilder _classBuilder;
     private readonly List<SyntaxToken> _modifiers = new();
     private readonly List<ParameterSyntax> _parameters = new();
+    private readonly List<StatementSyntax> _statements = new();
     private readonly string _methodName;
     private readonly string _returnType;
     
@@ -13,6 +14,12 @@ internal class MethodBuilder
         _classBuilder = classBuilder;
         _methodName = methodName;
         _returnType = returnType;
+    }
+
+    internal MethodBuilder AddStatements(params StatementSyntax[] statements)
+    {
+        _statements.AddRange(statements);
+        return this;
     }
 
     internal MethodBuilder AddParameters(params MethodParameter[] parameters)
@@ -33,12 +40,13 @@ internal class MethodBuilder
 
     internal ClassBuilder FinishMethodBuild()
     {
-        MethodDeclarationSyntax methodDeclaration = MethodDeclaration(ParseTypeName(_returnType), _methodName);
-        methodDeclaration = methodDeclaration
+        BlockSyntax body = _statements.Any() ? Block(_statements) : Block();
+
+        MethodDeclarationSyntax methodDeclaration = MethodDeclaration(ParseTypeName(_returnType), _methodName)
             .AddModifiers(_modifiers.ToArray())
             .AddParameterListParameters(_parameters.ToArray())
-            .WithBody(Block());
-        
+            .WithBody(body);
+
         _classBuilder.AddMethodDefinition(methodDeclaration);
         return _classBuilder;
     }

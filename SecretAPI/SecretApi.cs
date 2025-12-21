@@ -11,7 +11,7 @@
     /// <summary>
     /// Main class handling loading API.
     /// </summary>
-    public class SecretApi : Plugin
+    public partial class SecretApi : Plugin
     {
         /// <inheritdoc/>
         public override string Name => "SecretAPI";
@@ -49,7 +49,7 @@
         public override void Enable()
         {
             Harmony = new Harmony("SecretAPI" + DateTime.Now);
-            CallOnLoadAttribute.Load(Assembly);
+            OnLoad();
         }
 
         /// <inheritdoc/>
