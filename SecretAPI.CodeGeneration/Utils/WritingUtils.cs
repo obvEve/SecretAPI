@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.CodeGeneration;
+﻿/*namespace SecretAPI.CodeGeneration.Utils;
 
 using System.CodeDom.Compiler;
 using Microsoft.CodeAnalysis;
@@ -115,4 +115,4 @@ public static class WritingUtils
 
         return writer; 
     }
-}
+}*/

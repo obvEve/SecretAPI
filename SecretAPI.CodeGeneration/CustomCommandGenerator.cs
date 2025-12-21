@@ -1,13 +1,5 @@
 ﻿namespace SecretAPI.CodeGeneration;
 
-using System.CodeDom.Compiler;
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
-using System.IO;
-using CodeBuilders;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 /// <summary>
 /// Code generator for custom commands, creating validation etc.
 /// </summary>
@@ -17,6 +9,26 @@ public class CustomCommandGenerator : IIncrementalGenerator
     private const string CommandName = "CustomCommand";
     private const string ExecuteMethodName = "Execute";
     private const string ExecuteCommandMethodAttributeLocation = "SecretAPI.Features.Commands.Attributes.ExecuteCommandAttribute";
+
+    private static readonly MethodParameter ArgumentsParam =
+        new(
+            identifier: "arguments",
+            type: GetSingleGenericTypeSyntax("ArraySegment", SyntaxKind.StringKeyword)
+        );
+    
+    private static readonly MethodParameter SenderParam =
+        new(
+            identifier: "sender",
+            type: IdentifierName("ICommandSender")
+        );
+    
+    private static readonly MethodParameter ResponseParam =
+        new(
+            identifier: "response",
+            type: GetPredefinedTypeSyntax(SyntaxKind.StringKeyword),
+            modifiers: TokenList(
+                Token(SyntaxKind.OutKeyword))
+        );
 
     /// <inheritdoc/>
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -77,10 +89,12 @@ public class CustomCommandGenerator : IIncrementalGenerator
             return;
 
         CompilationUnitSyntax compilation = ClassBuilder.CreateBuilder(namedClassSymbol)
-            .AddUsingStatement("System")
-            .AddUsingStatement("System.Collections.Generic")
-            .AddModifier(SyntaxKind.PartialKeyword)
-            .AddMethodDefinition()
+            .AddUsingStatements("System", "System.Collections.Generic")
+            .AddUsingStatements("CommandSystem")
+            .AddModifiers(SyntaxKind.PartialKeyword)
+            .StartMethodCreation(ExecuteMethodName, "bool")
+            .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
+            .AddParameters(ArgumentsParam, SenderParam, ResponseParam)
             .FinishMethodBuild()
             .Build();
 
