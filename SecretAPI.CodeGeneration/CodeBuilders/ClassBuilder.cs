@@ -1,12 +1,11 @@
 ﻿namespace SecretAPI.CodeGeneration.CodeBuilders;
 
-internal class ClassBuilder
+internal class ClassBuilder : CodeBuilder<ClassBuilder>
 {
     private NamespaceDeclarationSyntax _namespaceDeclaration;
     private ClassDeclarationSyntax _classDeclaration;
     private string _className;
 
-    private readonly List<SyntaxToken> _modifiers = new();
     private readonly List<UsingDirectiveSyntax> _usings = new();
     private readonly List<MethodDeclarationSyntax> _methods = new();
 
@@ -37,13 +36,13 @@ internal class ClassBuilder
 
     internal void AddMethodDefinition(MethodDeclarationSyntax method) => _methods.Add(method);
 
-    internal ClassBuilder AddModifiers(params SyntaxKind[] modifiers)
+    /*internal ClassBuilder AddModifiers(params SyntaxKind[] modifiers)
     {
         foreach (SyntaxKind token in modifiers)
             _modifiers.Add(Token(token));
 
         return this;
-    }
+    }*/
 
     internal CompilationUnitSyntax Build()
     {

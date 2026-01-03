@@ -1,9 +1,8 @@
 ﻿namespace SecretAPI.CodeGeneration.CodeBuilders;
 
-internal class MethodBuilder
+internal class MethodBuilder : CodeBuilder<MethodBuilder>
 {
     private readonly ClassBuilder _classBuilder;
-    private readonly List<SyntaxToken> _modifiers = new();
     private readonly List<ParameterSyntax> _parameters = new();
     private readonly List<StatementSyntax> _statements = new();
     private readonly string _methodName;
@@ -26,14 +25,6 @@ internal class MethodBuilder
     {
         foreach (MethodParameter parameter in parameters)
             _parameters.Add(parameter.Syntax);
-
-        return this;
-    }
-    
-    internal MethodBuilder AddModifiers(params SyntaxKind[] modifiers)
-    {
-        foreach (SyntaxKind token in modifiers)
-            _modifiers.Add(Token(token));
 
         return this;
     }
