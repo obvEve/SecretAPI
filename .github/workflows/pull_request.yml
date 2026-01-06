@@ -26,16 +26,19 @@ jobs:
           Invoke-WebRequest -Uri ${{ env.REFERENCES_URL }} -OutFile "${{ github.workspace }}/References.zip"
           Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
 
+      - name: Rename Assembly-CSharp-Publicized to Assembly-CSharp
+        shell: pwsh
+        run: Rename-Item -Path "${{ env.REFERENCES_PATH }}\Assembly-CSharp-Publicized.dll" -NewName "Assembly-CSharp.dll"
+
       - name: Build
         env:
           SL_REFERENCES: ${{ env.REFERENCES_PATH }}
         shell: pwsh
-        run: |
-          dotnet build -c Release
+        run: dotnet build -c Release
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Build Result
-          path: ${{ github.workspace }}\SecretAPI\bin\Release\net48\SecretAPI.dll
+          path: ${{ github.workspace }}/**/bin/Release/net48/*SecretAPI*.dll
           retention-days: 7
