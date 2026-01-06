@@ -15,9 +15,6 @@
     public static class PrefabStore<TPrefab>
         where TPrefab : NetworkBehaviour
     {
-        private static TPrefab[]? collection;
-        private static TPrefab? savedPrefab;
-
         /// <summary>
         /// Gets the first prefab found of the specified type.
         /// </summary>
@@ -25,13 +22,13 @@
         {
             get
             {
-                if (savedPrefab)
-                    return savedPrefab;
+                if (field)
+                    return field;
 
                 if (typeof(TPrefab) == typeof(ReferenceHub))
-                    return savedPrefab = NetworkManager.singleton.playerPrefab.GetComponent<TPrefab>();
+                    return field = NetworkManager.singleton.playerPrefab.GetComponent<TPrefab>();
 
-                return savedPrefab = AllComponentPrefabs.FirstOrDefault()!;
+                return field = AllComponentPrefabs.FirstOrDefault()!;
             }
         }
 
@@ -43,8 +40,8 @@
         {
             get
             {
-                if (collection != null)
-                    return collection;
+                if (field != null)
+                    return field;
 
                 List<TPrefab> allPrefabs = ListPool<TPrefab>.Shared.Rent();
 
@@ -54,10 +51,10 @@
                         allPrefabs.Add(prefab);
                 }
 
-                collection = allPrefabs.ToArray();
+                field = allPrefabs.ToArray();
                 ListPool<TPrefab>.Shared.Return(allPrefabs);
 
-                return collection;
+                return field;
             }
         }
     }
