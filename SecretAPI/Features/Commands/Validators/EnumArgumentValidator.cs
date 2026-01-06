@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Features.Commands.Validators
+﻿/*namespace SecretAPI.Features.Commands.Validators
 {
     using System;
 
@@ -12,4 +12,4 @@
         {
         }
     }
-}
+}*/

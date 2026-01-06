@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.CodeGeneration;
+﻿namespace SecretAPI.CodeGeneration.Generators;
 
 /// <summary>
 /// Code generator for CallOnLoad/CallOnUnload
