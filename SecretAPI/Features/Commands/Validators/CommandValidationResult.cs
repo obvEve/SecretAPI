@@ -4,7 +4,7 @@
     /// Defines the result of a <see cref="ICommandArgumentValidator{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type this is validating.</typeparam>
-    public struct CommandValidationResult<T>
+    public readonly struct CommandValidationResult<T>
     {
         /// <summary>
         /// Whether the validation was successful.
