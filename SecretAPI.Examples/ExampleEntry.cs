@@ -5,7 +5,6 @@
     using HarmonyLib;
     using LabApi.Loader.Features.Plugins;
     using SecretAPI.Examples.Settings;
-    using SecretAPI.Extensions;
     using SecretAPI.Features.UserSettings;
 
     /// <summary>

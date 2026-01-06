@@ -12,26 +12,6 @@
     public static class MirrorExtensions
     {
         /// <summary>
-        /// Sends a fake cassie message to a player.
-        /// </summary>
-        /// <param name="target">The target to send the cassie message to.</param>
-        /// <param name="message">The message to send.</param>
-        /// <param name="isHeld">Whether the cassie is held.</param>
-        /// <param name="isNoisy">Whether the cassie is noisy.</param>
-        /// <param name="isSubtitles">Whether there is subtitles on the cassie.</param>
-        /// <param name="customSubtitles">The custom subtitles to use for the cassie.</param>
-        [Obsolete("Due to NW changes to Cassie, this is no longer functional.")]
-        public static void SendFakeCassieMessage(
-            this Player target,
-            string message,
-            bool isHeld = false,
-            bool isNoisy = true,
-            bool isSubtitles = true,
-            string customSubtitles = "")
-        {
-        }
-
-        /// <summary>
         /// Send a fake rpc message to a player.
         /// </summary>
         /// <param name="target">The target to send the rpc to.</param>
