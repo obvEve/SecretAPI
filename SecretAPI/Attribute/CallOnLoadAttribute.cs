@@ -16,15 +16,23 @@
         /// Initializes a new instance of the <see cref="CallOnLoadAttribute"/> class.
         /// </summary>
         /// <param name="priority">The priority of the load.</param>
-        public CallOnLoadAttribute(int priority = 0)
+        /// <param name="shouldSourceGen">Whether it should source generate the method call. False will make it slower during runtime.</param>
+        public CallOnLoadAttribute(int priority = 0, bool shouldSourceGen = true)
         {
             Priority = priority;
+            ShouldSourceGen = shouldSourceGen;
         }
 
         /// <summary>
         /// Gets the priority of the loading.
         /// </summary>
         public int Priority { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether it should source generate the method call.
+        /// </summary>
+        /// <remarks>If disabled, this will do runtime reflection which is slower.</remarks>
+        public bool ShouldSourceGen { get; }
 
         /// <summary>
         /// Loads and calls all <see cref="CallOnLoadAttribute"/>.

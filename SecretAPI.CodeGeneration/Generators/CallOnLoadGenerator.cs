@@ -68,6 +68,17 @@ public class CallOnLoadGenerator : IIncrementalGenerator
         return 0;
     }
 
+    private static bool ShouldAutogenerate(IMethodSymbol method, string attributeLocation)
+    {
+        AttributeData? attribute = method.GetAttributes()
+            .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == attributeLocation);
+
+        if (attribute is { ConstructorArguments.Length: >= 2 })
+            return (bool)attribute.ConstructorArguments[1].Value!;
+
+        return false;
+    }
+
     private static void Generate(
         SourceProductionContext context,
         INamedTypeSymbol? pluginClassSymbol,
@@ -77,16 +88,19 @@ public class CallOnLoadGenerator : IIncrementalGenerator
             return;
         
         IMethodSymbol[] loadCalls = methods
-            .Where(m => m.isLoad)
+            .Where(m => m.isLoad && ShouldAutogenerate(m.method, CallOnLoadAttributeLocation))
             .Select(m => m.method)
             .OrderBy(m => GetPriority(m, CallOnLoadAttributeLocation))
             .ToArray();
 
         IMethodSymbol[] unloadCalls = methods
-            .Where(m => m.isUnload)
+            .Where(m => m.isUnload && ShouldAutogenerate(m.method, CallOnUnloadAttributeLocation))
             .Select(m => m.method)
             .OrderBy(m => GetPriority(m, CallOnUnloadAttributeLocation))
             .ToArray();
+
+        if (!loadCalls.Any() && !unloadCalls.Any())
+            return;
 
         CompilationUnitSyntax compilation = ClassBuilder.CreateBuilder(pluginClassSymbol)
             .AddUsingStatements("System")
