@@ -5,7 +5,7 @@
     /// <summary>
     /// Validates command argument for <see cref="Player"/>.
     /// </summary>
-    public class PlayerArgumentValidator : ICommandArgumentValidator<Player>
+    public sealed class PlayerArgumentValidator : ICommandArgumentValidator<Player>
     {
         /// <inheritdoc />
         public CommandValidationResult<Player> Validate(string argument)

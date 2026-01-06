@@ -6,7 +6,7 @@
     /// Validator for <see cref="Enum"/>.
     /// </summary>
     /// <typeparam name="TEnum">The <see cref="Enum"/> to validate.</typeparam>
-    public class EnumArgumentValidator<TEnum> : ICommandArgumentValidator<TEnum>
+    public sealed class EnumArgumentValidator<TEnum> : ICommandArgumentValidator<TEnum>
         where TEnum : struct, Enum
     {
         /// <inheritdoc />

@@ -3,8 +3,13 @@
     /// <summary>
     /// Defines the base of a validator for <see cref="CustomCommand"/>.
     /// </summary>
+    public interface ICommandArgumentValidator;
+
+    /// <summary>
+    /// Defines the base of a validator for <see cref="CustomCommand"/>.
+    /// </summary>
     /// <typeparam name="T">The type this validator is for.</typeparam>
-    public interface ICommandArgumentValidator<T>
+    public interface ICommandArgumentValidator<T> : ICommandArgumentValidator
     {
         /// <summary>
         /// Validates the specified argument.
