@@ -26,6 +26,10 @@ jobs:
           Invoke-WebRequest -Uri ${{ env.REFERENCES_URL }} -OutFile "${{ github.workspace }}/References.zip"
           Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
 
+      - name: Rename Assembly-CSharp-Publicized to Assembly-CSharp
+        shell: pwsh
+        run: Rename-Item -Path "${{ env.REFERENCES_PATH }}\Assembly-CSharp-Publicized.dll" -NewName "Assembly-CSharp.dll"
+
       - name: Build
         env:
           SL_REFERENCES: ${{ env.REFERENCES_PATH }}
