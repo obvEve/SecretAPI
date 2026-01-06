@@ -24,10 +24,14 @@ internal class ClassBuilder : CodeBuilder<ClassBuilder>
     internal static ClassBuilder CreateBuilder(INamedTypeSymbol namedClass)
         => new(namedClass.ContainingNamespace.ToDisplayString(), namedClass.Name);
 
-    internal ClassBuilder AddUsingStatements(params string[] usingStatement)
+    internal ClassBuilder AddUsingStatements(params string[] usingStatements)
     {
-        foreach (string statement in usingStatement)
-            _usings.Add(UsingDirective(ParseName(statement)));
+        foreach (string statement in usingStatements)
+        {
+            UsingDirectiveSyntax usings = UsingDirective(ParseName(statement));
+            if (!_usings.Any(existing => existing.IsEquivalentTo(usings)))
+                _usings.Add(usings);
+        }
 
         return this;
     }
@@ -35,14 +39,6 @@ internal class ClassBuilder : CodeBuilder<ClassBuilder>
     internal MethodBuilder StartMethodCreation(string methodName, string returnType) => new(this, methodName, returnType);
 
     internal void AddMethodDefinition(MethodDeclarationSyntax method) => _methods.Add(method);
-
-    /*internal ClassBuilder AddModifiers(params SyntaxKind[] modifiers)
-    {
-        foreach (SyntaxKind token in modifiers)
-            _modifiers.Add(Token(token));
-
-        return this;
-    }*/
 
     internal CompilationUnitSyntax Build()
     {
