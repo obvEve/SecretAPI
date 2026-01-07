@@ -6,6 +6,7 @@
 [Generator]
 public class CallOnLoadGenerator : IIncrementalGenerator
 {
+    private const string PluginNamespace = "LabApi.Loader.Features.Plugins";
     private const string PluginBaseClassName = "Plugin";
     private const string CallOnLoadAttributeLocation = "SecretAPI.Attribute.CallOnLoadAttribute";
     private const string CallOnUnloadAttributeLocation = "SecretAPI.Attribute.CallOnUnloadAttribute";
@@ -32,8 +33,8 @@ public class CallOnLoadGenerator : IIncrementalGenerator
                     static (node, _) => node is ClassDeclarationSyntax,
                     static (ctx, _) =>
                         ctx.SemanticModel.GetDeclaredSymbol(ctx.Node) as INamedTypeSymbol)
-                .Where(static c =>
-                    c is { IsAbstract: false, BaseType.Name: PluginBaseClassName })!;
+                .Where(static c => !c.IsAbstract && c.BaseType?.Name == PluginBaseClassName &&
+                                   c.BaseType.ContainingNamespace.ToDisplayString() == PluginNamespace);
         
         context.RegisterSourceOutput(pluginClassProvider.Combine(callProvider.Collect()), static (context, data) =>
         {
@@ -86,7 +87,7 @@ public class CallOnLoadGenerator : IIncrementalGenerator
     {
         if (pluginClassSymbol == null || methods.IsEmpty)
             return;
-        
+
         IMethodSymbol[] loadCalls = methods
             .Where(m => m.isLoad && ShouldAutogenerate(m.method, CallOnLoadAttributeLocation))
             .Select(m => m.method)

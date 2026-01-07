@@ -1,6 +1,6 @@
 ﻿namespace SecretAPI.CodeGeneration.Utils;
 
-public static class Util
+internal static class Util
 {
     private static AttributeSyntax GetGeneratedCodeAttributeSyntax()
         => Attribute(IdentifierName("GeneratedCode"))
@@ -17,7 +17,7 @@ public static class Util
     internal static AttributeListSyntax GetGeneratedCodeAttributeListSyntax()
         => AttributeList(SingletonSeparatedList(GetGeneratedCodeAttributeSyntax()));
     
-    public static TypeSyntax GetSingleGenericTypeSyntax(string genericName, SyntaxKind predefinedType)
+    internal static TypeSyntax GetSingleGenericTypeSyntax(string genericName, SyntaxKind predefinedType)
         => GenericName(genericName)
             .WithTypeArgumentList(
                 TypeArgumentList(
@@ -25,22 +25,22 @@ public static class Util
                         PredefinedType(
                             Token(predefinedType)))));
     
-    public static PredefinedTypeSyntax GetPredefinedTypeSyntax(SyntaxKind kind)
+    internal static PredefinedTypeSyntax GetPredefinedTypeSyntax(SyntaxKind kind)
         => PredefinedType(Token(kind));
 
-    public static StatementSyntax MethodCallStatement(string typeName, string methodName)
+    internal static StatementSyntax MethodCallStatement(string typeName, string methodName)
         => ExpressionStatement(
             InvocationExpression(
                 MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     ParseTypeName(typeName), IdentifierName(methodName))));
 
-    public static StatementSyntax[] MethodCallStatements(IMethodSymbol[] methodCalls)
+    internal static StatementSyntax[] MethodCallStatements(IMethodSymbol[] methodCalls)
     {
         List<StatementSyntax> statements = new();
         
-        foreach (IMethodSymbol methodCall in methodCalls)
-            statements.Add(MethodCallStatement(methodCall.ContainingType.ToDisplayString(), methodCall.Name));
+        foreach (IMethodSymbol method in methodCalls)
+            statements.Add(MethodCallStatement(method.ContainingType.ToDisplayString(), method.Name));
 
         return statements.ToArray();
     }

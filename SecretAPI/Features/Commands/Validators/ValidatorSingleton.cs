@@ -1,14 +1,15 @@
-﻿namespace SecretAPI.Features.Commands.Validators;
-
-/// <summary>
-/// Handles singleton-ing <see cref="ICommandArgumentValidator"/>.
-/// </summary>
-/// <typeparam name="T">The <see cref="ICommandArgumentValidator"/> type.</typeparam>
-public static class ValidatorSingleton<T>
-    where T : class, ICommandArgumentValidator, new()
+﻿namespace SecretAPI.Features.Commands.Validators
 {
     /// <summary>
-    /// The current <see cref="T"/> instance.
+    /// Handles singleton-ing <see cref="ICommandArgumentValidator"/>.
     /// </summary>
-    public static readonly T Instance = new();
+    /// <typeparam name="T">The <see cref="ICommandArgumentValidator"/> type.</typeparam>
+    public static class ValidatorSingleton<T>
+        where T : class, ICommandArgumentValidator, new()
+    {
+        /// <summary>
+        /// The current static instance.
+        /// </summary>
+        public static readonly T Instance = new();
+    }
 }

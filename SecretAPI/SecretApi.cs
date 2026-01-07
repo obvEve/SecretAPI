@@ -6,7 +6,6 @@
     using LabApi.Features;
     using LabApi.Loader.Features.Plugins;
     using LabApi.Loader.Features.Plugins.Enums;
-    using SecretAPI.Attribute;
 
     /// <summary>
     /// Main class handling loading API.
