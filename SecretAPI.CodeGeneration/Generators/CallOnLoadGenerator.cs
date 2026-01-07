@@ -8,8 +8,8 @@ public class CallOnLoadGenerator : IIncrementalGenerator
 {
     private const string PluginNamespace = "LabApi.Loader.Features.Plugins";
     private const string PluginBaseClassName = "Plugin";
-    private const string CallOnLoadAttributeLocation = "SecretAPI.Attribute.CallOnLoadAttribute";
-    private const string CallOnUnloadAttributeLocation = "SecretAPI.Attribute.CallOnUnloadAttribute";
+    private const string CallOnLoadAttributeLocation = "SecretAPI.Attributes.CallOnLoadAttribute";
+    private const string CallOnUnloadAttributeLocation = "SecretAPI.Attributes.CallOnUnloadAttribute";
 
     /// <inheritdoc/>
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -28,12 +28,12 @@ public class CallOnLoadGenerator : IIncrementalGenerator
                     HasAttribute(method, CallOnUnloadAttributeLocation)))
                 .Where(static m => m.Item2 || m.Item3);
 
-        IncrementalValuesProvider<INamedTypeSymbol> pluginClassProvider =
+        IncrementalValuesProvider<INamedTypeSymbol?> pluginClassProvider =
             context.SyntaxProvider.CreateSyntaxProvider(
                     static (node, _) => node is ClassDeclarationSyntax,
                     static (ctx, _) =>
                         ctx.SemanticModel.GetDeclaredSymbol(ctx.Node) as INamedTypeSymbol)
-                .Where(static c => !c.IsAbstract && c.BaseType?.Name == PluginBaseClassName &&
+                .Where(static c => c != null && !c.IsAbstract && c.BaseType?.Name == PluginBaseClassName &&
                                    c.BaseType.ContainingNamespace.ToDisplayString() == PluginNamespace);
         
         context.RegisterSourceOutput(pluginClassProvider.Combine(callProvider.Collect()), static (context, data) =>
