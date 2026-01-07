@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using CustomPlayerEffects;
     using LabApi.Features.Wrappers;
-    using SecretAPI.Attribute;
+    using SecretAPI.Attributes;
     using SecretAPI.Extensions;
     using UnityEngine;
     using UnityEngine.SceneManagement;
