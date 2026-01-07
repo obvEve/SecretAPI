@@ -16,9 +16,11 @@
     {
         private const float RaycastDistance = 2;
 
-        private static readonly List<RoomName> KnownUnsafeRooms =
+        /// <summary>
+        /// Gets a list of <see cref="RoomName"/> that will be denied by <see cref="RoomSafetyFailReason.KnownBad"/>.
+        /// </summary>
+        public static List<RoomName> KnownUnsafeRooms { get; } =
         [
-            RoomName.HczTesla, // Instant death
             RoomName.EzEvacShelter, // Stuck permanently
             RoomName.EzCollapsedTunnel, // Stuck permanently
             RoomName.HczWaysideIncinerator, // Death
