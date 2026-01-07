@@ -48,5 +48,11 @@
         /// Gets a value indicating whether the selected option is currently set to the default.
         /// </summary>
         public bool IsDefault => Base.DefaultIsB ? IsOptionB : IsOptionA;
+
+        /// <summary>
+        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerOnly"/> is true.
+        /// </summary>
+        /// <param name="isB">Whether the setting is set to B value now.</param>
+        public void SendServerUpdate(bool isB) => Base.SendValueUpdate(isB, false, IsKnownOwnerHub);
     }
 }

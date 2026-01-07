@@ -253,6 +253,13 @@
         }
 
         /// <summary>
+        /// Checks whether a <see cref="ReferenceHub"/> is equal to <see cref="KnownOwner"/>.
+        /// </summary>
+        /// <param name="hub">The <see cref="ReferenceHub"/> to check.</param>
+        /// <returns>Whether <see cref="ReferenceHub"/> is equal to Owner <see cref="ReferenceHub"/>.</returns>
+        internal bool IsKnownOwnerHub(ReferenceHub? hub) => hub && KnownOwner?.ReferenceHub == hub;
+
+        /// <summary>
         /// Resyncs the setting to its owner.
         /// </summary>
         protected void ResyncToOwner()
