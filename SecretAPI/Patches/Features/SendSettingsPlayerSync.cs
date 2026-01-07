@@ -2,7 +2,7 @@
 {
     using HarmonyLib;
     using LabApi.Features.Wrappers;
-    using SecretAPI.Attribute;
+    using SecretAPI.Attributes;
     using SecretAPI.Features.UserSettings;
     using UserSettings.ServerSpecific;
 

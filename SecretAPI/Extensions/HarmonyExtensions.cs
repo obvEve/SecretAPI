@@ -6,7 +6,7 @@
     using System.Reflection;
     using HarmonyLib;
     using LabApi.Features.Console;
-    using SecretAPI.Attribute;
+    using SecretAPI.Attributes;
 
     /// <summary>
     /// Handles patching.

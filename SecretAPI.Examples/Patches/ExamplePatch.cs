@@ -1,6 +1,6 @@
 ﻿namespace SecretAPI.Examples.Patches
 {
-    using SecretAPI.Attribute;
+    using SecretAPI.Attributes;
 
     /// <summary>
     /// An example harmony patch.
