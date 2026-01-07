@@ -6,6 +6,7 @@
     using MapGeneration;
     using PlayerRoles.FirstPersonControl;
     using PlayerRoles.PlayableScps.Scp106;
+    using SecretAPI.Enums;
     using UnityEngine;
 
     /// <summary>
@@ -13,7 +14,7 @@
     /// </summary>
     public static class RoomExtensions
     {
-        private const float DefaultLocateRadius = 10;
+        private const float RaycastDistance = 2;
 
         private static readonly List<RoomName> KnownUnsafeRooms =
         [
@@ -28,19 +29,26 @@
         /// Gets whether a room is safe to teleport to. Will consider decontamination, warhead, teslas and void rooms.
         /// </summary>
         /// <param name="room">The room to check.</param>
+        /// <param name="failReasons">Reasons why the safety check should fail.</param>
         /// <returns>Whether the room is safe to teleport to.</returns>
-        public static bool IsSafeToTeleport(this Room room)
+        public static bool IsSafeToTeleport(this Room room, RoomSafetyFailReason failReasons)
         {
-            if (Warhead.IsDetonated && room.Zone != FacilityZone.Surface)
+            if (failReasons.HasFlag(RoomSafetyFailReason.Warhead) && Warhead.IsDetonated && room.Zone != FacilityZone.Surface)
                 return false;
 
-            if (Decontamination.IsDecontaminating && room.Zone == FacilityZone.LightContainment)
+            if (failReasons.HasFlag(RoomSafetyFailReason.Decontamination) && Decontamination.IsDecontaminating && room.Zone == FacilityZone.LightContainment)
+                return false;
+
+            if (failReasons.HasFlag(RoomSafetyFailReason.Tesla) && room.Name == RoomName.HczTesla)
                 return false;
 
             if (KnownUnsafeRooms.Contains(room.Name))
                 return false;
 
-            return Physics.Raycast(room.Position, Vector3.down, out _, 2, FpcStateProcessor.Mask);
+            if (failReasons.HasFlag(RoomSafetyFailReason.MissingFloor) && !Physics.Raycast(room.Position, Vector3.down, out _, RaycastDistance, FpcStateProcessor.Mask))
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -51,7 +59,7 @@
         /// <param name="zone">If set to anything other than <see cref="FacilityZone.None"/> will only attempt to find in that zone.</param>
         /// <param name="defaultRadius">The default radius allowed nea  the found spot.</param>
         /// <returns>Whether a valid teleport position was correctly found.</returns>
-        public static bool TryGetTeleportLocation(this Player player, [NotNullWhen(true)] out Vector3? position, FacilityZone zone = FacilityZone.None, float defaultRadius = DefaultLocateRadius)
+        public static bool TryGetTeleportLocation(this Player player, [NotNullWhen(true)] out Vector3? position, FacilityZone zone = FacilityZone.None, float defaultRadius = Scp106PocketExitFinder.RaycastRange)
         {
             position = null;
             return player.RoleBase is IFpcRole fpc && TryGetTeleportLocation(fpc, out position, zone);
