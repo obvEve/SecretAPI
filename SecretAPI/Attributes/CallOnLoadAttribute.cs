@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Attribute
+﻿namespace SecretAPI.Attributes
 {
     using System;
     using System.Collections.Generic;
