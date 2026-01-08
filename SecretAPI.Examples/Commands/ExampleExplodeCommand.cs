@@ -17,10 +17,11 @@
         public override string Description => "Explodes a player!";
 
         [ExecuteCommand]
-        private void Explode([CommandSender] Player sender, Player target)
+        private CommandResult Explode([CommandSender] Player sender, Player target)
         {
             Logger.Debug($"Example explode command run by {sender.Nickname} - Target: {target.Nickname}");
             TimedGrenadeProjectile.SpawnActive(target.Position, ItemType.GrenadeHE, sender);
+            return new CommandResult(true, "Success");
         }
     }
 }

@@ -11,6 +11,7 @@ global using static Microsoft.CodeAnalysis.CSharp.SyntaxFacts;
 //? Utils from SecretAPI
 global using SecretAPI.CodeGeneration.CodeBuilders;
 global using SecretAPI.CodeGeneration.Utils;
+global using SecretAPI.CodeGeneration.Diagnostics;
 
 //? Static utils from SecretAPI
 global using static SecretAPI.CodeGeneration.Utils.GenericTypeUtils;

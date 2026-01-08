@@ -103,19 +103,20 @@ public class CallOnLoadGenerator : IIncrementalGenerator
         if (!loadCalls.Any() && !unloadCalls.Any())
             return;
 
-        CompilationUnitSyntax compilation = ClassBuilder.CreateBuilder(pluginClassSymbol)
+        ClassBuilder classBuilder = ClassBuilder.CreateBuilder(pluginClassSymbol)
             .AddUsingStatements("System")
-            .AddModifiers(SyntaxKind.PartialKeyword)
-            .StartMethodCreation("OnLoad", SyntaxKind.VoidKeyword)
+            .AddModifiers(SyntaxKind.PartialKeyword);
+
+        classBuilder.StartMethodCreation("OnLoad", SyntaxKind.VoidKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword)
             .AddStatements(MethodCallStatements(loadCalls))
-            .FinishMethodBuild()
-            .StartMethodCreation("OnUnload", SyntaxKind.VoidKeyword)
+            .FinishMethodBuild();
+
+        classBuilder.StartMethodCreation("OnUnload", SyntaxKind.VoidKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword)
             .AddStatements(MethodCallStatements(unloadCalls))
-            .FinishMethodBuild()
-            .Build();
+            .FinishMethodBuild();
 
-        context.AddSource($"{pluginClassSymbol.Name}.g.cs",  compilation.ToFullString());
+        classBuilder.Build(context, $"{pluginClassSymbol.Name}.g.cs");
     }
 }

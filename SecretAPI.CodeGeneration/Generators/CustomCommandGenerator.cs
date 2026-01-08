@@ -9,19 +9,20 @@ public class CustomCommandGenerator : IIncrementalGenerator
     private const string CommandName = "CustomCommand";
     private const string ExecuteMethodName = "Execute";
     private const string ExecuteCommandMethodAttributeLocation = "SecretAPI.Features.Commands.Attributes.ExecuteCommandAttribute";
+    private const string CommandResultLocation = "CommandResult";
 
     private static readonly MethodParameter ArgumentsParam =
         new(
             identifier: "arguments",
             type: GetSingleGenericTypeSyntax("ArraySegment", SyntaxKind.StringKeyword)
         );
-    
+
     private static readonly MethodParameter SenderParam =
         new(
             identifier: "sender",
             type: IdentifierName("ICommandSender")
         );
-    
+
     private static readonly MethodParameter ResponseParam =
         new(
             identifier: "response",
@@ -78,7 +79,7 @@ public class CustomCommandGenerator : IIncrementalGenerator
     }
 
     private static void Generate(
-        SourceProductionContext ctx,
+        SourceProductionContext context,
         INamedTypeSymbol namedClassSymbol,
         ImmutableArray<MethodDeclarationSyntax> executeMethods)
     {
@@ -88,17 +89,32 @@ public class CustomCommandGenerator : IIncrementalGenerator
         if (namedClassSymbol.BaseType?.Name != CommandName)
             return;
 
-        CompilationUnitSyntax compilation = ClassBuilder.CreateBuilder(namedClassSymbol)
+        ClassBuilder classBuilder = ClassBuilder.CreateBuilder(namedClassSymbol)
             .AddUsingStatements("System", "System.Collections.Generic")
             .AddUsingStatements("CommandSystem")
-            .AddModifiers(SyntaxKind.PartialKeyword)
-            .StartMethodCreation(ExecuteMethodName, SyntaxKind.BoolKeyword)
+            .AddModifiers(SyntaxKind.PartialKeyword);
+
+        foreach (MethodDeclarationSyntax method in executeMethods)
+        {
+            if (method.ReturnType.ToString() != CommandResultLocation)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        CommandDiagnostics.InvalidExecuteMethod,
+                        method.ReturnType.GetLocation(),
+                        method.Identifier.Text,
+                        "Return type should be of type " + CommandResultLocation
+                    )
+                );
+            }
+        }
+
+        classBuilder.StartMethodCreation(ExecuteMethodName, SyntaxKind.BoolKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
             .AddParameters(ArgumentsParam, SenderParam, ResponseParam)
-            .FinishMethodBuild()
-            .Build();
+            .FinishMethodBuild();
 
-        ctx.AddSource($"{namedClassSymbol.Name}.g.cs", compilation.ToFullString());
+        classBuilder.Build(context, $"{namedClassSymbol.Name}.g.cs");
     }
 }
 

@@ -36,11 +36,5 @@ internal readonly struct MethodParameter
         _default = @default;
     }
 
-    public ParameterSyntax Syntax =>
-        Parameter(
-            attributeLists: _attributeLists,
-            modifiers: _modifiers,
-            type: _type,
-            identifier: _identifier,
-            @default: _default);
+    public ParameterSyntax Syntax => Parameter(_attributeLists, _modifiers, _type, _identifier, _default);
 }

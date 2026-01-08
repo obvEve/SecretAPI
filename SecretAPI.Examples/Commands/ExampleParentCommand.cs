@@ -24,9 +24,10 @@
         public override CustomCommand[] SubCommands { get; } = [new ExampleExplodeCommand()];
 
         [ExecuteCommand]
-        private void Run([CommandSender] Player sender)
+        private CommandResult Run([CommandSender] Player sender)
         {
             Logger.Debug($"Example parent was run by {sender.Nickname}");
+            return new CommandResult(true, "Success");
         }
     }
 }
