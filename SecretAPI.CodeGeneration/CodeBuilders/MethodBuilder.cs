@@ -6,9 +6,9 @@ internal class MethodBuilder : CodeBuilder<MethodBuilder>
     private readonly List<ParameterSyntax> _parameters = new();
     private readonly List<StatementSyntax> _statements = new();
     private readonly string _methodName;
-    private readonly string _returnType;
+    private readonly TypeSyntax _returnType;
     
-    internal MethodBuilder(ClassBuilder classBuilder, string methodName, string returnType)
+    internal MethodBuilder(ClassBuilder classBuilder, string methodName, TypeSyntax returnType)
     {
         _classBuilder = classBuilder;
         _methodName = methodName;
@@ -33,7 +33,7 @@ internal class MethodBuilder : CodeBuilder<MethodBuilder>
     {
         BlockSyntax body = _statements.Any() ? Block(_statements) : Block();
 
-        MethodDeclarationSyntax methodDeclaration = MethodDeclaration(ParseTypeName(_returnType), _methodName)
+        MethodDeclarationSyntax methodDeclaration = MethodDeclaration(_returnType, _methodName)
             .AddModifiers(_modifiers.ToArray())
             .AddParameterListParameters(_parameters.ToArray())
             .WithBody(body);

@@ -92,7 +92,7 @@ public class CustomCommandGenerator : IIncrementalGenerator
             .AddUsingStatements("System", "System.Collections.Generic")
             .AddUsingStatements("CommandSystem")
             .AddModifiers(SyntaxKind.PartialKeyword)
-            .StartMethodCreation(ExecuteMethodName, "bool")
+            .StartMethodCreation(ExecuteMethodName, SyntaxKind.BoolKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
             .AddParameters(ArgumentsParam, SenderParam, ResponseParam)
             .FinishMethodBuild()

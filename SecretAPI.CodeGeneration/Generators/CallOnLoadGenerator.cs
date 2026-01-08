@@ -106,16 +106,16 @@ public class CallOnLoadGenerator : IIncrementalGenerator
         CompilationUnitSyntax compilation = ClassBuilder.CreateBuilder(pluginClassSymbol)
             .AddUsingStatements("System")
             .AddModifiers(SyntaxKind.PartialKeyword)
-            .StartMethodCreation("OnLoad", "void")
+            .StartMethodCreation("OnLoad", SyntaxKind.VoidKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword)
             .AddStatements(MethodCallStatements(loadCalls))
             .FinishMethodBuild()
-            .StartMethodCreation("OnUnload", "void")
+            .StartMethodCreation("OnUnload", SyntaxKind.VoidKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword)
             .AddStatements(MethodCallStatements(unloadCalls))
             .FinishMethodBuild()
             .Build();
-        
+
         context.AddSource($"{pluginClassSymbol.Name}.g.cs",  compilation.ToFullString());
     }
 }

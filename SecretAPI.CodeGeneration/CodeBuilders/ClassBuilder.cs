@@ -4,25 +4,23 @@ internal class ClassBuilder : CodeBuilder<ClassBuilder>
 {
     private NamespaceDeclarationSyntax _namespaceDeclaration;
     private ClassDeclarationSyntax _classDeclaration;
-    private string _className;
 
     private readonly List<UsingDirectiveSyntax> _usings = new();
     private readonly List<MethodDeclarationSyntax> _methods = new();
 
-    private ClassBuilder(string @namespace, string className)
+    private ClassBuilder(NamespaceDeclarationSyntax namespaceDeclaration, ClassDeclarationSyntax classDeclaration)
     {
-        _namespaceDeclaration = NamespaceDeclaration(ParseName(@namespace));
-        _className = className;
-        _classDeclaration = ClassDeclaration(className);
+        _namespaceDeclaration = namespaceDeclaration;
+        _classDeclaration = classDeclaration;
 
         AddUsingStatements("System.CodeDom.Compiler");
     }
-    
-    internal static ClassBuilder CreateBuilder(string @namespace, string className)
-        => new(@namespace, className);
 
     internal static ClassBuilder CreateBuilder(INamedTypeSymbol namedClass)
-        => new(namedClass.ContainingNamespace.ToDisplayString(), namedClass.Name);
+        => CreateBuilder(NamespaceDeclaration(ParseName(namedClass.ContainingNamespace.ToDisplayString())), ClassDeclaration(namedClass.Name));
+
+    internal static ClassBuilder CreateBuilder(NamespaceDeclarationSyntax namespaceDeclaration, ClassDeclarationSyntax classDeclaration)
+        => new(namespaceDeclaration, classDeclaration);
 
     internal ClassBuilder AddUsingStatements(params string[] usingStatements)
     {
@@ -36,7 +34,8 @@ internal class ClassBuilder : CodeBuilder<ClassBuilder>
         return this;
     }
 
-    internal MethodBuilder StartMethodCreation(string methodName, string returnType) => new(this, methodName, returnType);
+    internal MethodBuilder StartMethodCreation(string methodName, TypeSyntax returnType) => new(this, methodName, returnType);
+    internal MethodBuilder StartMethodCreation(string methodName, SyntaxKind returnType) => StartMethodCreation(methodName, GetPredefinedTypeSyntax(returnType));
 
     internal void AddMethodDefinition(MethodDeclarationSyntax method) => _methods.Add(method);
 
