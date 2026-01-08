@@ -76,6 +76,11 @@
         }
 
         /// <summary>
+        /// Gets a value indicating whether the setting is the default and not tied to a <see cref="Player"/>.
+        /// </summary>
+        public bool IsDefaultSetting => KnownOwner == null;
+
+        /// <summary>
         /// Gets or sets the current label.
         /// </summary>
         public string Label
@@ -251,6 +256,11 @@
             ListPool<CustomSetting>.Shared.Return(playerSettings);
             ListPool<ServerSpecificSettingBase>.Shared.Return(ordered);
         }
+
+        /// <summary>
+        /// Sends an update to <see cref="KnownOwner"/> that <see cref="Label"/> or <see cref="DescriptionHint"/> has changed.
+        /// </summary>
+        public void SendSettingUpdate() => Base.SendUpdate(Label, DescriptionHint, false, IsKnownOwnerHub);
 
         /// <summary>
         /// Checks whether a <see cref="ReferenceHub"/> is equal to <see cref="KnownOwner"/>.

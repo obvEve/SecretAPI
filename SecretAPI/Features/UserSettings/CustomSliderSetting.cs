@@ -57,12 +57,42 @@
         public int SelectedValueInt => Base.SyncIntValue;
 
         /// <summary>
+        /// Gets or sets the value to string format.
+        /// </summary>
+        public string ValueToStringFormat
+        {
+            get => Base.ValueToStringFormat;
+            set
+            {
+                Base.ValueToStringFormat = value;
+                SendSliderUpdate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the final display display format.
+        /// </summary>
+        public string FinalDisplayFormat
+        {
+            get => Base.FinalDisplayFormat;
+            set
+            {
+                Base.FinalDisplayFormat = value;
+                SendSliderUpdate();
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the minimum value of the setting.
         /// </summary>
         public float MinimumValue
         {
             get => Base.MinValue;
-            set => Base.MinValue = value;
+            set
+            {
+                Base.MinValue = value;
+                SendSliderUpdate();
+            }
         }
 
         /// <summary>
@@ -71,23 +101,44 @@
         public float MaximumValue
         {
             get => Base.MaxValue;
-            set => Base.MaxValue = value;
+            set
+            {
+                Base.MaxValue = value;
+                SendSliderUpdate();
+            }
         }
 
         /// <summary>
-        /// Gets the default value of the setting.
+        /// Gets or sets the default value of the setting.
         /// </summary>
-        public float DefaultValue => Base.DefaultValue;
+        public float DefaultValue
+        {
+            get => Base.DefaultValue;
+            set => Base.DefaultValue = value;
+        }
 
         /// <summary>
-        /// Gets a value indicating whether to use integer. False will use float.
+        /// Gets or sets a value indicating whether to use integer. False will use float.
         /// </summary>
-        public bool UseInteger => Base.Integer;
+        public bool UseInteger
+        {
+            get => Base.Integer;
+            set
+            {
+                Base.Integer = value;
+                SendSliderUpdate();
+            }
+        }
 
         /// <summary>
         /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerOnly"/> is true.
         /// </summary>
         /// <param name="value">The new value that this is set to.</param>
         public void SendServerUpdate(float value) => Base.SendValueUpdate(value, false, IsKnownOwnerHub);
+
+        /// <summary>
+        /// Sends an update that any of the slider values have been updated.
+        /// </summary>
+        public void SendSliderUpdate() => Base.SendSliderUpdate(MinimumValue, MaximumValue, UseInteger, ValueToStringFormat, FinalDisplayFormat, false, IsKnownOwnerHub);
     }
 }

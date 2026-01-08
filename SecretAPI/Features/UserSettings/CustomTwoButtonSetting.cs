@@ -35,6 +35,32 @@
         public new SSTwoButtonsSetting Base { get; }
 
         /// <summary>
+        /// Gets or sets the current text for the first option.
+        /// </summary>
+        public string OptionA
+        {
+            get => Base.OptionA;
+            set
+            {
+                Base.OptionA = value;
+                SendOptionsUpdate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the current text for the second option.
+        /// </summary>
+        public string OptionB
+        {
+            get => Base.OptionB;
+            set
+            {
+                Base.OptionB = value;
+                SendOptionsUpdate();
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the selected option is currently the first.
         /// </summary>
         public bool IsOptionA => Base.SyncIsA;
@@ -54,5 +80,10 @@
         /// </summary>
         /// <param name="isB">Whether the setting is set to B value now.</param>
         public void SendServerUpdate(bool isB) => Base.SendValueUpdate(isB, false, IsKnownOwnerHub);
+
+        /// <summary>
+        /// Sends an update to the <see cref="CustomSetting.KnownOwner"/> that <see cref="OptionA"/> or <see cref="OptionB"/> has changed values.
+        /// </summary>
+        public void SendOptionsUpdate() => Base.SendTwoButtonUpdate(OptionA, OptionB, false, IsKnownOwnerHub);
     }
 }
