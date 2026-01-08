@@ -58,12 +58,27 @@
         public string[] Options
         {
             get => Base.Options;
-            set => Base.Options = value;
+            set
+            {
+                Base.Options = value;
+                SendDropdownUpdate();
+            }
         }
 
         /// <summary>
         /// Gets the selected option as string.
         /// </summary>
         public string SelectedOption => Options[ValidatedSelectedIndex];
+
+        /// <summary>
+        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerOnly"/> is true.
+        /// </summary>
+        /// <param name="selectionId">The new ID selected.</param>
+        public void SendServerUpdate(int selectionId) => Base.SendValueUpdate(selectionId, false, IsKnownOwnerHub);
+
+        /// <summary>
+        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that <see cref="Options"/> has been updated.
+        /// </summary>
+        private void SendDropdownUpdate() => Base.SendDropdownUpdate(Options, false,  IsKnownOwnerHub);
     }
 }

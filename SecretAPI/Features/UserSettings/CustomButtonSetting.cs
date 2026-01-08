@@ -40,13 +40,34 @@
         public TimeSpan LastPress => Base.SyncLastPress.Elapsed;
 
         /// <summary>
-        /// Gets the text of the button.
+        /// Gets or sets the text of the button.
         /// </summary>
-        public string Text => Base.ButtonText;
+        public string Text
+        {
+            get => Base.ButtonText;
+            set
+            {
+                Base.ButtonText = value;
+                SendButtonUpdate();
+            }
+        }
 
         /// <summary>
-        /// Gets the amount of time to hold the button in seconds.
+        /// Gets or sets the amount of time to hold the button in seconds.
         /// </summary>
-        public float HoldTime => Base.HoldTimeSeconds;
+        public float RequiredHoldTime
+        {
+            get => Base.HoldTimeSeconds;
+            set
+            {
+                Base.HoldTimeSeconds = value;
+                SendButtonUpdate();
+            }
+        }
+
+        /// <summary>
+        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that <see cref="Text"/> or <see cref="RequiredHoldTime"/> has updated.
+        /// </summary>
+        private void SendButtonUpdate() => Base.SendButtonUpdate(Text, RequiredHoldTime, false, IsKnownOwnerHub);
     }
 }

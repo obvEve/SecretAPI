@@ -84,6 +84,6 @@
         /// <summary>
         /// Sends an update to the <see cref="CustomSetting.KnownOwner"/> that <see cref="OptionA"/> or <see cref="OptionB"/> has changed values.
         /// </summary>
-        public void SendOptionsUpdate() => Base.SendTwoButtonUpdate(OptionA, OptionB, false, IsKnownOwnerHub);
+        private void SendOptionsUpdate() => Base.SendTwoButtonUpdate(OptionA, OptionB, false, IsKnownOwnerHub);
     }
 }

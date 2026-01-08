@@ -70,7 +70,7 @@
         }
 
         /// <summary>
-        /// Gets or sets the final display display format.
+        /// Gets or sets the final display format.
         /// </summary>
         public string FinalDisplayFormat
         {
@@ -139,6 +139,6 @@
         /// <summary>
         /// Sends an update that any of the slider values have been updated.
         /// </summary>
-        public void SendSliderUpdate() => Base.SendSliderUpdate(MinimumValue, MaximumValue, UseInteger, ValueToStringFormat, FinalDisplayFormat, false, IsKnownOwnerHub);
+        private void SendSliderUpdate() => Base.SendSliderUpdate(MinimumValue, MaximumValue, UseInteger, ValueToStringFormat, FinalDisplayFormat, false, IsKnownOwnerHub);
     }
 }

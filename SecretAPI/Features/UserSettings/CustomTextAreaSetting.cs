@@ -40,6 +40,15 @@
         public new SSTextArea Base { get; }
 
         /// <summary>
+        /// Gets or sets the current content. This is equal to <see cref="CustomSetting.Label"/>.
+        /// </summary>
+        public string Content
+        {
+            get => Label;
+            set => Label = value;
+        }
+
+        /// <summary>
         /// Gets the foldout mode.
         /// </summary>
         public SSTextArea.FoldoutMode Foldout => Base.Foldout;

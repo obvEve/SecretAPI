@@ -86,7 +86,11 @@
         public string Label
         {
             get => Base.Label;
-            set => Base.Label = value;
+            set
+            {
+                Base.Label = value;
+                SendSettingUpdate();
+            }
         }
 
         /// <summary>
@@ -95,7 +99,11 @@
         public string DescriptionHint
         {
             get => Base.HintDescription;
-            set => Base.HintDescription = value;
+            set
+            {
+                Base.HintDescription = value;
+                SendSettingUpdate();
+            }
         }
 
         /// <summary>
@@ -258,11 +266,6 @@
         }
 
         /// <summary>
-        /// Sends an update to <see cref="KnownOwner"/> that <see cref="Label"/> or <see cref="DescriptionHint"/> has changed.
-        /// </summary>
-        public void SendSettingUpdate() => Base.SendUpdate(Label, DescriptionHint, false, IsKnownOwnerHub);
-
-        /// <summary>
         /// Checks whether a <see cref="ReferenceHub"/> is equal to <see cref="KnownOwner"/>.
         /// </summary>
         /// <param name="hub">The <see cref="ReferenceHub"/> to check.</param>
@@ -343,5 +346,10 @@
 
             return currentSetting;
         }
+
+        /// <summary>
+        /// Sends an update to <see cref="KnownOwner"/> that <see cref="Label"/> or <see cref="DescriptionHint"/> has changed.
+        /// </summary>
+        private void SendSettingUpdate() => Base.SendUpdate(Label, DescriptionHint, false, IsKnownOwnerHub);
     }
 }
