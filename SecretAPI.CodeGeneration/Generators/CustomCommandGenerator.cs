@@ -83,6 +83,8 @@ public class CustomCommandGenerator : IIncrementalGenerator
         INamedTypeSymbol namedClassSymbol,
         ImmutableArray<MethodDeclarationSyntax> executeMethods)
     {
+        const string ResultArgName = "result";
+
         if (namedClassSymbol.IsAbstract)
             return;
 
@@ -92,8 +94,10 @@ public class CustomCommandGenerator : IIncrementalGenerator
         ClassBuilder classBuilder = ClassBuilder.CreateBuilder(namedClassSymbol)
             .AddUsingStatements("System", "System.Collections.Generic")
             .AddUsingStatements("CommandSystem")
+            .AddUsingStatements("SecretAPI.Features.Commands")
             .AddModifiers(SyntaxKind.PartialKeyword);
 
+        List<StatementSyntax> executeValidateStatements = new();
         foreach (MethodDeclarationSyntax method in executeMethods)
         {
             if (method.ReturnType.ToString() != CommandResultLocation)
@@ -106,15 +110,43 @@ public class CustomCommandGenerator : IIncrementalGenerator
                         "Return type should be of type " + CommandResultLocation
                     )
                 );
+
+                continue;
             }
+
+            executeValidateStatements.Add(GetExecuteCheckSyntax(method));
         }
+
+        LocalDeclarationStatementSyntax resultDeclaration = LocalDeclarationStatement(
+            VariableDeclaration(NullableType(IdentifierName(CommandResultLocation)))
+                .AddVariables(VariableDeclarator(ResultArgName)
+                    .WithInitializer(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression)))));
 
         classBuilder.StartMethodCreation(ExecuteMethodName, SyntaxKind.BoolKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
             .AddParameters(ArgumentsParam, SenderParam, ResponseParam)
+            .AddStatements(resultDeclaration)
+            .AddStatements(executeValidateStatements.ToArray())
+            /*.AddStatements(ReturnStatement(LiteralExpression(SyntaxKind.TrueLiteralExpression)))*/
             .FinishMethodBuild();
 
         classBuilder.Build(context, $"{namedClassSymbol.Name}.g.cs");
+    }
+
+    private static StatementSyntax GetExecuteCheckSyntax(MethodDeclarationSyntax methodDeclarationSyntax)
+    {
+        List<StatementSyntax> statements = new();
+
+        foreach (ParameterSyntax parameterSyntax in methodDeclarationSyntax.ParameterList.Parameters)
+        {
+        }
+
+        return Block(statements);
+    }
+
+    private static StatementSyntax GenerateSubCommandCheck()
+    {
+        return null;
     }
 }
 
