@@ -1,6 +1,8 @@
 ﻿namespace SecretAPI.Features.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using CommandSystem;
 
     /// <summary>
@@ -27,6 +29,27 @@
         public virtual bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             throw new NotImplementedException($"Command {Command} not implemented. Did source generation fail? - If this is not intentional, submit a bugreport!");
+        }
+
+        /// <summary>
+        /// Checks whether an argument matches any <see cref="SubCommands"/>.
+        /// </summary>
+        /// <param name="argument">The argument to check if is reference to subcommand.</param>
+        /// <param name="command">The command found, otherwise false.</param>
+        /// <returns>Whether a sub command matching the argument was found.</returns>
+        protected bool CheckSubCommand(string argument, [NotNullWhen(true)] out CustomCommand? command)
+        {
+            foreach (CustomCommand subCommand in SubCommands)
+            {
+                if (subCommand.Command == argument || subCommand.Aliases.Any(alias => alias == argument))
+                {
+                    command = subCommand;
+                    return true;
+                }
+            }
+
+            command = null;
+            return false;
         }
     }
 }

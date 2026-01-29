@@ -1,5 +1,7 @@
 ﻿namespace SecretAPI.CodeGeneration.Generators;
 
+using System.Linq.Expressions;
+
 /// <summary>
 /// Code generator for custom commands, creating validation etc.
 /// </summary>
@@ -10,10 +12,11 @@ public class CustomCommandGenerator : IIncrementalGenerator
     private const string ExecuteMethodName = "Execute";
     private const string ExecuteCommandMethodAttributeLocation = "SecretAPI.Features.Commands.Attributes.ExecuteCommandAttribute";
     private const string CommandResultLocation = "CommandResult";
+    private const string ArgumentsParamName = "arguments";
 
     private static readonly MethodParameter ArgumentsParam =
         new(
-            identifier: "arguments",
+            identifier: ArgumentsParamName,
             type: GetSingleGenericTypeSyntax("ArraySegment", SyntaxKind.StringKeyword)
         );
 
@@ -92,9 +95,9 @@ public class CustomCommandGenerator : IIncrementalGenerator
             return;
 
         ClassBuilder classBuilder = ClassBuilder.CreateBuilder(namedClassSymbol)
-            .AddUsingStatements("System", "System.Collections.Generic")
+            .AddUsingStatements("System", "System.Linq", "System.Collections.Generic")
             .AddUsingStatements("CommandSystem")
-            .AddUsingStatements("SecretAPI.Features.Commands")
+            .AddUsingStatements("SecretAPI.Features.Commands", "SecretAPI.Features.Commands.Validators")
             .AddModifiers(SyntaxKind.PartialKeyword);
 
         List<StatementSyntax> executeValidateStatements = new();
@@ -125,6 +128,7 @@ public class CustomCommandGenerator : IIncrementalGenerator
         classBuilder.StartMethodCreation(ExecuteMethodName, SyntaxKind.BoolKeyword)
             .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
             .AddParameters(ArgumentsParam, SenderParam, ResponseParam)
+            .AddStatements(GenerateSubCommandCheck())
             .AddStatements(resultDeclaration)
             .AddStatements(executeValidateStatements.ToArray())
             /*.AddStatements(ReturnStatement(LiteralExpression(SyntaxKind.TrueLiteralExpression)))*/
@@ -141,12 +145,60 @@ public class CustomCommandGenerator : IIncrementalGenerator
         {
         }
 
-        return Block(statements);
+        return Block();
     }
 
     private static StatementSyntax GenerateSubCommandCheck()
     {
-        return null;
+        const string CheckSubCommandMethodIdentifier = "CheckSubCommand";
+        const string CheckSubCommandCommandParamIdentifier = "subCommand";
+        const string CheckSubCommandResultIdentifier = "checkSubCommandResult";
+
+        /*ForEachStatementSyntax forEach =
+            ForEachStatement(IdentifierName(CommandName), IdentifierName(SubCommandIdentifier), IdentifierName(SubCommandGetterIdentifier), Block());*/
+
+        // if (CheckSubCommand(arguments.First(), out CustomCommand? subCommand))
+        IfStatementSyntax ifSubCommandCheck = IfStatement(
+            InvocationExpression(IdentifierName(CheckSubCommandMethodIdentifier))
+                .WithArgumentList(ArgumentList(SeparatedList(new[]
+                {
+                    Argument(
+                        InvocationExpression(
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression, 
+                                IdentifierName(ArgumentsParamName),
+                                IdentifierName("First")))),
+                    Argument(
+                        DeclarationExpression(
+                            NullableType(
+                                IdentifierName(CommandName)),
+                            SingleVariableDesignation(
+                                Identifier(CheckSubCommandCommandParamIdentifier))))
+                        .WithRefOrOutKeyword(Token(SyntaxKind.OutKeyword))
+                }))),
+            Block());
+        
+        IfStatementSyntax ifArgumentsAnyStatement = IfStatement(
+            InvocationExpression(
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName(ArgumentsParamName),
+                    IdentifierName("Any"))),
+            Block(ifSubCommandCheck));
+
+        /*
+          Generate :
+          if (arguments.Any())
+          {
+            if (CheckSubCommand(arguments.First(), out CustomCommand? command))
+            {
+                bool subCommandResult = command.Execute(arguments, sender, out response);
+                return subCommandResult;
+            }
+          }
+        */
+
+        return ifArgumentsAnyStatement;
     }
 }
 
