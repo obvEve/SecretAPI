@@ -12,7 +12,10 @@ public class CustomCommandGenerator : IIncrementalGenerator
     private const string ExecuteMethodName = "Execute";
     private const string ExecuteCommandMethodAttributeLocation = "SecretAPI.Features.Commands.Attributes.ExecuteCommandAttribute";
     private const string CommandResultLocation = "CommandResult";
+
     private const string ArgumentsParamName = "arguments";
+    private const string SenderParamName = "sender";
+    private const string ResponseParamName = "response";
 
     private static readonly MethodParameter ArgumentsParam =
         new(
@@ -22,13 +25,13 @@ public class CustomCommandGenerator : IIncrementalGenerator
 
     private static readonly MethodParameter SenderParam =
         new(
-            identifier: "sender",
+            identifier: SenderParamName,
             type: IdentifierName("ICommandSender")
         );
 
     private static readonly MethodParameter ResponseParam =
         new(
-            identifier: "response",
+            identifier: ResponseParamName,
             type: GetPredefinedTypeSyntax(SyntaxKind.StringKeyword),
             modifiers: TokenList(
                 Token(SyntaxKind.OutKeyword))
@@ -154,9 +157,25 @@ public class CustomCommandGenerator : IIncrementalGenerator
         const string CheckSubCommandCommandParamIdentifier = "subCommand";
         const string CheckSubCommandResultIdentifier = "checkSubCommandResult";
 
-        /*ForEachStatementSyntax forEach =
-            ForEachStatement(IdentifierName(CommandName), IdentifierName(SubCommandIdentifier), IdentifierName(SubCommandGetterIdentifier), Block());*/
+        // bool checkSubCommandResult = subCommand.Execute(arguments, sender, out response);
+        LocalDeclarationStatementSyntax subCommandExecute = LocalDeclarationStatement(
+            VariableDeclaration(GetPredefinedTypeSyntax(SyntaxKind.BoolKeyword))
+                .AddVariables(VariableDeclarator(CheckSubCommandResultIdentifier)
+                    .WithInitializer(EqualsValueClause(
+                        InvocationExpression(MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            IdentifierName(CheckSubCommandCommandParamIdentifier),
+                            IdentifierName(ExecuteMethodName))).WithArgumentList(ArgumentList(SeparatedList(new[]
+                        {
+                            Argument(IdentifierName(ArgumentsParamName)),
+                            Argument(IdentifierName(SenderParamName)),
+                            Argument(IdentifierName(ResponseParamName))
+                                .WithRefOrOutKeyword(Token(SyntaxKind.OutKeyword))
+                        })))))));
 
+        // return checkSubCommandResult;
+        ReturnStatementSyntax returnStatement = ReturnStatement(IdentifierName(CheckSubCommandResultIdentifier));
+        
         // if (CheckSubCommand(arguments.First(), out CustomCommand? subCommand))
         IfStatementSyntax ifSubCommandCheck = IfStatement(
             InvocationExpression(IdentifierName(CheckSubCommandMethodIdentifier))
@@ -176,8 +195,9 @@ public class CustomCommandGenerator : IIncrementalGenerator
                                 Identifier(CheckSubCommandCommandParamIdentifier))))
                         .WithRefOrOutKeyword(Token(SyntaxKind.OutKeyword))
                 }))),
-            Block());
-        
+            Block(subCommandExecute, returnStatement));
+
+        // if (arguments.Any())
         IfStatementSyntax ifArgumentsAnyStatement = IfStatement(
             InvocationExpression(
                 MemberAccessExpression(
@@ -185,18 +205,6 @@ public class CustomCommandGenerator : IIncrementalGenerator
                     IdentifierName(ArgumentsParamName),
                     IdentifierName("Any"))),
             Block(ifSubCommandCheck));
-
-        /*
-          Generate :
-          if (arguments.Any())
-          {
-            if (CheckSubCommand(arguments.First(), out CustomCommand? command))
-            {
-                bool subCommandResult = command.Execute(arguments, sender, out response);
-                return subCommandResult;
-            }
-          }
-        */
 
         return ifArgumentsAnyStatement;
     }
