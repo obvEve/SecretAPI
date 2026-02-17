@@ -26,8 +26,18 @@
         /// <param name="optionB">The second option.</param>
         /// <param name="defaultIsB">Whether the second option should be default. Default: false.</param>
         /// <param name="hint">The hint to show.</param>
-        protected CustomTwoButtonSetting(int? id, string label, string optionA, string optionB, bool defaultIsB = false, string? hint = null)
-            : this(new SSTwoButtonsSetting(id, label, optionA, optionB, defaultIsB, hint))
+        /// <param name="collectionId">The <see cref="CustomSetting.CollectionId"/>.</param>
+        /// <param name="isServerSetting">See <see cref="CustomSetting.IsServerSetting"/>.</param>
+        protected CustomTwoButtonSetting(
+            int? id,
+            string label,
+            string optionA,
+            string optionB,
+            bool defaultIsB = false,
+            string? hint = null,
+            byte collectionId = byte.MaxValue,
+            bool isServerSetting = false)
+            : this(new SSTwoButtonsSetting(id, label, optionA, optionB, defaultIsB, hint, collectionId, isServerSetting))
         {
         }
 

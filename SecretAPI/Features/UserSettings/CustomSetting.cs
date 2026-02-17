@@ -21,7 +21,7 @@
 
         static CustomSetting()
         {
-            SecretApi.Harmony?.PatchCategory(nameof(CustomSetting));
+            SecretApi.Harmony?.PatchCategory(nameof(CustomSetting), SecretApi.Assembly);
 
             ServerSpecificSettingsSync.SendOnJoinFilter = null;
             ServerSpecificSettingsSync.DefinedSettings ??= []; // fix null ref
@@ -66,10 +66,10 @@
         public abstract CustomHeader Header { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the setting is server side only.
+        /// Gets or sets a value indicating whether the setting is server side.
         /// </summary>
-        /// <remarks>The setting value cannot be updated from client side and can be used to indicate server features being toggled.</remarks>
-        public bool IsServerOnly
+        /// <remarks>This will result in client not saving the setting values and allows the server to change the setting .</remarks>
+        public bool IsServerSetting
         {
             get => Base.IsServerOnly;
             set => Base.IsServerOnly = value;
@@ -151,13 +151,13 @@
         /// Unregisters collection of settings.
         /// </summary>
         /// <param name="settings">The settings to unregister.</param>
-        public static void UnRegister(params CustomSetting[] settings) => CustomSettings.RemoveAll(s => settings.Contains(s));
+        public static void UnRegister(params CustomSetting[] settings) => CustomSettings.RemoveAll(settings.Contains);
 
         /// <summary>
         /// Unregisters a collection of settings.
         /// </summary>
         /// <param name="settings">The settings to unregister.</param>
-        public static void UnRegister(IEnumerable<CustomSetting> settings) => CustomSettings.RemoveAll(s => settings.Contains(s));
+        public static void UnRegister(IEnumerable<CustomSetting> settings) => CustomSettings.RemoveAll(settings.Contains);
 
         /// <summary>
         /// Tries to get player specific setting.

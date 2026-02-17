@@ -29,6 +29,8 @@
         /// <param name="valueToStringFormat">Value to string format.</param>
         /// <param name="finalDisplayFormat">The final display format.</param>
         /// <param name="hint">The hint to display.</param>
+        /// <param name="collectionId">The <see cref="CustomSetting.CollectionId"/>.</param>
+        /// <param name="isServerSetting">See <see cref="CustomSetting.IsServerSetting"/>.</param>
         protected CustomSliderSetting(
             int? id,
             string label,
@@ -38,7 +40,9 @@
             bool integer = false,
             string valueToStringFormat = "0.##",
             string finalDisplayFormat = "{0}",
-            string? hint = null)
+            string? hint = null,
+            byte collectionId = byte.MaxValue,
+            bool isServerSetting = false)
             : this(new SSSliderSetting(id, label, minValue, maxValue, defaultValue, integer, valueToStringFormat, finalDisplayFormat, hint))
         {
         }

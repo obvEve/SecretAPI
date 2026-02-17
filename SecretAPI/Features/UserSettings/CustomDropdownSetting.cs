@@ -27,14 +27,18 @@
         /// <param name="defaultOptionIndex">The default option (int index).</param>
         /// <param name="entryType">The entry type.</param>
         /// <param name="hint">The hint to show.</param>
+        /// <param name="collectionId">The <see cref="CustomSetting.CollectionId"/>.</param>
+        /// <param name="isServerSetting">See <see cref="CustomSetting.IsServerSetting"/>.</param>
         protected CustomDropdownSetting(
             int? id,
             string label,
             string[] options,
             int defaultOptionIndex = 0,
             SSDropdownSetting.DropdownEntryType entryType = SSDropdownSetting.DropdownEntryType.Regular,
-            string? hint = null)
-            : this(new SSDropdownSetting(id, label, options, defaultOptionIndex, entryType, hint))
+            string? hint = null,
+            byte collectionId = byte.MaxValue,
+            bool isServerSetting = false)
+            : this(new SSDropdownSetting(id, label, options, defaultOptionIndex, entryType, hint, collectionId, isServerSetting))
         {
         }
 
