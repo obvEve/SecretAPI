@@ -75,7 +75,13 @@
         public string SelectedOption => Options[ValidatedSelectedIndex];
 
         /// <summary>
-        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerOnly"/> is true.
+        /// Gets the <see cref="SSDropdownSetting.DropdownEntryType"/>.
+        /// </summary>
+        /// <remarks>Refer to https://github.com/HubertMoszka/Server-Specific-Settings-System/blob/main/SSDropdownSetting.cs#L151 for proper documentation.</remarks>
+        public SSDropdownSetting.DropdownEntryType EntryType => Base.EntryType;
+
+        /// <summary>
+        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerSetting"/> is true.
         /// </summary>
         /// <param name="selectionId">The new ID selected.</param>
         public void SendServerUpdate(int selectionId) => Base.SendValueUpdate(selectionId, false, IsKnownOwnerHub);

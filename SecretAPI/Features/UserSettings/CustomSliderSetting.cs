@@ -135,7 +135,7 @@
         }
 
         /// <summary>
-        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerOnly"/> is true.
+        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerSetting"/> is true.
         /// </summary>
         /// <param name="value">The new value that this is set to.</param>
         public void SendServerUpdate(float value) => Base.SendValueUpdate(value, false, IsKnownOwnerHub);
