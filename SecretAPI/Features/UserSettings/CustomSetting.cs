@@ -72,7 +72,7 @@
         public SettingResponseType LastUpdateType { get; private set; } = SettingResponseType.None;
 
         /// <summary>
-        /// Gets  a value indicating whether the current value received is different to that of the last one.
+        /// Gets  a value indicating whether the current value received is different to that prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
         /// </summary>
         public virtual bool HasValueChanged { get; }
 

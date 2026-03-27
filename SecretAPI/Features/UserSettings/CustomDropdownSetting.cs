@@ -89,7 +89,7 @@
         public int LastSelectedIndex { get; private set; } = -1;
 
         /// <summary>
-        /// Gets the last selected option as a string, or null if none was selected previously.
+        /// Gets the selected option prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call as a string, or null if none was selected previously.
         /// </summary>
         public string? LastSelectedOption => LastSelectedIndex < 0 || LastSelectedIndex >= Options.Length ? null : Options[LastSelectedIndex];
 

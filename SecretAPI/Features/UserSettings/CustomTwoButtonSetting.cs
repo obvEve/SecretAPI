@@ -74,7 +74,7 @@
         public override bool HasValueChanged => WasLastOptionB != IsOptionB;
 
         /// <summary>
-        /// Gets a value indicating whether the last value was Option B.
+        /// Gets a value indicating whether the value prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call was Option B.
         /// </summary>
         public bool WasLastOptionB { get; private set; }
 
