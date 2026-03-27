@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Features.UserSettings
 {
+    using System;
     using global::UserSettings.ServerSpecific;
 
     /// <summary>
@@ -21,6 +22,7 @@
         /// <summary>
         /// Gets a <see cref="CustomHeader"/> for Gameplay purposes.
         /// </summary>
+        [Obsolete("3.0 will remove this - Please handle your setting header yourself!")]
         public static CustomHeader Gameplay { get; } = new("Gameplay", hint: "Features that affect gameplay");
 
         /// <summary>
