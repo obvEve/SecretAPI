@@ -284,7 +284,7 @@
         internal bool IsKnownOwnerHub(ReferenceHub? hub) => hub && KnownOwner?.ReferenceHub == hub;
 
         /// <summary>
-        /// Called before <see cref="HandleSettingUpdate"/>, adding <see cref="HasValueChanged"/> & <see cref="LastUpdateType"/>.
+        /// Called before <see cref="HandleSettingUpdate"/>, adding <see cref="HasValueChanged"/> and <see cref="LastUpdateType"/>.
         /// </summary>
         /// <remarks>This will not have the current status.</remarks>
         protected internal virtual void HandleBeforeSettingUpdate()
