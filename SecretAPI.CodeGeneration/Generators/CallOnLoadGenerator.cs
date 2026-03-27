@@ -98,8 +98,6 @@ public class CallOnLoadGenerator : IIncrementalGenerator
                 )
             );
         }
-        
-        /*if (pluginClassSymbol.IsVirtual)*/
 
         IMethodSymbol[] loadCalls = methods
             .Where(m => m.isLoad && ShouldAutogenerate(m.method, CallOnLoadAttributeLocation))
