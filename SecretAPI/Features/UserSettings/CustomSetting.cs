@@ -66,6 +66,12 @@
         public abstract CustomHeader Header { get; }
 
         /// <summary>
+        /// Gets an enum indicating the type of the last update.
+        /// </summary>
+        /// <remarks>When used inside of <see cref="HandleSettingUpdate"/> it will indicate the current status.</remarks>
+        public SettingResponseType LastUpdateType { get; private set; } = SettingResponseType.None;
+
+        /// <summary>
         /// Gets or sets a value indicating whether the setting is server side.
         /// </summary>
         /// <remarks>This will result in client not saving the setting values and allows the server to change the setting .</remarks>
@@ -307,6 +313,7 @@
         /// <summary>
         /// Called when client sends a new value on the setting.
         /// </summary>
+        /// <remarks>You can use <see cref="LastUpdateType"/> to get the current update type.</remarks>
         protected abstract void HandleSettingUpdate();
 
         private static void RemoveStoredPlayer(Player player) => ReceivedPlayerSettings.Remove(player);
@@ -327,8 +334,11 @@
             NetworkWriterPooled valueWriter = NetworkWriterPool.Get();
             settingBase.SerializeValue(valueWriter);
             newSettingPlayer.Base.DeserializeValue(new NetworkReader(valueWriter.buffer));
-
             NetworkWriterPool.Return(valueWriter);
+
+            newSettingPlayer.LastUpdateType = newSettingPlayer.LastUpdateType == SettingResponseType.None
+                ? SettingResponseType.Initial
+                : SettingResponseType.Update;
 
             newSettingPlayer.HandleSettingUpdate();
         }
