@@ -70,6 +70,14 @@
             }
         }
 
+        /// <inheritdoc />
+        public override bool HasValueChanged => WasLastOptionB != IsOptionB;
+
+        /// <summary>
+        /// Gets a value indicating whether the value prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call was Option B.
+        /// </summary>
+        public bool WasLastOptionB { get; private set; }
+
         /// <summary>
         /// Gets a value indicating whether the selected option is currently the first.
         /// </summary>
@@ -90,6 +98,13 @@
         /// </summary>
         /// <param name="isB">Whether the setting is set to B value now.</param>
         public void SendServerUpdate(bool isB) => Base.SendValueUpdate(isB, false, IsKnownOwnerHub);
+
+        /// <inheritdoc />
+        protected internal override void HandleBeforeSettingUpdate()
+        {
+            base.HandleBeforeSettingUpdate();
+            WasLastOptionB = IsOptionB;
+        }
 
         /// <summary>
         /// Sends an update to the <see cref="CustomSetting.KnownOwner"/> that <see cref="OptionA"/> or <see cref="OptionB"/> has changed values.

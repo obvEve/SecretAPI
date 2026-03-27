@@ -1,6 +1,7 @@
 ﻿namespace SecretAPI.Features.UserSettings
 {
     using global::UserSettings.ServerSpecific;
+    using UnityEngine;
 
     /// <summary>
     /// Wrapper for <see cref="SSSliderSetting"/>.
@@ -49,6 +50,19 @@
 
         /// <inheritdoc/>
         public new SSSliderSetting Base { get; }
+
+        /// <inheritdoc />
+        public override bool HasValueChanged => !Mathf.Approximately(LastSelectedValueFloat, SelectedValueFloat);
+
+        /// <summary>
+        /// Gets the selected value prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call as a float.
+        /// </summary>
+        public float LastSelectedValueFloat { get; private set; }
+
+        /// <summary>
+        /// Gets the selected value prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call as an int.
+        /// </summary>
+        public int LastSelectedValueInt => Mathf.RoundToInt(LastSelectedValueFloat);
 
         /// <summary>
         /// Gets the synced value selected as a float.
@@ -139,6 +153,13 @@
         /// </summary>
         /// <param name="value">The new value that this is set to.</param>
         public void SendServerUpdate(float value) => Base.SendValueUpdate(value, false, IsKnownOwnerHub);
+
+        /// <inheritdoc />
+        protected internal override void HandleBeforeSettingUpdate()
+        {
+            base.HandleBeforeSettingUpdate();
+            LastSelectedValueFloat = SelectedValueFloat;
+        }
 
         /// <summary>
         /// Sends an update that any of the slider values have been updated.

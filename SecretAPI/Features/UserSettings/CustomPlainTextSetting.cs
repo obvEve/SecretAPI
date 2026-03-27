@@ -43,6 +43,15 @@
         public new SSPlaintextSetting Base { get; }
 
         /// <summary>
+        /// Gets the input text prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
+        /// </summary>
+        public string LastInputText
+        {
+            get => field ??= string.Empty;
+            private set;
+        }
+
+        /// <summary>
         /// Gets the synced input text.
         /// </summary>
         public string InputText => Base.SyncInputText;
@@ -91,6 +100,13 @@
         /// </summary>
         /// <param name="text">The new text.</param>
         public void SendServerUpdate(string text) => Base.SendValueUpdate(text, false, IsKnownOwnerHub);
+
+        /// <inheritdoc />
+        protected internal override void HandleBeforeSettingUpdate()
+        {
+            base.HandleBeforeSettingUpdate();
+            LastInputText = InputText;
+        }
 
         /// <summary>
         /// Sends an update to the <see cref="CustomSetting.KnownOwner"/> that <see cref="Placeholder"/> <see cref="CharacterLimit"/> or <see cref="ContentType"/> has changed values.
