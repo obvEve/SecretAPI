@@ -21,7 +21,7 @@
 
         static CustomSetting()
         {
-            SecretApi.Harmony?.PatchCategory(nameof(CustomSetting));
+            SecretApi.Harmony.PatchCategory(nameof(CustomSetting), SecretApi.Assembly);
 
             ServerSpecificSettingsSync.SendOnJoinFilter = null;
             ServerSpecificSettingsSync.DefinedSettings ??= []; // fix null ref
@@ -66,14 +66,30 @@
         public abstract CustomHeader Header { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the setting is server side only.
+        /// Gets an enum indicating the type of the last update.
         /// </summary>
-        /// <remarks>The setting value cannot be updated from client side and can be used to indicate server features being toggled.</remarks>
-        public bool IsServerOnly
+        /// <remarks>When used inside of <see cref="HandleSettingUpdate"/> it will indicate the current status.</remarks>
+        public SettingResponseType LastUpdateType { get; private set; } = SettingResponseType.None;
+
+        /// <summary>
+        /// Gets  a value indicating whether the current value received is different to that prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
+        /// </summary>
+        public virtual bool HasValueChanged { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the setting is server side.
+        /// </summary>
+        /// <remarks>This will result in client not saving the setting values and allows the server to change the setting .</remarks>
+        public bool IsServerSetting
         {
             get => Base.IsServerOnly;
             set => Base.IsServerOnly = value;
         }
+
+        /// <summary>
+        /// Gets a value indicating whether the setting is the default and not tied to a <see cref="Player"/>.
+        /// </summary>
+        public bool IsDefaultSetting => KnownOwner == null;
 
         /// <summary>
         /// Gets or sets the current label.
@@ -81,7 +97,11 @@
         public string Label
         {
             get => Base.Label;
-            set => Base.Label = value;
+            set
+            {
+                Base.Label = value;
+                SendSettingUpdate();
+            }
         }
 
         /// <summary>
@@ -90,7 +110,11 @@
         public string DescriptionHint
         {
             get => Base.HintDescription;
-            set => Base.HintDescription = value;
+            set
+            {
+                Base.HintDescription = value;
+                SendSettingUpdate();
+            }
         }
 
         /// <summary>
@@ -138,13 +162,13 @@
         /// Unregisters collection of settings.
         /// </summary>
         /// <param name="settings">The settings to unregister.</param>
-        public static void UnRegister(params CustomSetting[] settings) => CustomSettings.RemoveAll(s => settings.Contains(s));
+        public static void UnRegister(params CustomSetting[] settings) => CustomSettings.RemoveAll(settings.Contains);
 
         /// <summary>
         /// Unregisters a collection of settings.
         /// </summary>
         /// <param name="settings">The settings to unregister.</param>
-        public static void UnRegister(IEnumerable<CustomSetting> settings) => CustomSettings.RemoveAll(s => settings.Contains(s));
+        public static void UnRegister(IEnumerable<CustomSetting> settings) => CustomSettings.RemoveAll(settings.Contains);
 
         /// <summary>
         /// Tries to get player specific setting.
@@ -253,6 +277,24 @@
         }
 
         /// <summary>
+        /// Checks whether a <see cref="ReferenceHub"/> is equal to <see cref="KnownOwner"/>.
+        /// </summary>
+        /// <param name="hub">The <see cref="ReferenceHub"/> to check.</param>
+        /// <returns>Whether <see cref="ReferenceHub"/> is equal to Owner <see cref="ReferenceHub"/>.</returns>
+        internal bool IsKnownOwnerHub(ReferenceHub? hub) => hub && KnownOwner?.ReferenceHub == hub;
+
+        /// <summary>
+        /// Called before <see cref="HandleSettingUpdate"/>, adding <see cref="HasValueChanged"/> and <see cref="LastUpdateType"/>.
+        /// </summary>
+        /// <remarks>This will not have the current status.</remarks>
+        protected internal virtual void HandleBeforeSettingUpdate()
+        {
+            LastUpdateType = LastUpdateType == SettingResponseType.None
+                ? SettingResponseType.Initial
+                : SettingResponseType.Update;
+        }
+
+        /// <summary>
         /// Resyncs the setting to its owner.
         /// </summary>
         protected void ResyncToOwner()
@@ -287,6 +329,7 @@
         /// <summary>
         /// Called when client sends a new value on the setting.
         /// </summary>
+        /// <remarks>You can use <see cref="LastUpdateType"/> to get the current update type.</remarks>
         protected abstract void HandleSettingUpdate();
 
         private static void RemoveStoredPlayer(Player player) => ReceivedPlayerSettings.Remove(player);
@@ -304,10 +347,11 @@
 
             // validate setting existence and then write data from client
             CustomSetting newSettingPlayer = EnsurePlayerSpecificSetting(player, setting);
+            newSettingPlayer.HandleBeforeSettingUpdate();
+
             NetworkWriterPooled valueWriter = NetworkWriterPool.Get();
             settingBase.SerializeValue(valueWriter);
             newSettingPlayer.Base.DeserializeValue(new NetworkReader(valueWriter.buffer));
-
             NetworkWriterPool.Return(valueWriter);
 
             newSettingPlayer.HandleSettingUpdate();
@@ -326,5 +370,10 @@
 
             return currentSetting;
         }
+
+        /// <summary>
+        /// Sends an update to <see cref="KnownOwner"/> that <see cref="Label"/> or <see cref="DescriptionHint"/> has changed.
+        /// </summary>
+        private void SendSettingUpdate() => Base.SendUpdate(Label, DescriptionHint, false, IsKnownOwnerHub);
     }
 }

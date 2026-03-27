@@ -21,22 +21,22 @@
         /// <summary>
         /// Used to consider <see cref="AdminFlags.BypassMode"/>.
         /// </summary>
-        Bypass = 1,
+        Bypass = 1 << 0,
 
         /// <summary>
         /// Used to consider the player's <see cref="PlayerRoleBase"/>.
         /// </summary>
-        Role = 2,
+        Role = 1 << 1,
 
         /// <summary>
         /// Used to consider the player's <see cref="Player.CurrentItem"/>.
         /// </summary>
-        CurrentItem = 4,
+        CurrentItem = 1 << 2,
 
         /// <summary>
         /// Used to consider the player's inventory, not including the item they are holding.
         /// </summary>
-        InventoryExcludingCurrent = 8,
+        InventoryExcludingCurrent = 1 << 3,
 
         /// <summary>
         /// Used to consider the player's ENTIRE inventory.

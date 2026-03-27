@@ -20,7 +20,7 @@
         public override string Description => "API for SCP:SL";
 
         /// <inheritdoc/>
-        public override string Author => "@misfiy / @obvEvelyn";
+        public override string Author => "@obvEve";
 
         /// <inheritdoc/>
         public override LoadPriority Priority => LoadPriority.Highest;
@@ -38,7 +38,7 @@
         /// <summary>
         /// Gets the harmony to use for the API.
         /// </summary>
-        internal static Harmony? Harmony { get; private set; }
+        internal static Harmony Harmony { get; } = new("SecretAPI" + DateTime.Now);
 
         /// <summary>
         /// Gets the Assembly of the API.
@@ -48,14 +48,13 @@
         /// <inheritdoc/>
         public override void Enable()
         {
-            Harmony = new Harmony("SecretAPI" + DateTime.Now);
             CallOnLoadAttribute.Load(Assembly);
         }
 
         /// <inheritdoc/>
         public override void Disable()
         {
-            Harmony?.UnpatchAll(Harmony.Id);
+            Harmony.UnpatchAll(Harmony.Id);
         }
     }
 }

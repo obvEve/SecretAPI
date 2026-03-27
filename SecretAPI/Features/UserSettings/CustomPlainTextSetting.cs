@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Features.UserSettings
 {
+    using System;
     using global::UserSettings.ServerSpecific;
     using TMPro;
 
@@ -27,14 +28,18 @@
         /// <param name="characterLimit">The max allowed characters.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="hint">The hint to display for the setting.</param>
+        /// <param name="collectionId">The <see cref="CustomSetting.CollectionId"/>.</param>
+        /// <param name="isServerSetting">See <see cref="CustomSetting.IsServerSetting"/>.</param>
         protected CustomPlainTextSetting(
             int? id,
             string label,
             string placeholder = "...",
             int characterLimit = 64,
             TMP_InputField.ContentType contentType = TMP_InputField.ContentType.Standard,
-            string? hint = null)
-            : this(new SSPlaintextSetting(id, label, placeholder, characterLimit, contentType, hint))
+            string? hint = null,
+            byte collectionId = byte.MaxValue,
+            bool isServerSetting = false)
+            : this(new SSPlaintextSetting(id, label, placeholder, characterLimit, contentType, hint, collectionId, isServerSetting))
         {
         }
 
@@ -42,23 +47,74 @@
         public new SSPlaintextSetting Base { get; }
 
         /// <summary>
+        /// Gets the input text prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
+        /// </summary>
+        public string LastInputText
+        {
+            get => field ??= string.Empty;
+            private set;
+        }
+
+        /// <summary>
         /// Gets the synced input text.
         /// </summary>
         public string InputText => Base.SyncInputText;
 
         /// <summary>
-        /// Gets the content type.
+        /// Gets or sets the content type.
         /// </summary>
-        public TMP_InputField.ContentType ContentType => Base.ContentType;
+        public TMP_InputField.ContentType ContentType
+        {
+            get => Base.ContentType;
+            set
+            {
+                Base.ContentType = value;
+                SendPlaintextUpdate();
+            }
+        }
 
         /// <summary>
-        /// Gets the placeholder.
+        /// Gets or sets the placeholder.
         /// </summary>
-        public string Placeholder => Base.Placeholder;
+        public string Placeholder
+        {
+            get => Base.Placeholder;
+            set
+            {
+                Base.Placeholder = value;
+                SendPlaintextUpdate();
+            }
+        }
 
         /// <summary>
-        /// Gets the character limit.
+        /// Gets or sets the character limit.
         /// </summary>
-        public int CharacterLimit => Base.CharacterLimit;
+        public int CharacterLimit
+        {
+            get => Base.CharacterLimit;
+            set
+            {
+                Base.CharacterLimit = value;
+                SendPlaintextUpdate();
+            }
+        }
+
+        /// <summary>
+        /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerSetting"/> is true.
+        /// </summary>
+        /// <param name="text">The new text.</param>
+        public void SendServerUpdate(string text) => Base.SendValueUpdate(text, false, IsKnownOwnerHub);
+
+        /// <inheritdoc />
+        protected internal override void HandleBeforeSettingUpdate()
+        {
+            base.HandleBeforeSettingUpdate();
+            LastInputText = InputText;
+        }
+
+        /// <summary>
+        /// Sends an update to the <see cref="CustomSetting.KnownOwner"/> that <see cref="Placeholder"/> <see cref="CharacterLimit"/> or <see cref="ContentType"/> has changed values.
+        /// </summary>
+        private void SendPlaintextUpdate() => Base.SendPlaintextUpdate(Placeholder, (ushort)Math.Clamp(CharacterLimit, ushort.MinValue, ushort.MaxValue), ContentType, false, IsKnownOwnerHub);
     }
 }

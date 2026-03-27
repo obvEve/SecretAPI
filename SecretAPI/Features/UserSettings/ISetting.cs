@@ -6,7 +6,7 @@
     /// Interface for <see cref="CustomSetting"/> to handle the Base.
     /// </summary>
     /// <typeparam name="T">The setting being wrapped.</typeparam>
-    public interface ISetting<T>
+    public interface ISetting<out T>
         where T : ServerSpecificSettingBase
     {
         /// <summary>
