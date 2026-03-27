@@ -44,7 +44,7 @@
             string? hint = null,
             byte collectionId = byte.MaxValue,
             bool isServerSetting = false)
-            : this(new SSSliderSetting(id, label, minValue, maxValue, defaultValue, integer, valueToStringFormat, finalDisplayFormat, hint))
+            : this(new SSSliderSetting(id, label, minValue, maxValue, defaultValue, integer, valueToStringFormat, finalDisplayFormat, hint, collectionId, isServerSetting))
         {
         }
 

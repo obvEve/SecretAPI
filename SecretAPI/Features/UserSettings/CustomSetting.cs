@@ -21,7 +21,7 @@
 
         static CustomSetting()
         {
-            SecretApi.Harmony?.PatchCategory(nameof(CustomSetting), SecretApi.Assembly);
+            SecretApi.Harmony.PatchCategory(nameof(CustomSetting), SecretApi.Assembly);
 
             ServerSpecificSettingsSync.SendOnJoinFilter = null;
             ServerSpecificSettingsSync.DefinedSettings ??= []; // fix null ref

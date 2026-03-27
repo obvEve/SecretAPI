@@ -28,14 +28,18 @@
         /// <param name="characterLimit">The max allowed characters.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="hint">The hint to display for the setting.</param>
+        /// <param name="collectionId">The <see cref="CustomSetting.CollectionId"/>.</param>
+        /// <param name="isServerSetting">See <see cref="CustomSetting.IsServerSetting"/>.</param>
         protected CustomPlainTextSetting(
             int? id,
             string label,
             string placeholder = "...",
             int characterLimit = 64,
             TMP_InputField.ContentType contentType = TMP_InputField.ContentType.Standard,
-            string? hint = null)
-            : this(new SSPlaintextSetting(id, label, placeholder, characterLimit, contentType, hint))
+            string? hint = null,
+            byte collectionId = byte.MaxValue,
+            bool isServerSetting = false)
+            : this(new SSPlaintextSetting(id, label, placeholder, characterLimit, contentType, hint, collectionId, isServerSetting))
         {
         }
 

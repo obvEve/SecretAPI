@@ -27,14 +27,7 @@
         /// <summary>
         /// Gets the <see cref="Player"/> with this effect.
         /// </summary>
-        public Player Owner { get; private set; } = null!;
-
-        /// <inheritdoc/>
-        public override void Start()
-        {
-            Owner = Player.Get(Hub);
-            base.Start();
-        }
+        public Player Owner => field ??= Player.Get(Hub);
 
         /// <inheritdoc/>
         public override string ToString() => $"{GetType().Name}: Owner ({Owner}) - Intensity ({Intensity}) - Duration {Duration}";
@@ -45,7 +38,7 @@
         [CallOnLoad]
         internal static void Initialize()
         {
-            SecretApi.Harmony?.PatchCategory(nameof(CustomPlayerEffect), SecretApi.Assembly);
+            SecretApi.Harmony.PatchCategory(nameof(CustomPlayerEffect), SecretApi.Assembly);
             EffectsToRegister.Add(typeof(TemporaryDamageImmunity));
             EffectsToRegister.Add(typeof(StaminaUsageDisablerEffect));
             EffectsToRegister.Add(typeof(SprintDisablerEffect));

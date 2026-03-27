@@ -38,7 +38,7 @@
         /// <summary>
         /// Gets the harmony to use for the API.
         /// </summary>
-        internal static Harmony? Harmony { get; } = new("SecretAPI" + DateTime.Now);
+        internal static Harmony Harmony { get; } = new("SecretAPI" + DateTime.Now);
 
         /// <summary>
         /// Gets the Assembly of the API.
@@ -54,7 +54,7 @@
         /// <inheritdoc/>
         public override void Disable()
         {
-            Harmony?.UnpatchAll(Harmony.Id);
+            Harmony.UnpatchAll(Harmony.Id);
         }
     }
 }
