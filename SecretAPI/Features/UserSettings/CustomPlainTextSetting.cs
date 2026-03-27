@@ -49,11 +49,7 @@
         /// <summary>
         /// Gets the input text prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
         /// </summary>
-        public string LastInputText
-        {
-            get => field ??= string.Empty;
-            private set;
-        }
+        public string LastInputText { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets the synced input text.
