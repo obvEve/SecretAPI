@@ -45,6 +45,9 @@
         /// <inheritdoc/>
         public new SSDropdownSetting Base { get; }
 
+        /// <inheritdoc />
+        public override bool HasValueChanged => LastSelectedIndex != SyncedIndex;
+
         /// <summary>
         /// Gets the index the client is claiming to have selected.
         /// </summary>
@@ -81,10 +84,29 @@
         public SSDropdownSetting.DropdownEntryType EntryType => Base.EntryType;
 
         /// <summary>
+        /// Gets the last selected index, or -1 if none was selected previously.
+        /// </summary>
+        public int LastSelectedIndex { get; private set; } = -1;
+
+        /// <summary>
+        /// Gets the last selected option as a string, or null if none was selected previously.
+        /// </summary>
+        public string? LastSelectedOption => LastSelectedIndex < 0 || LastSelectedIndex >= Options.Length ? null : Options[LastSelectedIndex];
+
+        /// <summary>
         /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that this has been updated on Server. Only works if <see cref="CustomSetting.IsServerSetting"/> is true.
         /// </summary>
         /// <param name="selectionId">The new ID selected.</param>
         public void SendServerUpdate(int selectionId) => Base.SendValueUpdate(selectionId, false, IsKnownOwnerHub);
+
+        /// <inheritdoc />
+        protected internal override void HandleBeforeSettingUpdate()
+        {
+            base.HandleBeforeSettingUpdate();
+
+            if (LastUpdateType != SettingResponseType.Initial)
+                LastSelectedIndex = SyncedIndex;
+        }
 
         /// <summary>
         /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that <see cref="Options"/> has been updated.

@@ -72,6 +72,11 @@
         public SettingResponseType LastUpdateType { get; private set; } = SettingResponseType.None;
 
         /// <summary>
+        /// Gets  a value indicating whether the current value received is different to that of the last one.
+        /// </summary>
+        public virtual bool HasValueChanged { get; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the setting is server side.
         /// </summary>
         /// <remarks>This will result in client not saving the setting values and allows the server to change the setting .</remarks>
@@ -279,6 +284,17 @@
         internal bool IsKnownOwnerHub(ReferenceHub? hub) => hub && KnownOwner?.ReferenceHub == hub;
 
         /// <summary>
+        /// Called before <see cref="HandleSettingUpdate"/>, adding <see cref="HasValueChanged"/> & <see cref="LastUpdateType"/>.
+        /// </summary>
+        /// <remarks>This will not have the current status.</remarks>
+        protected internal virtual void HandleBeforeSettingUpdate()
+        {
+            LastUpdateType = LastUpdateType == SettingResponseType.None
+                ? SettingResponseType.Initial
+                : SettingResponseType.Update;
+        }
+
+        /// <summary>
         /// Resyncs the setting to its owner.
         /// </summary>
         protected void ResyncToOwner()
@@ -331,14 +347,12 @@
 
             // validate setting existence and then write data from client
             CustomSetting newSettingPlayer = EnsurePlayerSpecificSetting(player, setting);
+            newSettingPlayer.HandleBeforeSettingUpdate();
+
             NetworkWriterPooled valueWriter = NetworkWriterPool.Get();
             settingBase.SerializeValue(valueWriter);
             newSettingPlayer.Base.DeserializeValue(new NetworkReader(valueWriter.buffer));
             NetworkWriterPool.Return(valueWriter);
-
-            newSettingPlayer.LastUpdateType = newSettingPlayer.LastUpdateType == SettingResponseType.None
-                ? SettingResponseType.Initial
-                : SettingResponseType.Update;
 
             newSettingPlayer.HandleSettingUpdate();
         }
