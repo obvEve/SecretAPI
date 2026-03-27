@@ -20,7 +20,7 @@
         public override string Description => "API for SCP:SL";
 
         /// <inheritdoc/>
-        public override string Author => "@misfiy / @obvEvelyn";
+        public override string Author => "@obvEve";
 
         /// <inheritdoc/>
         public override LoadPriority Priority => LoadPriority.Highest;
