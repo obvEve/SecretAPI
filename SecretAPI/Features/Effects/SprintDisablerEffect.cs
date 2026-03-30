@@ -1,30 +1,29 @@
-﻿namespace SecretAPI.Features.Effects
+﻿namespace SecretAPI.Features.Effects;
+
+using PlayerRoles.FirstPersonControl;
+
+/// <summary>
+/// Effect that disables sprinting for a player. Sets stamina to 0 and disables regen.
+/// </summary>
+public class SprintDisablerEffect : CustomPlayerEffect, IStaminaModifier
 {
-    using PlayerRoles.FirstPersonControl;
+    /// <inheritdoc />
+    public bool StaminaModifierActive => IsEnabled;
 
-    /// <summary>
-    /// Effect that disables sprinting for a player. Sets stamina to 0 and disables regen.
-    /// </summary>
-    public class SprintDisablerEffect : CustomPlayerEffect, IStaminaModifier
+    /// <inheritdoc />
+    public float StaminaRegenMultiplier => 0;
+
+    /// <inheritdoc />
+    public override EffectClassification Classification => EffectClassification.Negative;
+
+    /// <inheritdoc />
+    public override void Enabled()
     {
-        /// <inheritdoc />
-        public bool StaminaModifierActive => IsEnabled;
+        Owner.StaminaRemaining = 0;
+    }
 
-        /// <inheritdoc />
-        public float StaminaRegenMultiplier => 0;
-
-        /// <inheritdoc />
-        public override EffectClassification Classification => EffectClassification.Negative;
-
-        /// <inheritdoc />
-        public override void Enabled()
-        {
-            Owner.StaminaRemaining = 0;
-        }
-
-        /// <inheritdoc />
-        public override void Disabled()
-        {
-        }
+    /// <inheritdoc />
+    public override void Disabled()
+    {
     }
 }
