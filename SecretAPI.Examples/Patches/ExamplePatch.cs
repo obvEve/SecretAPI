@@ -1,24 +1,23 @@
-﻿namespace SecretAPI.Examples.Patches
+﻿namespace SecretAPI.Examples.Patches;
+
+using SecretAPI.Attributes;
+
+/// <summary>
+/// An example harmony patch.
+/// </summary>
+[HarmonyPatchCategory(nameof(ExampleEntry))]
+/*[HarmonyPatch]*/
+public static class ExamplePatch
 {
-    using SecretAPI.Attributes;
-
-    /// <summary>
-    /// An example harmony patch.
-    /// </summary>
-    [HarmonyPatchCategory(nameof(ExampleEntry))]
-    /*[HarmonyPatch]*/
-    public static class ExamplePatch
+    // gets called before the original method is called
+    private static bool Prefix()
     {
-        // gets called before the original method is called
-        private static bool Prefix()
-        {
-            // prevent original method from running
-            return false;
-        }
+        // prevent original method from running
+        return false;
+    }
 
-        // gets called after the original method is called
-        private static void Postfix()
-        {
-        }
+    // gets called after the original method is called
+    private static void Postfix()
+    {
     }
 }

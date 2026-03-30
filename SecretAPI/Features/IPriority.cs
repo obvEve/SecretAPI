@@ -1,13 +1,12 @@
-﻿namespace SecretAPI.Features
+﻿namespace SecretAPI.Features;
+
+/// <summary>
+/// Handles IPriority.
+/// </summary>
+public interface IPriority
 {
     /// <summary>
-    /// Handles IPriority.
+    /// Gets the current priority.
     /// </summary>
-    public interface IPriority
-    {
-        /// <summary>
-        /// Gets the current priority.
-        /// </summary>
-        public int Priority { get; }
-    }
+    public int Priority { get; }
 }

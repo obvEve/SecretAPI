@@ -1,66 +1,65 @@
-﻿namespace SecretAPI.Extensions
+﻿namespace SecretAPI.Extensions;
+
+using System;
+using System.Reflection;
+using LabApi.Features.Console;
+using LabApi.Features.Wrappers;
+using Mirror;
+
+/// <summary>
+/// Extensions related to Mirror.
+/// </summary>
+public static class MirrorExtensions
 {
-    using System;
-    using System.Reflection;
-    using LabApi.Features.Console;
-    using LabApi.Features.Wrappers;
-    using Mirror;
+    /// <summary>
+    /// Send a fake rpc message to a player.
+    /// </summary>
+    /// <param name="target">The target to send the rpc to.</param>
+    /// <param name="behaviour">The network behaviour containing the rpc.</param>
+    /// <param name="type">The type containing the rpc.</param>
+    /// <param name="rpcName">The name of the rpc to call.</param>
+    /// <param name="values">The values to write to the writer.</param>
+    public static void SendFakeRpcMessage(this Player target, NetworkBehaviour behaviour, Type type, string rpcName, params object[] values)
+    {
+        NetworkWriterPooled pooledWriter = NetworkWriterPool.Get();
+
+        foreach (object obj in values)
+            ProperWrite(pooledWriter, obj);
+
+        RpcMessage rpcMessage = new()
+        {
+            netId = behaviour.netId,
+            componentIndex = behaviour.ComponentIndex,
+            functionHash = (ushort)ReflectionExtensions.GetLongFuncName(type, rpcName).GetStableHashCode(),
+            payload = pooledWriter.ToArraySegment(),
+        };
+
+        target.Connection.Send(rpcMessage);
+        NetworkWriterPool.Return(pooledWriter);
+    }
 
     /// <summary>
-    /// Extensions related to Mirror.
+    /// Handles writing <see cref="object"/> into a <see cref="NetworkWriter"/>.
     /// </summary>
-    public static class MirrorExtensions
+    /// <param name="writer">The writer to write the object to.</param>
+    /// <param name="obj">The object to write.</param>
+    public static void ProperWrite(this NetworkWriter writer, object obj)
     {
-        /// <summary>
-        /// Send a fake rpc message to a player.
-        /// </summary>
-        /// <param name="target">The target to send the rpc to.</param>
-        /// <param name="behaviour">The network behaviour containing the rpc.</param>
-        /// <param name="type">The type containing the rpc.</param>
-        /// <param name="rpcName">The name of the rpc to call.</param>
-        /// <param name="values">The values to write to the writer.</param>
-        public static void SendFakeRpcMessage(this Player target, NetworkBehaviour behaviour, Type type, string rpcName, params object[] values)
+        Type genericType = typeof(Writer<>).MakeGenericType(obj.GetType());
+        FieldInfo? writeField = genericType.GetField("write", BindingFlags.Static | BindingFlags.Public);
+        if (writeField == null)
         {
-            NetworkWriterPooled pooledWriter = NetworkWriterPool.Get();
-
-            foreach (object obj in values)
-                ProperWrite(pooledWriter, obj);
-
-            RpcMessage rpcMessage = new()
-            {
-                netId = behaviour.netId,
-                componentIndex = behaviour.ComponentIndex,
-                functionHash = (ushort)ReflectionExtensions.GetLongFuncName(type, rpcName).GetStableHashCode(),
-                payload = pooledWriter.ToArraySegment(),
-            };
-
-            target.Connection.Send(rpcMessage);
-            NetworkWriterPool.Return(pooledWriter);
+            Logger.Warn($"Tried to write type: {obj.GetType()} but has no NetworkWriter!");
+            return;
         }
 
-        /// <summary>
-        /// Handles writing <see cref="object"/> into a <see cref="NetworkWriter"/>.
-        /// </summary>
-        /// <param name="writer">The writer to write the object to.</param>
-        /// <param name="obj">The object to write.</param>
-        public static void ProperWrite(this NetworkWriter writer, object obj)
+        object? writeDelegate = writeField.GetValue(null);
+        if (writeDelegate is not Delegate del)
         {
-            Type genericType = typeof(Writer<>).MakeGenericType(obj.GetType());
-            FieldInfo? writeField = genericType.GetField("write", BindingFlags.Static | BindingFlags.Public);
-            if (writeField == null)
-            {
-                Logger.Warn($"Tried to write type: {obj.GetType()} but has no NetworkWriter!");
-                return;
-            }
-
-            object? writeDelegate = writeField.GetValue(null);
-            if (writeDelegate is not Delegate del)
-            {
-                Logger.Warn($"Writer<{obj.GetType()}>.write is not a delegate!");
-                return;
-            }
-
-            del.DynamicInvoke(writer, obj);
+            Logger.Warn($"Writer<{obj.GetType()}>.write is not a delegate!");
+            return;
         }
+
+        del.DynamicInvoke(writer, obj);
     }
 }

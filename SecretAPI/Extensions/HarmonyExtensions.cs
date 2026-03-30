@@ -1,68 +1,67 @@
-﻿namespace SecretAPI.Extensions
+﻿namespace SecretAPI.Extensions;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using HarmonyLib;
+using LabApi.Features.Console;
+using SecretAPI.Attributes;
+
+/// <summary>
+/// Handles patching.
+/// </summary>
+public static class HarmonyExtensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using HarmonyLib;
-    using LabApi.Features.Console;
-    using SecretAPI.Attributes;
-
-    /// <summary>
-    /// Handles patching.
-    /// </summary>
-    public static class HarmonyExtensions
+    /// <param name="harmony">The harmony to use for the patch.</param>
+    extension(Harmony harmony)
     {
-        /// <param name="harmony">The harmony to use for the patch.</param>
-        extension(Harmony harmony)
+        /// <summary>
+        /// Patches all methods with the proper <see cref="HarmonyPatchCategory"/>.
+        /// </summary>
+        /// <param name="category">The category to patch.</param>
+        /// <param name="assembly">The assembly to find patches in.</param>
+        public void PatchCategory(string category, Assembly? assembly = null)
         {
-            /// <summary>
-            /// Patches all methods with the proper <see cref="HarmonyPatchCategory"/>.
-            /// </summary>
-            /// <param name="category">The category to patch.</param>
-            /// <param name="assembly">The assembly to find patches in.</param>
-            public void PatchCategory(string category, Assembly? assembly = null)
-            {
-                assembly ??= Assembly.GetCallingAssembly();
+            assembly ??= Assembly.GetCallingAssembly();
 
-                assembly.GetTypes().Where(type =>
-                    {
-                        IEnumerable<HarmonyPatchCategory> categories = type.GetCustomAttributes<HarmonyPatchCategory>();
-                        return categories.Any(c => c.Category == category);
-                    })
-                    .Do(type => SafePatch(harmony, type));
-            }
-
-            /// <summary>
-            /// Patches all patches that don't have a <see cref="HarmonyPatchCategory"/>.
-            /// </summary>
-            /// <param name="assembly">The assembly to look for patches.</param>
-            public void PatchAllNoCategory(Assembly? assembly = null)
-            {
-                assembly ??= Assembly.GetCallingAssembly();
-
-                assembly.GetTypes().Where(type =>
-                    {
-                        IEnumerable<HarmonyPatchCategory> categories = type.GetCustomAttributes<HarmonyPatchCategory>();
-                        return !categories.Any();
-                    })
-                    .Do(type => SafePatch(harmony, type));
-            }
-
-            /// <summary>
-            /// Attempts to safely patch a <see cref="Type"/>, logging any errors.
-            /// </summary>
-            /// <param name="type">The <see cref="Type"/> to attempt to patch.</param>
-            public void SafePatch(Type type)
-            {
-                try
+            assembly.GetTypes().Where(type =>
                 {
-                    harmony.CreateClassProcessor(type).Patch();
-                }
-                catch (Exception ex)
+                    IEnumerable<HarmonyPatchCategory> categories = type.GetCustomAttributes<HarmonyPatchCategory>();
+                    return categories.Any(c => c.Category == category);
+                })
+                .Do(type => SafePatch(harmony, type));
+        }
+
+        /// <summary>
+        /// Patches all patches that don't have a <see cref="HarmonyPatchCategory"/>.
+        /// </summary>
+        /// <param name="assembly">The assembly to look for patches.</param>
+        public void PatchAllNoCategory(Assembly? assembly = null)
+        {
+            assembly ??= Assembly.GetCallingAssembly();
+
+            assembly.GetTypes().Where(type =>
                 {
-                    Logger.Error($"[HarmonyExtensions] failed to safely patch {harmony.Id} ({type.FullName}): {ex}");
-                }
+                    IEnumerable<HarmonyPatchCategory> categories = type.GetCustomAttributes<HarmonyPatchCategory>();
+                    return !categories.Any();
+                })
+                .Do(type => SafePatch(harmony, type));
+        }
+
+        /// <summary>
+        /// Attempts to safely patch a <see cref="Type"/>, logging any errors.
+        /// </summary>
+        /// <param name="type">The <see cref="Type"/> to attempt to patch.</param>
+        public void SafePatch(Type type)
+        {
+            try
+            {
+                harmony.CreateClassProcessor(type).Patch();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"[HarmonyExtensions] failed to safely patch {harmony.Id} ({type.FullName}): {ex}");
             }
         }
     }

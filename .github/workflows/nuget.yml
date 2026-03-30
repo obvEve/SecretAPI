@@ -33,7 +33,7 @@ jobs:
       - name: Build and Pack NuGet
         env:
           SL_REFERENCES: ${{ env.REFERENCES_PATH }}
-        run: dotnet pack -c Release --output ${NUGET_PACKAGED_PATH}
+        run: dotnet pack -c Release --output ${{ NUGET_PACKAGED_PATH }}
 
       - name: Push NuGet package
         run: |

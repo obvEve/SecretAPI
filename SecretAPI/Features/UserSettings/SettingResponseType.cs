@@ -1,23 +1,22 @@
-﻿namespace SecretAPI.Features.UserSettings
+﻿namespace SecretAPI.Features.UserSettings;
+
+/// <summary>
+/// The type of response.
+/// </summary>
+public enum SettingResponseType
 {
     /// <summary>
-    /// The type of response.
+    /// Indicates that no response has been recorded.
     /// </summary>
-    public enum SettingResponseType
-    {
-        /// <summary>
-        /// Indicates that no response has been recorded.
-        /// </summary>
-        None,
+    None,
 
-        /// <summary>
-        /// Indicates that this is the initial response.
-        /// </summary>
-        Initial,
+    /// <summary>
+    /// Indicates that this is the initial response.
+    /// </summary>
+    Initial,
 
-        /// <summary>
-        /// Indicates that this is an update, changing the value.
-        /// </summary>
-        Update,
-    }
+    /// <summary>
+    /// Indicates that this is an update, changing the value.
+    /// </summary>
+    Update,
 }
