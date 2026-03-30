@@ -74,7 +74,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     /// <summary>
     /// Gets  a value indicating whether the current value received is different to that prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
     /// </summary>
-    public virtual bool HasValueChanged { get; }
+    public virtual bool HasValueChanged { get; } = false;
 
     /// <summary>
     /// Gets or sets a value indicating whether the setting is server side.
