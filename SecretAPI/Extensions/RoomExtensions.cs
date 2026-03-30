@@ -44,7 +44,7 @@
             if (failReasons.HasFlag(RoomSafetyFailReason.Tesla) && room.Name == RoomName.HczTesla)
                 return false;
 
-            if (KnownUnsafeRooms.Contains(room.Name))
+            if (failReasons.HasFlag(RoomSafetyFailReason.KnownBad) && KnownUnsafeRooms.Contains(room.Name))
                 return false;
 
             if (failReasons.HasFlag(RoomSafetyFailReason.MissingFloor) && !Physics.Raycast(room.Position, Vector3.down, out _, RaycastDistance, FpcStateProcessor.Mask))
