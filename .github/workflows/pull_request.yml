@@ -10,8 +10,8 @@ jobs:
     runs-on: windows-latest
     
     env:
-      REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
       REFERENCES_PATH: ${{ github.workspace }}/References
+      BUILD_OUTPUT: ${{ github.workspace }}/Output
 
     steps:
       - name: Checkout
@@ -20,25 +20,20 @@ jobs:
       - name: Setup Dotnet
         uses: actions/setup-dotnet@v4.0.1
 
-      - name: Download References
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri ${{ env.REFERENCES_URL }} -OutFile "${{ github.workspace }}/References.zip"
-          Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
-
-#      - name: Rename Assembly-CSharp-Publicized to Assembly-CSharp
-#        shell: pwsh
-#        run: Rename-Item -Path "${{ env.REFERENCES_PATH }}\Assembly-CSharp-Publicized.dll" -NewName "Assembly-CSharp.dll"
+      - name: Download SCP:SL References
+        uses: Axwabo/scpsl-references-downloader@v1
+        id: refs
+        with:
+          directory: $ {{ env.REFERENCES_PATH }}
 
       - name: Build
         env:
-          SL_REFERENCES: ${{ env.REFERENCES_PATH }}
-        shell: pwsh
-        run: dotnet build -c Release
+          SL_REFERENCES: ${{ steps.refs.outputs.target }}
+        run: dotnet build -c Release --output  ${{ env.BUILD_OUTPUT }}
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Build Result
-          path: ${{ github.workspace }}/**/bin/Release/net48/*SecretAPI*.dll
+          path: ${{ env.BUILD_OUTPUT }}
           retention-days: 7
