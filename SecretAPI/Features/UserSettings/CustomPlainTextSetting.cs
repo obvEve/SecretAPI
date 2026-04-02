@@ -46,6 +46,9 @@ public abstract class CustomPlainTextSetting : CustomSetting, ISetting<SSPlainte
     /// <inheritdoc />
     public new SSPlaintextSetting Base { get; }
 
+    /// <inheritdoc />
+    public override bool HasValueChanged => LastInputText != InputText;
+
     /// <summary>
     /// Gets the input text prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
     /// </summary>
