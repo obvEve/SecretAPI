@@ -16,9 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Dotnet
-        uses: actions/setup-dotnet@v4.0.1
-
       - name: Download SCP:SL References
         uses: Axwabo/scpsl-references-downloader@v1
         id: refs

@@ -17,9 +17,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Dotnet
-        uses: actions/setup-dotnet@v4.0.1
-
       - name: Download SCP:SL References
         uses: Axwabo/scpsl-references-downloader@v1
         id: refs
@@ -35,5 +32,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Build Result
-          path: ${{ env.BUILD_OUTPUT }}
+          path: ${{ env.BUILD_OUTPUT }}\SecretAPI*.dll
           retention-days: 7
