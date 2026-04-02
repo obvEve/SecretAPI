@@ -24,12 +24,12 @@ jobs:
         uses: Axwabo/scpsl-references-downloader@v1
         id: refs
         with:
-          directory: $ {{ env.REFERENCES_PATH }}
+          directory: ${{ env.REFERENCES_PATH }}
 
       - name: Build
         env:
           SL_REFERENCES: ${{ steps.refs.outputs.target }}
-        run: dotnet build -c Release --output  ${{ env.BUILD_OUTPUT }}
+        run: dotnet build -c Release --output ${{ env.BUILD_OUTPUT }}
 
       - name: Upload
         uses: actions/upload-artifact@v4

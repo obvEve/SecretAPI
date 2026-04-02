@@ -23,7 +23,7 @@ jobs:
         uses: Axwabo/scpsl-references-downloader@v1
         id: refs
         with:
-          directory: $ {{ env.REFERENCES_PATH }}
+          directory: ${{ env.REFERENCES_PATH }}
 
       - name: Build and Pack NuGet
         env:
