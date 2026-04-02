@@ -25,4 +25,14 @@ public class CustomHeader : ISetting<SSGroupHeader>
 
     /// <inheritdoc />
     public SSGroupHeader Base { get; }
+
+    /// <summary>
+    /// Gets the label of the header.
+    /// </summary>
+    public string Label => Base.Label;
+
+    /// <summary>
+    /// Gets a value indicating whether the padding should be reduced.
+    /// </summary>
+    public bool ReducedPadding => Base.ReducedPadding;
 }
