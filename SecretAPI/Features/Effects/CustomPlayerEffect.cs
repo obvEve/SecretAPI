@@ -16,8 +16,6 @@ using Logger = LabApi.Features.Console.Logger;
 /// </summary>
 public abstract class CustomPlayerEffect : StatusEffectBase
 {
-    private static bool isLoaded;
-
     /// <summary>
     /// Gets a list of types to register (Must inherit <see cref="StatusEffectBase"/>).
     /// <remarks>Must be <see cref="Type"/>, can be gotten through <code>typeof(Scp207)</code></remarks>
@@ -43,25 +41,24 @@ public abstract class CustomPlayerEffect : StatusEffectBase
         EffectsToRegister.Add(typeof(StaminaUsageDisablerEffect));
         EffectsToRegister.Add(typeof(SprintDisablerEffect));
 
-        SceneManager.sceneLoaded += (_, _) =>
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        Transform playerEffects = PrefabStore<ReferenceHub>.Prefab.playerEffectsController.effectsGameObject.transform;
+        foreach (Type type in EffectsToRegister)
         {
-            if (isLoaded)
-                return;
-
-            isLoaded = true;
-
-            Transform playerEffects = PrefabStore<ReferenceHub>.Prefab.playerEffectsController.effectsGameObject.transform;
-            foreach (Type type in EffectsToRegister)
+            if (!typeof(StatusEffectBase).IsAssignableFrom(type))
             {
-                if (!typeof(StatusEffectBase).IsAssignableFrom(type))
-                {
-                    Logger.Error($"[CustomPlayerEffect.Initialize] {type.FullName} is not a valid StatusEffectBase and thus could not be registered!");
-                    continue;
-                }
-
-                // register effect into prefab
-                new GameObject(type.Name, type).transform.parent = playerEffects;
+                Logger.Error($"[CustomPlayerEffect.Initialize] {type.FullName} is not a valid StatusEffectBase and thus could not be registered!");
+                continue;
             }
-        };
+
+            // register effect into prefab
+            new GameObject(type.Name, type).transform.parent = playerEffects;
+        }
     }
 }

@@ -29,19 +29,19 @@ public static class PlayerExtensions
         /// <returns>Whether a valid permission was found.</returns>
         public bool HasDoorPermission(IDoorPermissionRequester requester, DoorPermissionCheck checkFlags = DoorPermissionCheck.Default)
         {
-            if (checkFlags.HasFlag(DoorPermissionCheck.Bypass) && player.IsBypassEnabled)
+            if (checkFlags.HasFlagFast(DoorPermissionCheck.Bypass) && player.IsBypassEnabled)
                 return true;
 
-            if (checkFlags.HasFlag(DoorPermissionCheck.Role) && player.RoleBase is IDoorPermissionProvider roleProvider && requester.PermissionsPolicy.CheckPermissions(roleProvider.GetPermissions(requester)))
+            if (checkFlags.HasFlagFast(DoorPermissionCheck.Role) && player.RoleBase is IDoorPermissionProvider roleProvider && requester.PermissionsPolicy.CheckPermissions(roleProvider.GetPermissions(requester)))
                 return true;
 
             foreach (Item item in player.Items)
             {
                 bool isCurrent = item == player.CurrentItem;
-                if (!checkFlags.HasFlag(DoorPermissionCheck.CurrentItem) && isCurrent)
+                if (!checkFlags.HasFlagFast(DoorPermissionCheck.CurrentItem) && isCurrent)
                     continue;
 
-                if (!checkFlags.HasFlag(DoorPermissionCheck.InventoryExcludingCurrent) && !isCurrent)
+                if (!checkFlags.HasFlagFast(DoorPermissionCheck.InventoryExcludingCurrent) && !isCurrent)
                     continue;
 
                 if (item.Base is IDoorPermissionProvider itemProvider && requester.PermissionsPolicy.CheckPermissions(itemProvider.GetPermissions(requester)))

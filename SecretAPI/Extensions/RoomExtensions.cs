@@ -35,19 +35,19 @@ public static class RoomExtensions
     /// <returns>Whether the room is safe to teleport to.</returns>
     public static bool IsSafeToTeleport(this Room room, RoomSafetyFailReason failReasons)
     {
-        if (failReasons.HasFlag(RoomSafetyFailReason.Warhead) && Warhead.IsDetonated && room.Zone != FacilityZone.Surface)
+        if (failReasons.HasFlagFast(RoomSafetyFailReason.Warhead) && Warhead.IsDetonated && room.Zone != FacilityZone.Surface)
             return false;
 
-        if (failReasons.HasFlag(RoomSafetyFailReason.Decontamination) && Decontamination.IsDecontaminating && room.Zone == FacilityZone.LightContainment)
+        if (failReasons.HasFlagFast(RoomSafetyFailReason.Decontamination) && Decontamination.IsDecontaminating && room.Zone == FacilityZone.LightContainment)
             return false;
 
-        if (failReasons.HasFlag(RoomSafetyFailReason.Tesla) && room.Name == RoomName.HczTesla)
+        if (failReasons.HasFlagFast(RoomSafetyFailReason.Tesla) && room.Name == RoomName.HczTesla)
             return false;
 
-        if (failReasons.HasFlag(RoomSafetyFailReason.KnownBad) && KnownUnsafeRooms.Contains(room.Name))
+        if (failReasons.HasFlagFast(RoomSafetyFailReason.KnownBad) && KnownUnsafeRooms.Contains(room.Name))
             return false;
 
-        if (failReasons.HasFlag(RoomSafetyFailReason.MissingFloor) && !Physics.Raycast(room.Position, Vector3.down, out _, RaycastDistance, FpcStateProcessor.Mask))
+        if (failReasons.HasFlagFast(RoomSafetyFailReason.MissingFloor) && !Physics.Raycast(room.Position, Vector3.down, out _, RaycastDistance, FpcStateProcessor.Mask))
             return false;
 
         return true;

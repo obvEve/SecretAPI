@@ -76,5 +76,5 @@ public static class PrefabManager
 
     private static T GetOrThrow<T>(string name)
         where T : NetworkBehaviour => PrefabStore<T>.AllComponentPrefabs.FirstOrDefault(c => c.name == name)
-                                      ?? throw new InvalidOperationException($"[PrefabManager] Failed to component ({typeof(T).Name}) by name {name} | Report this as a bug");
+                                      ?? throw new InvalidOperationException($"[PrefabManager] Failed to get component ({typeof(T).Name}) by name {name} | Report this as a bug");
 }
