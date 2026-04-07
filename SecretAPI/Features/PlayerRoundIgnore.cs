@@ -1,6 +1,8 @@
 ﻿namespace SecretAPI.Features;
 
 using System.Collections.Generic;
+using LabApi.Events.Arguments.PlayerEvents;
+using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using SecretAPI.Enums;
 using SecretAPI.Extensions;
@@ -25,10 +27,13 @@ public static class PlayerRoundIgnore
     static PlayerRoundIgnore()
     {
         SecretApi.Harmony.PatchCategory(nameof(PlayerRoundIgnore));
+        PlayerEvents.Left += OnPlayerLeft;
     }
 
     /// <summary>
     /// Gets a collection of <see cref="Player"/> to their current <see cref="RoundIgnoreStatus"/>.
     /// </summary>
     public static Dictionary<Player, RoundIgnoreStatus> PlayerToStatus { get; } = new();
+
+    private static void OnPlayerLeft(PlayerLeftEventArgs ev) => PlayerToStatus.Remove(ev.Player);
 }
