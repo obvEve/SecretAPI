@@ -53,15 +53,14 @@ public static class CollectionExtensions
     /// <param name="value"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static bool TryGetRandomWeighted<T>(this IEnumerable<T> collection, out T? value)
-        where T : IWeighted
+    public static bool TryGetRandomWeighted<T>(this IEnumerable<(T Item, float Weight)> collection, out T? value)
     {
         float totalWeight = collection.Sum(item => item.Weight);
         float random = Random.Range(0f, totalWeight);
 
-        foreach (T item in collection)
+        foreach ((T item, float weight) in collection)
         {
-            random -= item.Weight;
+            random -= weight;
             if (random <= 0f)
             {
                 value = item;
@@ -79,11 +78,10 @@ public static class CollectionExtensions
     /// <param name="collection"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T GetRandomWeighted<T>(this IEnumerable<T> collection)
-        where T : IWeighted
+    public static T GetRandomWeighted<T>(this IEnumerable<(T Item, float Weight)> collection)
     {
         TryGetRandomWeighted(collection, out T? value);
-        return value ?? throw new InvalidOperationException();
+        return value ?? throw new InvalidOperationException("[CollectionExtensions.GetRandomWeighted] Could not find item - Was the collection perhaps empty?");
     }
 
     /// <summary>
@@ -93,6 +91,6 @@ public static class CollectionExtensions
     /// <param name="weightAssigner"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static IEnumerable<WeightedWrapper<T>> WrapWeighted<T>(this IEnumerable<T> collection, Func<T, float> weightAssigner)
-        => collection.Select(item => new WeightedWrapper<T>(item, weightAssigner(item)));
+    public static IEnumerable<(T Item, float Weight)> GetWeights<T>(this IEnumerable<T> collection, Func<T, float> weightAssigner)
+        => collection.Select(item => (item, weightAssigner(item)));
 }
