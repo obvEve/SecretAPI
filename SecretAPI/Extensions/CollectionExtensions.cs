@@ -55,10 +55,11 @@ public static class CollectionExtensions
     /// <returns></returns>
     public static bool TryGetRandomWeighted<T>(this IEnumerable<(T Item, float Weight)> collection, out T? value)
     {
-        float totalWeight = collection.Sum(item => item.Weight);
+        (T Item, float Weight)[] array = collection.ToArray();
+        float totalWeight = array.Sum(item => item.Weight);
         float random = Random.Range(0f, totalWeight);
 
-        foreach ((T item, float weight) in collection)
+        foreach ((T item, float weight) in array)
         {
             random -= weight;
             if (random <= 0f)
