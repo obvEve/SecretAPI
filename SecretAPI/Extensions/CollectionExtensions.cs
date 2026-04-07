@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using SecretAPI.Patches.Features;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -44,4 +45,54 @@ public static class CollectionExtensions
             return value != null;
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collection"></param>
+    /// <param name="value"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static bool TryGetRandomWeighted<T>(this IEnumerable<T> collection, out T? value)
+        where T : IWeighted
+    {
+        float totalWeight = collection.Sum(item => item.Weight);
+        float random = Random.Range(0f, totalWeight);
+
+        foreach (T item in collection)
+        {
+            random -= item.Weight;
+            if (random <= 0f)
+            {
+                value = item;
+                return true;
+            }
+        }
+
+        value = default;
+        return false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collection"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T GetRandomWeighted<T>(this IEnumerable<T> collection)
+        where T : IWeighted
+    {
+        TryGetRandomWeighted(collection, out T? value);
+        return value ?? throw new InvalidOperationException();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collection"></param>
+    /// <param name="weightAssigner"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static IEnumerable<WeightedWrapper<T>> WrapWeighted<T>(this IEnumerable<T> collection, Func<T, float> weightAssigner)
+        => collection.Select(item => new WeightedWrapper<T>(item, weightAssigner(item)));
 }
