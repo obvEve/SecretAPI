@@ -3,9 +3,9 @@
 using PlayerRoles.FirstPersonControl;
 
 /// <summary>
-/// Effect that disables sprinting for a player. Sets stamina to 0 and disables regen.
+/// Effect that disables sprinting for a player and disables regeneration of it.
 /// </summary>
-public class SprintDisablerEffect : CustomPlayerEffect, IStaminaModifier
+public class Depleted : CustomPlayerEffect, IStaminaModifier
 {
     /// <inheritdoc />
     public bool StaminaModifierActive => IsEnabled;

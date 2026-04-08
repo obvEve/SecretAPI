@@ -105,7 +105,7 @@ public abstract class CustomPlainTextSetting : CustomSetting, ISetting<SSPlainte
     public void SendServerUpdate(string text) => Base.SendValueUpdate(text, false, IsKnownOwnerHub);
 
     /// <inheritdoc />
-    protected internal override void HandleBeforeSettingUpdate()
+    protected override void HandleBeforeSettingUpdate()
     {
         base.HandleBeforeSettingUpdate();
         LastInputText = InputText;

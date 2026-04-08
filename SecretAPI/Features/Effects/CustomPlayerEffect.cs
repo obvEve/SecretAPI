@@ -37,9 +37,8 @@ public abstract class CustomPlayerEffect : StatusEffectBase
     internal static void Initialize()
     {
         SecretApi.Harmony.PatchCategory(nameof(CustomPlayerEffect), SecretApi.Assembly);
-        EffectsToRegister.Add(typeof(TemporaryDamageImmunity));
-        EffectsToRegister.Add(typeof(StaminaUsageDisablerEffect));
-        EffectsToRegister.Add(typeof(SprintDisablerEffect));
+        EffectsToRegister.Add(typeof(Energized));
+        EffectsToRegister.Add(typeof(Depleted));
 
         SceneManager.sceneLoaded += OnSceneLoaded;
     }

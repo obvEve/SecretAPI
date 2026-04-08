@@ -3,9 +3,9 @@
 using PlayerRoles.FirstPersonControl;
 
 /// <summary>
-/// Effect that disables stamina usage.
+/// Effect that removes stamina usage, granting infinite stamina.
 /// </summary>
-public class StaminaUsageDisablerEffect : CustomPlayerEffect, IStaminaModifier
+public class Energized : CustomPlayerEffect, IStaminaModifier
 {
     /// <inheritdoc />
     public bool StaminaModifierActive => IsEnabled;

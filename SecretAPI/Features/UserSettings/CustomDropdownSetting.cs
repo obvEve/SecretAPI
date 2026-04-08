@@ -100,7 +100,7 @@ public abstract class CustomDropdownSetting : CustomSetting, ISetting<SSDropdown
     public void SendServerUpdate(int selectionId) => Base.SendValueUpdate(selectionId, false, IsKnownOwnerHub);
 
     /// <inheritdoc />
-    protected internal override void HandleBeforeSettingUpdate()
+    protected override void HandleBeforeSettingUpdate()
     {
         base.HandleBeforeSettingUpdate();
 

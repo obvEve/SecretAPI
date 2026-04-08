@@ -155,7 +155,7 @@ public abstract class CustomSliderSetting : CustomSetting, ISetting<SSSliderSett
     public void SendServerUpdate(float value) => Base.SendValueUpdate(value, false, IsKnownOwnerHub);
 
     /// <inheritdoc />
-    protected internal override void HandleBeforeSettingUpdate()
+    protected override void HandleBeforeSettingUpdate()
     {
         base.HandleBeforeSettingUpdate();
         LastSelectedValueFloat = SelectedValueFloat;

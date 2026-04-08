@@ -100,7 +100,7 @@ public abstract class CustomTwoButtonSetting : CustomSetting, ISetting<SSTwoButt
     public void SendServerUpdate(bool isB) => Base.SendValueUpdate(isB, false, IsKnownOwnerHub);
 
     /// <inheritdoc />
-    protected internal override void HandleBeforeSettingUpdate()
+    protected override void HandleBeforeSettingUpdate()
     {
         base.HandleBeforeSettingUpdate();
         WasLastOptionB = IsOptionB;

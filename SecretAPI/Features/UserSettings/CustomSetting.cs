@@ -286,8 +286,8 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     /// <summary>
     /// Called before <see cref="HandleSettingUpdate"/>, adding <see cref="HasValueChanged"/> and <see cref="LastUpdateType"/>.
     /// </summary>
-    /// <remarks>This will not have the current status.</remarks>
-    protected internal virtual void HandleBeforeSettingUpdate()
+    /// <remarks>This will not have the current status and should always call back to base.</remarks>
+    protected virtual void HandleBeforeSettingUpdate()
     {
         LastUpdateType = LastUpdateType == SettingResponseType.None
             ? SettingResponseType.Initial

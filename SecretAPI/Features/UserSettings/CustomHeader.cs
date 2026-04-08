@@ -19,7 +19,7 @@ public class CustomHeader : ISetting<SSGroupHeader>
     }
 
     /// <summary>
-    /// Gets a <see cref="CustomHeader"/> for Example purposes.
+    /// Gets a <see cref="CustomHeader"/> used to contain all the example settings of SecretAPI.Examples.
     /// </summary>
     public static CustomHeader Examples { get; } = new("Examples", hint: "Features used as examples");
 
