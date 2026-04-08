@@ -22,7 +22,7 @@ jobs:
         with:
           directory: ${{ env.REFERENCES_PATH }}
 
-      - name: Build and Pack NuGet
+      - name: Build
         env:
           SL_REFERENCES: ${{ steps.refs.outputs.target }}
         run: dotnet build -c Release --output ${{ env.BUILD_OUTPUT }}
