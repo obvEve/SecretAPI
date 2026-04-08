@@ -27,7 +27,7 @@ jobs:
           directory: ${{ env.REFERENCES_PATH }}
 
       - name: List references
-        run: ls ${{ env.REFERENCES_PATH }}
+        run: ls ${{ steps.refs.outputs.target }}
 
       - name: Build
         env:
