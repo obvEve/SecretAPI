@@ -13,4 +13,7 @@ public static class FastEnums
 
     /// <inheritdoc cref="Enum.HasFlag"/>
     public static bool HasFlagFast(this RoomSafetyFailReason @enum, RoomSafetyFailReason flag) => (@enum & flag) == flag;
+
+    /// <inheritdoc cref="Enum.HasFlag"/>
+    public static bool HasFlagFast(this RoundIgnoreStatus @enum, RoundIgnoreStatus flag) => (@enum & flag) == flag;
 }
