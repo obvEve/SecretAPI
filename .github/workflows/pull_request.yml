@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      REFERENCES_PATH: ${{ github.workspace }}/References
       BUILD_OUTPUT: ${{ github.workspace }}/Output
 
     steps:
@@ -20,12 +19,8 @@ jobs:
       - name: Download SCP:SL References
         uses: Axwabo/scpsl-references-downloader@v1
         id: refs
-        with:
-          directory: ${{ env.REFERENCES_PATH }}
 
       - name: Build
-        env:
-          SL_REFERENCES: ${{ steps.refs.outputs.target }}
         run: dotnet build -c Release --output ${{ env.BUILD_OUTPUT }}
 
       - name: Upload
