@@ -14,4 +14,12 @@
         <RepositoryUrl>https://github.com/obvEve/SecretAPI</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisMode>recommended</AnalysisMode>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <CodeAnalysisRuleSet>../stylecop.ruleset</CodeAnalysisRuleSet>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
 </Project>
