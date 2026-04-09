@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using LabApi.Features.Console;
 using LabApi.Features.Wrappers;
 using Mirror;
 using SecretAPI.Attributes;
@@ -25,14 +26,8 @@ internal static class RoundIgnoreCountPatch
 
     private static MethodInfo TargetMethod()
     {
-        Type nestedType = typeof(RoundSummary).GetNestedTypes(AccessTools.all)
-            .FirstOrDefault(currentType => currentType.Name is StateMachine) ?? throw new Exception("Could not locate state machine for RoundSummary::<>c");
-
-        // nestedType.GetMethods(AccessTools.all).ForEach(method => Logger.Debug(method.Name));
-        MethodInfo updateCountMethod = nestedType.GetMethods(AccessTools.all)
-            .FirstOrDefault(x => x.Name.Contains(UpdateTargetCount)) ?? throw new Exception($"Could not locate {UpdateTargetCount} method in state machine");
-
-        return updateCountMethod;
+        return typeof(RoundSummary).GetNestedMethod(StateMachine, UpdateTargetCount)
+               ?? throw new Exception($"Could not locate state machine for {StateMachine} | {UpdateTargetCount}");
     }
 
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
@@ -43,19 +38,37 @@ internal static class RoundIgnoreCountPatch
             .Insert(
                 new CodeInstruction(OpCodes.Ldarg_0),
                 CodeInstruction.Call(typeof(RoundIgnoreCountPatch), nameof(IsPlayerIgnored)),
-                new CodeInstruction(OpCodes.Brtrue_S, skip));
+                new CodeInstruction(OpCodes.Brfalse_S, skip),
+                new CodeInstruction(OpCodes.Ldc_I4_0),
+                new CodeInstruction(OpCodes.Ret));
 
         return matcher.InstructionEnumeration();
     }
 
     private static bool IsPlayerIgnored(ReferenceHub hub)
     {
-        if (!NetworkServer.active || !Round.IsRoundStarted)
+        if (!NetworkServer.active)
             return false;
 
         if (hub == null)
             return false;
 
-        return hub && Player.Get(hub).RoundIgnoreStatus.HasFlagFast(RoundIgnoreStatus.ScpTargetCount);
+        Logger.Debug($"AllHub count: {ReferenceHub.AllHubs.Count}");
+        Logger.Debug($"Is checking count: {hub.nicknameSync?.DisplayName ?? "(NULL NAME)"} | {hub.roleManager?.CurrentRole?.RoleName ?? "(NULL ROLE)"} ");
+
+        foreach (KeyValuePair<Player, RoundIgnoreStatus> kvp in PlayerRoundIgnore.PlayerToStatus)
+        {
+            Logger.Debug("Got further!");
+            if (kvp.Key.ReferenceHub != hub)
+                continue;
+
+            bool value = kvp.Value.HasFlagFast(RoundIgnoreStatus.ScpTargetCount);
+            Logger.Debug($"Is Ignored: {value}");
+            return value;
+        }
+
+        return false;
+
+        // return hub && Player.Get(hub).RoundIgnoreStatus.HasFlagFast(RoundIgnoreStatus.ScpTargetCount);
     }
 }

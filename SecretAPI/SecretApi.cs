@@ -3,10 +3,14 @@
 using System;
 using System.Reflection;
 using HarmonyLib;
+using LabApi.Events.Handlers;
 using LabApi.Features;
+using LabApi.Features.Console;
 using LabApi.Loader.Features.Plugins;
 using LabApi.Loader.Features.Plugins.Enums;
 using SecretAPI.Attributes;
+using SecretAPI.Enums;
+using SecretAPI.Features;
 
 /// <summary>
 /// Main class handling loading API.
@@ -49,6 +53,24 @@ public class SecretApi : Plugin
     public override void Enable()
     {
         CallOnLoadAttribute.Load(Assembly);
+
+        PlayerEvents.Spawned += ev =>
+        {
+            if (!ev.Player.IsDummy)
+                return;
+
+            if (PlayerRoundIgnore.PlayerToStatus.ContainsKey(ev.Player))
+                return;
+
+            Logger.Info("Dummy been set to ignore status!");
+            ev.Player.RoundIgnoreStatus = RoundIgnoreStatus.ScpTargetCount | RoundIgnoreStatus.RoundEndingCheck;
+            Logger.Info($"Ignore Status is {ev.Player.RoundIgnoreStatus}");
+        };
+
+        ServerEvents.RoundEnding += ev =>
+        {
+            Logger.Info($"Is Round Ending?: {ev.IsAllowed}");
+        };
     }
 
     /// <inheritdoc/>

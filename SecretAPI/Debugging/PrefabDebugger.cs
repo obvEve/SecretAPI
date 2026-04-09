@@ -15,7 +15,7 @@ using Logger = LabApi.Features.Console.Logger;
 /// <summary>
 /// Debugs basegame prefabs by logging information about them.
 /// </summary>
-internal static class PrefabDebugging
+internal static class PrefabDebugger
 {
     /// <summary>
     /// Loads the prefab debugging.
