@@ -1,25 +1,27 @@
-﻿namespace SecretAPI.Extensions
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using HarmonyLib;
-    using LabApi.Features.Console;
-    using SecretAPI.Attribute;
+﻿namespace SecretAPI.Extensions;
 
-    /// <summary>
-    /// Handles patching.
-    /// </summary>
-    public static class HarmonyExtensions
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using HarmonyLib;
+using LabApi.Features.Console;
+using SecretAPI.Attributes;
+
+/// <summary>
+/// Handles patching.
+/// </summary>
+public static class HarmonyExtensions
+{
+    /// <param name="harmony">The harmony to use for the patch.</param>
+    extension(Harmony harmony)
     {
         /// <summary>
         /// Patches all methods with the proper <see cref="HarmonyPatchCategory"/>.
         /// </summary>
-        /// <param name="harmony">The harmony to use for the patch.</param>
         /// <param name="category">The category to patch.</param>
         /// <param name="assembly">The assembly to find patches in.</param>
-        public static void PatchCategory(this Harmony harmony, string category, Assembly? assembly = null)
+        public void PatchCategory(string category, Assembly? assembly = null)
         {
             assembly ??= Assembly.GetCallingAssembly();
 
@@ -34,9 +36,8 @@
         /// <summary>
         /// Patches all patches that don't have a <see cref="HarmonyPatchCategory"/>.
         /// </summary>
-        /// <param name="harmony">The harmony to use for the patch.</param>
         /// <param name="assembly">The assembly to look for patches.</param>
-        public static void PatchAllNoCategory(this Harmony harmony, Assembly? assembly = null)
+        public void PatchAllNoCategory(Assembly? assembly = null)
         {
             assembly ??= Assembly.GetCallingAssembly();
 
@@ -51,9 +52,8 @@
         /// <summary>
         /// Attempts to safely patch a <see cref="Type"/>, logging any errors.
         /// </summary>
-        /// <param name="harmony">The harmony to use for the patch.</param>
         /// <param name="type">The <see cref="Type"/> to attempt to patch.</param>
-        public static void SafePatch(this Harmony harmony, Type type)
+        public void SafePatch(Type type)
         {
             try
             {
