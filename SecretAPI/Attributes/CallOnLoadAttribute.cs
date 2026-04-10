@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using SecretAPI.Extensions;
 using SecretAPI.Features;
 
 /// <summary>
@@ -50,21 +51,14 @@ public class CallOnLoadAttribute : Attribute, IPriority
     internal static void CallAttributeMethodPriority<TAttribute>(Assembly assembly)
         where TAttribute : Attribute, IPriority
     {
-        const BindingFlags methodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
         Dictionary<TAttribute, MethodInfo> methods = new();
-
-        // get all types
-        foreach (Type type in assembly.GetTypes())
+        foreach (MethodInfo method in assembly.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
         {
-            // get all static methods
-            foreach (MethodInfo method in type.GetMethods(methodFlags))
-            {
-                TAttribute? attribute = method.GetCustomAttribute<TAttribute>();
-                if (attribute == null)
-                    continue;
+            TAttribute? attribute = method.GetCustomAttribute<TAttribute>();
+            if (attribute == null)
+                continue;
 
-                methods.Add(attribute, method);
-            }
+            methods.Add(attribute, method);
         }
 
         foreach (KeyValuePair<TAttribute, MethodInfo> method in methods.OrderBy(static v => v.Key.Priority))

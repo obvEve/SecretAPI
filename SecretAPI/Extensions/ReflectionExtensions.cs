@@ -1,8 +1,10 @@
 ﻿namespace SecretAPI.Extensions;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using HarmonyLib;
 
 /// <summary>
 /// Extensions for reflection.
@@ -36,16 +38,42 @@ public static class ReflectionExtensions
     }
 
     /// <summary>
-    /// Copies the properties.
+    /// Searches through an assembly and returns all <see cref="MethodInfo"/> based on the provided flags.
+    /// </summary>
+    /// <param name="assembly">The assembly to search through.</param>
+    /// <param name="flags">The <see cref="BindingFlags"/> used for the method search within a <see cref="Type"/>.</param>
+    /// <returns>A collection of <see cref="MethodInfo"/> based on the provided assembly and flags.</returns>
+    public static IEnumerable<MethodInfo> GetMethods(this Assembly assembly, BindingFlags flags)
+        => assembly.GetTypes().SelectMany(type => type.GetMethods(flags));
+
+    /// <summary>
+    /// Gets a nested <see cref="MethodInfo"/> within a <see cref="Type"/>.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> containing the needed method.</param>
+    /// <param name="nestedTypeName">The name of the nested type, this does not need to be exact.</param>
+    /// <param name="methodName">The name of the method, this does not need to be exact.</param>
+    /// <returns>The found method, or null if none matched.</returns>
+    public static MethodInfo? GetNestedMethod(this Type type, string nestedTypeName, string methodName)
+    {
+        return type.GetNestedTypes(AccessTools.all)
+            .Where(t => t.Name.Contains(nestedTypeName))
+            .SelectMany(t => t.GetMethods(AccessTools.all))
+            .FirstOrDefault(m => m.Name.Contains(methodName));
+    }
+
+    /// <summary>
+    /// Copies the properties from a <see cref="Type"/> onto another instance.
     /// </summary>
     /// <param name="source">The source of the properties to copy.</param>
-    /// <param name="destination">Where to copy to.</param>
-    public static void CopyProperties(this object source, object destination)
+    /// <param name="destination">Where the source properties should be copied to, this should match the same <see cref="Type"/> as source.</param>
+    public static void CopyPropertiesTo(this object source, object destination)
     {
-        Type destinationType = destination.GetType();
-        foreach (PropertyInfo property in source.GetType().GetProperties())
-        {
-            destinationType.GetProperty(property.Name)?.SetValue(destination, property.GetValue(source));
-        }
+        Type type = source.GetType();
+
+        if (type != destination.GetType())
+            throw new InvalidOperationException($"[ReflectionExtensions.CopyPropertiesTo] Source and destination types are mismatched: {type.FullName} | {destination.GetType().FullName}");
+
+        foreach (PropertyInfo property in type.GetProperties())
+            property.SetValue(destination, property.GetValue(source));
     }
 }

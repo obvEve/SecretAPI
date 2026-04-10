@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using LabApi.Features.Console;
 using LabApi.Features.Wrappers;
 using PlayerRoles;
 using SecretAPI.Attributes;
@@ -14,37 +15,33 @@ using SecretAPI.Extensions;
 using SecretAPI.Features;
 
 /// <summary>
-/// Handles patching to implement <see cref="RoundIgnoreStatus.RoundEndingCheck"/> into <see cref="RoundSummary.UpdateTargetCount"/>.
+/// Handles patching to implement <see cref="RoundIgnoreStatus.RoundEndingCheck"/> into <see cref="RoundSummary._ProcessServerSideCode"/>.
 /// </summary>
 [HarmonyPatchCategory(nameof(PlayerRoundIgnore))]
 [HarmonyPatch]
 internal static class RoundEndIgnorePatch
 {
-    private const string StateMachine = "<_ProcessServerSideCode>d__58";
+    private const string StateMachine = "_ProcessServerSideCode";
     private const string MoveNext = "MoveNext";
     private const int ReferenceHubLocalIndex = 20;
+    private const int SkipAdvanceAmount = 4; // amount needed to get to IL_0131: br IL_01bd
 
     private static MethodInfo TargetMethod()
     {
-        // typeof(RoundSummary).GetNestedTypes(AccessTools.all).ForEach(type => Logger.Debug(type.FullName ?? "NULL"));
-        Type nestedType = typeof(RoundSummary).GetNestedTypes(AccessTools.all)
-            .FirstOrDefault(type => type.Name is StateMachine) ?? throw new Exception($"Could not locate state machine for {StateMachine}");
-
-        // nestedType.GetMethods(AccessTools.all).ForEach(method => Logger.Debug(method.Name));
-        MethodInfo moveNextMethod = nestedType.GetMethods(AccessTools.all)
-            .FirstOrDefault(x => x.Name.Contains(MoveNext)) ?? throw new Exception($"Could not locate {MoveNext} method in state machine");
-
-        return moveNextMethod;
+        return typeof(RoundSummary).GetNestedMethod(StateMachine, MoveNext)
+               ?? throw new Exception($"Could not locate state machine for {StateMachine} | {MoveNext}");
     }
 
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         CodeMatcher matcher = new CodeMatcher(instructions, generator)
             .MatchEndForward(new CodeMatch(CodeInstruction.Call(typeof(PlayerRolesUtils), nameof(PlayerRolesUtils.GetTeam), [typeof(ReferenceHub)])))
+            .Advance(SkipAdvanceAmount)
             .CreateLabel(out Label skip)
+            .Advance(-SkipAdvanceAmount)
             .Insert(
                 new CodeInstruction(OpCodes.Ldloc_S, ReferenceHubLocalIndex),
-                CodeInstruction.Call(typeof(RoundEndIgnorePatch), nameof(IsPlayerIgnored)),
+                new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(RoundEndIgnorePatch), nameof(IsPlayerIgnored))),
                 new CodeInstruction(OpCodes.Brtrue_S, skip));
 
         return matcher.InstructionEnumeration();
