@@ -77,6 +77,11 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     public virtual bool HasValueChanged { get; } = false;
 
     /// <summary>
+    /// Gets a value indicating whether the setting is currently accessible on the client.
+    /// </summary>
+    public bool IsCurrentlyAccessible { get; private set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the setting is server side.
     /// </summary>
     /// <remarks>This will result in client not saving the setting values and allows the server to change the setting .</remarks>
@@ -174,10 +179,11 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     /// Tries to get player specific setting.
     /// </summary>
     /// <param name="player">The player to get settings of.</param>
+    /// <param name="requireAccessible">Whether the setting must currently be accessible to the player.</param>
     /// <param name="setting">The setting found.</param>
     /// <typeparam name="TSetting">The setting type to find.</typeparam>
-    /// <returns>Whether setting was found.</returns>
-    public static bool TryGetPlayerSetting<TSetting>(Player player, [NotNullWhen(true)] out TSetting? setting)
+    /// <returns>Whether a valid was found.</returns>
+    public static bool TryGetPlayerSetting<TSetting>(Player player, bool requireAccessible, [NotNullWhen(true)] out TSetting? setting)
         where TSetting : CustomSetting
     {
         setting = null;
@@ -187,14 +193,43 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
 
         foreach (CustomSetting toCheck in settings)
         {
-            if (toCheck is TSetting value)
-            {
-                setting = value;
-                return true;
-            }
+            if (toCheck is not TSetting value)
+                continue;
+
+            if (requireAccessible && !toCheck.IsCurrentlyAccessible)
+                return false;
+
+            setting = value;
+            return true;
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Tries to get player specific setting.
+    /// </summary>
+    /// <param name="player">The player to get settings of.</param>
+    /// <param name="setting">The setting found.</param>
+    /// <typeparam name="TSetting">The setting type to find.</typeparam>
+    /// <returns>Whether setting was found.</returns>
+    public static bool TryGetPlayerSetting<TSetting>(Player player, [NotNullWhen(true)] out TSetting? setting)
+        where TSetting : CustomSetting => TryGetPlayerSetting(player, false, out setting);
+
+    /// <summary>
+    /// Tries to get player specific setting.
+    /// </summary>
+    /// <param name="player">The player to get settings of.</param>
+    /// <param name="id">The id required of the setting.</param>
+    /// <param name="requireAccessible">Whether the setting must currently be accessible to the player.</param>
+    /// <param name="setting">The setting found.</param>
+    /// <returns>Whether setting was found.</returns>
+    public static bool TryGetPlayerSetting(Player player, int id, bool requireAccessible, [NotNullWhen(true)] out CustomSetting? setting)
+    {
+        setting = null;
+        if (PlayerSettings.TryGetValue(player, out List<CustomSetting>? settings))
+            setting = settings.FirstOrDefault(s => s.Id == id && (!requireAccessible || s.IsCurrentlyAccessible));
+        return setting != null;
     }
 
     /// <summary>
@@ -225,7 +260,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     /// <typeparam name="T">The setting class to check for.</typeparam>
     /// <returns>The found <see cref="CustomSetting"/> matching the params, otherwise null.</returns>
     public static T? Get<T>(int id)
-        where T : CustomSetting => CustomSettings.FirstOrDefault(s => s.Base.SettingId == id && s.GetType() == typeof(T)) as T;
+        where T : CustomSetting => Get(typeof(T), id) as T;
 
     /// <summary>
     /// Resyncs all settings to all players.
@@ -253,9 +288,14 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
         foreach (CustomSetting setting in CustomSettings)
         {
             if (!setting.CanView(player))
+            {
+                if (TryGetPlayerSetting(player, setting.Id, false, out CustomSetting? playerSetting))
+                    playerSetting.IsCurrentlyAccessible = false;
                 continue;
+            }
 
             CustomSetting playerSpecific = EnsurePlayerSpecificSetting(player, setting);
+            setting.IsCurrentlyAccessible = true;
             playerSpecific.PersonalizeSetting();
             playerSettings.Add(playerSpecific);
         }
