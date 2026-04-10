@@ -21,6 +21,5 @@ public enum RoundIgnoreStatus
     /// <summary>
     /// Player is ignored from <see cref="RoundSummary.TargetCount"/>.
     /// </summary>
-    /// <remarks>This will not reflect when round is not in progress (either due to it being ended or due to lobby).</remarks>
     ScpTargetCount = 1 << 1,
 }
