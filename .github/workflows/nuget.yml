@@ -6,36 +6,22 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     env:
-      REFERENCES_URL: https://exmod-team.github.io/SL-References/Dev.zip
-      REFERENCES_PATH: ${{ github.workspace }}/References
-      NUGET_PACKAGED_PATH: ${{ github.workspace }}/nupkgs
+      BUILD_OUTPUT: ${{ github.workspace }}/Output
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Dotnet
-        uses: actions/setup-dotnet@v4.0.1
+      - name: Download SCP:SL References
+        uses: Axwabo/scpsl-references-downloader@v1
+        id: refs
 
-      - name: Download References
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri ${{ env.REFERENCES_URL }} -OutFile "${{ github.workspace }}/References.zip"
-          Expand-Archive -Path "${{ github.workspace }}/References.zip" -DestinationPath ${{ env.REFERENCES_PATH }}
-
-      - name: Rename Assembly-CSharp-Publicized to Assembly-CSharp
-        shell: pwsh
-        run: Rename-Item -Path "${{ env.REFERENCES_PATH }}\Assembly-CSharp-Publicized.dll" -NewName "Assembly-CSharp.dll"
-
-      - name: Build and Pack NuGet
-        env:
-          SL_REFERENCES: ${{ env.REFERENCES_PATH }}
-        run: dotnet pack -c Release --output ${NUGET_PACKAGED_PATH}
+      - name: Build
+        run: dotnet build -c Release --output ${{ env.BUILD_OUTPUT }}
 
       - name: Push NuGet package
-        run: |
-          $PackageFile = (Get-ChildItem -Path "${NUGET_PACKAGED_PATH}" -Include 'SecretAPI.*.nupkg' -Recurse | Select-Object -First 1).FullName
-          dotnet nuget push $PackageFile --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        working-directory: ${{ env.BUILD_OUTPUT }}
+        run: dotnet nuget push SecretAPI.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

@@ -1,0 +1,25 @@
+﻿<Project>
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <Version>3.0.0-beta3</Version>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Nuget">
+        <Authors>obvEve</Authors>
+        <Company>obvEve</Company>
+
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/obvEve/SecretAPI</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisMode>recommended</AnalysisMode>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <CodeAnalysisRuleSet>../stylecop.ruleset</CodeAnalysisRuleSet>
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+</Project>
