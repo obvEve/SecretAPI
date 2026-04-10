@@ -20,6 +20,7 @@ public static class CollectionExtensions
         /// </summary>
         /// <returns>A random value, default value when empty collection.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Will occur if the collection is empty.</exception>
+        /// <remarks>Use <see cref="TryGetRandomValue"/> unless you have already validated and are sure the collection is not empty.</remarks>
         public T GetRandomValue()
         {
             TryGetRandomValue(collection, out T? value);
