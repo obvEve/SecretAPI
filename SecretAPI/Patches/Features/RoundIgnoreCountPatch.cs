@@ -36,7 +36,7 @@ internal static class RoundIgnoreCountPatch
             .Start()
             .CreateLabel(out Label skip)
             .Insert(
-                new CodeInstruction(OpCodes.Ldarg_0),
+                new CodeInstruction(OpCodes.Ldarg_1),
                 CodeInstruction.Call(typeof(RoundIgnoreCountPatch), nameof(IsPlayerIgnored)),
                 new CodeInstruction(OpCodes.Brfalse_S, skip),
                 new CodeInstruction(OpCodes.Ldc_I4_0),
@@ -45,30 +45,5 @@ internal static class RoundIgnoreCountPatch
         return matcher.InstructionEnumeration();
     }
 
-    private static bool IsPlayerIgnored(ReferenceHub hub)
-    {
-        if (!NetworkServer.active)
-            return false;
-
-        if (hub == null)
-            return false;
-
-        Logger.Debug($"AllHub count: {ReferenceHub.AllHubs.Count}");
-        Logger.Debug($"Is checking count: {hub.nicknameSync?.DisplayName ?? "(NULL NAME)"} | {hub.roleManager?.CurrentRole?.RoleName ?? "(NULL ROLE)"} ");
-
-        foreach (KeyValuePair<Player, RoundIgnoreStatus> kvp in PlayerRoundIgnore.PlayerToStatus)
-        {
-            Logger.Debug("Got further!");
-            if (kvp.Key.ReferenceHub != hub)
-                continue;
-
-            bool value = kvp.Value.HasFlagFast(RoundIgnoreStatus.ScpTargetCount);
-            Logger.Debug($"Is Ignored: {value}");
-            return value;
-        }
-
-        return false;
-
-        // return hub && Player.Get(hub).RoundIgnoreStatus.HasFlagFast(RoundIgnoreStatus.ScpTargetCount);
-    }
+    private static bool IsPlayerIgnored(ReferenceHub hub) => Player.Get(hub).RoundIgnoreStatus.HasFlagFast(RoundIgnoreStatus.ScpTargetCount);
 }

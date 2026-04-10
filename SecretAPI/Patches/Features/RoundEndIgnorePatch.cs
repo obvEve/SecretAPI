@@ -24,6 +24,7 @@ internal static class RoundEndIgnorePatch
     private const string StateMachine = "_ProcessServerSideCode";
     private const string MoveNext = "MoveNext";
     private const int ReferenceHubLocalIndex = 20;
+    private const int SkipAdvanceAmount = 4; // amount needed to get to IL_0131: br IL_01bd
 
     private static MethodInfo TargetMethod()
     {
@@ -35,7 +36,9 @@ internal static class RoundEndIgnorePatch
     {
         CodeMatcher matcher = new CodeMatcher(instructions, generator)
             .MatchEndForward(new CodeMatch(CodeInstruction.Call(typeof(PlayerRolesUtils), nameof(PlayerRolesUtils.GetTeam), [typeof(ReferenceHub)])))
+            .Advance(SkipAdvanceAmount)
             .CreateLabel(out Label skip)
+            .Advance(-SkipAdvanceAmount)
             .Insert(
                 new CodeInstruction(OpCodes.Ldloc_S, ReferenceHubLocalIndex),
                 new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(RoundEndIgnorePatch), nameof(IsPlayerIgnored))),
@@ -44,10 +47,5 @@ internal static class RoundEndIgnorePatch
         return matcher.InstructionEnumeration();
     }
 
-    private static bool IsPlayerIgnored(ReferenceHub hub)
-    {
-        bool ignore = Player.Get(hub).RoundIgnoreStatus.HasFlagFast(RoundIgnoreStatus.RoundEndingCheck);
-        Logger.Debug($"Should ignore {hub.nicknameSync?.DisplayName ?? "(NULL NAME)"} from round : {ignore}");
-        return ignore;
-    }
+    private static bool IsPlayerIgnored(ReferenceHub hub) => Player.Get(hub).RoundIgnoreStatus.HasFlagFast(RoundIgnoreStatus.RoundEndingCheck);
 }
