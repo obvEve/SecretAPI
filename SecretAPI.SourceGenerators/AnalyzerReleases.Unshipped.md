@@ -2,6 +2,6 @@
 
  Rule ID    | Category | Severity | Notes               
 ------------|----------|----------|---------------------
- SecretGen0 | Usage    | Error    | CA6000_AnalyzerName 
- SecretGen1 | Usage    | Error    | CA6000_AnalyzerName 
- SecretGen2 | Usage    | Error    | CA6000_AnalyzerName 
+ SG001 | Usage    | Error    | MustBePartialPluginClass 
+ SG002 | Usage    | Error    | MustBeAccessibleMethod 
+ SG003 | Usage    | Error    | MustBeStaticMethod 

@@ -3,7 +3,7 @@
 internal static class Diagnostics
 {
     internal static readonly DiagnosticDescriptor MustBePartialPluginClass = new(
-        "SecretGen0",
+        "SG001",
         "Plugin class must be partial",
         "Plugin class '{0}' is missing partial modifier",
         "Usage",
@@ -11,7 +11,7 @@ internal static class Diagnostics
         true);
 
     internal static readonly DiagnosticDescriptor MustBeAccessibleMethod = new(
-        "SecretGen1",
+        "SG002",
         "Method must be accessible",
         "Method '{0}' has accessibility '{1}', which is not supported for generated calls",
         "Usage",
@@ -19,7 +19,7 @@ internal static class Diagnostics
         true);
 
     internal static readonly DiagnosticDescriptor MustBeStaticMethod = new(
-        "SecretGen2",
+        "SG003",
         "Method must be static",
         "Method '{0}' is not marked as static",
         "Usage",
