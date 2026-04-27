@@ -111,5 +111,11 @@ public abstract class CustomDropdownSetting : CustomSetting, ISetting<SSDropdown
     /// <summary>
     /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that <see cref="Options"/> has been updated.
     /// </summary>
-    private void SendDropdownUpdate() => Base.SendDropdownUpdate(Options, false,  IsKnownOwnerHub);
+    private void SendDropdownUpdate()
+    {
+        if (!IsCurrentlyAccessible)
+            return;
+
+        Base.SendDropdownUpdate(Options, false, IsKnownOwnerHub);
+    }
 }

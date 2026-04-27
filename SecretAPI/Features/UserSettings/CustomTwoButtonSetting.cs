@@ -109,5 +109,11 @@ public abstract class CustomTwoButtonSetting : CustomSetting, ISetting<SSTwoButt
     /// <summary>
     /// Sends an update to the <see cref="CustomSetting.KnownOwner"/> that <see cref="OptionA"/> or <see cref="OptionB"/> has changed values.
     /// </summary>
-    private void SendOptionsUpdate() => Base.SendTwoButtonUpdate(OptionA, OptionB, false, IsKnownOwnerHub);
+    private void SendOptionsUpdate()
+    {
+        if (!IsCurrentlyAccessible)
+            return;
+
+        Base.SendTwoButtonUpdate(OptionA, OptionB, false, IsKnownOwnerHub);
+    }
 }

@@ -414,5 +414,11 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     /// <summary>
     /// Sends an update to <see cref="KnownOwner"/> that <see cref="Label"/> or <see cref="DescriptionHint"/> has changed.
     /// </summary>
-    private void SendSettingUpdate() => Base.SendUpdate(Label, DescriptionHint, false, IsKnownOwnerHub);
+    private void SendSettingUpdate()
+    {
+        if (!IsCurrentlyAccessible)
+            return;
+
+        Base.SendUpdate(Label, DescriptionHint, false, IsKnownOwnerHub);
+    }
 }
