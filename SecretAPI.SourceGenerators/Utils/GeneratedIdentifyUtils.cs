@@ -13,7 +13,7 @@ internal static class GeneratedIdentifyUtils
                             Token(SyntaxKind.CommaToken),
                             AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("1.0.0"))),
                         })));
-    
+
     internal static AttributeListSyntax GetGeneratedCodeAttributeListSyntax()
         => AttributeList(SingletonSeparatedList(GetGeneratedCodeAttributeSyntax()));
 }
