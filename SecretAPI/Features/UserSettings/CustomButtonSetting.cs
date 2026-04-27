@@ -68,5 +68,11 @@ public abstract class CustomButtonSetting : CustomSetting, ISetting<SSButton>
     /// <summary>
     /// Sends an update to <see cref="CustomSetting.KnownOwner"/> that <see cref="Text"/> or <see cref="RequiredHoldTime"/> has updated.
     /// </summary>
-    private void SendButtonUpdate() => Base.SendButtonUpdate(Text, RequiredHoldTime, false, IsKnownOwnerHub);
+    private void SendButtonUpdate()
+    {
+        if (!IsCurrentlyAccessible)
+            return;
+
+        Base.SendButtonUpdate(Text, RequiredHoldTime, false, IsKnownOwnerHub);
+    }
 }

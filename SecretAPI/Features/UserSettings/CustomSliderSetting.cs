@@ -164,5 +164,11 @@ public abstract class CustomSliderSetting : CustomSetting, ISetting<SSSliderSett
     /// <summary>
     /// Sends an update that any of the slider values have been updated.
     /// </summary>
-    private void SendSliderUpdate() => Base.SendSliderUpdate(MinimumValue, MaximumValue, UseInteger, ValueToStringFormat, FinalDisplayFormat, false, IsKnownOwnerHub);
+    private void SendSliderUpdate()
+    {
+        if (!IsCurrentlyAccessible)
+            return;
+
+        Base.SendSliderUpdate(MinimumValue, MaximumValue, UseInteger, ValueToStringFormat, FinalDisplayFormat, false, IsKnownOwnerHub);
+    }
 }

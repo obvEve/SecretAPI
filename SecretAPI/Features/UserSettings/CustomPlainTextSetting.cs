@@ -114,5 +114,11 @@ public abstract class CustomPlainTextSetting : CustomSetting, ISetting<SSPlainte
     /// <summary>
     /// Sends an update to the <see cref="CustomSetting.KnownOwner"/> that <see cref="Placeholder"/> <see cref="CharacterLimit"/> or <see cref="ContentType"/> has changed values.
     /// </summary>
-    private void SendPlaintextUpdate() => Base.SendPlaintextUpdate(Placeholder, (ushort)Math.Clamp(CharacterLimit, ushort.MinValue, ushort.MaxValue), ContentType, false, IsKnownOwnerHub);
+    private void SendPlaintextUpdate()
+    {
+        if (!IsCurrentlyAccessible)
+            return;
+
+        Base.SendPlaintextUpdate(Placeholder, (ushort)Math.Clamp(CharacterLimit, ushort.MinValue, ushort.MaxValue), ContentType, false, IsKnownOwnerHub);
+    }
 }
