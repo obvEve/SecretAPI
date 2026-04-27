@@ -69,7 +69,7 @@ public class CallOnLoadGenerator : IIncrementalGenerator
         return 0;
     }
 
-    private static bool ValidateMethod(SourceProductionContext context, Tuple<ClassDeclarationSyntax?, INamedTypeSymbol?> pluginInfo, IMethodSymbol method)
+    private static bool ValidateMethod(SourceProductionContext context, IMethodSymbol method)
     {
         bool isValid = true;
 
@@ -119,13 +119,13 @@ public class CallOnLoadGenerator : IIncrementalGenerator
         }
 
         IMethodSymbol[] loadCalls = methods
-            .Where(m => m.isLoad && ValidateMethod(context, pluginInfo, m.method))
+            .Where(m => m.isLoad && ValidateMethod(context, m.method))
             .Select(m => m.method)
             .OrderBy(m => GetPriority(m, CallOnLoadAttributeLocation))
             .ToArray();
 
         IMethodSymbol[] unloadCalls = methods
-            .Where(m => m.isUnload && ValidateMethod(context, pluginInfo, m.method))
+            .Where(m => m.isUnload && ValidateMethod(context, m.method))
             .Select(m => m.method)
             .OrderBy(m => GetPriority(m, CallOnUnloadAttributeLocation))
             .ToArray();
