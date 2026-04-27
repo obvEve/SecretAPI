@@ -2,6 +2,8 @@
 
 internal static class GeneratedIdentifyUtils
 {
+    private static SyntaxToken CurrentVersion => Literal(typeof(GeneratedIdentifyUtils).Assembly.GetName().Version.ToString());
+    
     private static AttributeSyntax GetGeneratedCodeAttributeSyntax()
         => Attribute(IdentifierName("GeneratedCode"))
             .WithArgumentList(
@@ -9,9 +11,9 @@ internal static class GeneratedIdentifyUtils
                     SeparatedList<AttributeArgumentSyntax>(
                         new SyntaxNodeOrToken[]
                         {
-                            AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("SecretAPI.CodeGeneration"))),
+                            AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("SecretAPI.SourceGenerators"))),
                             Token(SyntaxKind.CommaToken),
-                            AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("1.0.0"))),
+                            AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, CurrentVersion)),
                         })));
 
     internal static AttributeListSyntax GetGeneratedCodeAttributeListSyntax()
