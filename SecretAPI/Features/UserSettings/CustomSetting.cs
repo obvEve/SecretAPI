@@ -295,8 +295,8 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
             }
 
             CustomSetting playerSpecific = EnsurePlayerSpecificSetting(player, setting);
-            setting.IsCurrentlyAccessible = true;
             playerSpecific.PersonalizeSetting();
+            setting.IsCurrentlyAccessible = true;
             playerSettings.Add(playerSpecific);
         }
 
