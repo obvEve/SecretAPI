@@ -300,20 +300,26 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
             playerSettings.Add(playerSpecific);
         }
 
-        List<ServerSpecificSettingBase> ordered = ListPool<ServerSpecificSettingBase>.Shared.Rent();
-        foreach (IGrouping<CustomHeader, CustomSetting> grouping in playerSettings.GroupBy(static setting => setting.Header))
+        if (playerSettings.Count != 0)
         {
-            ordered.Add(grouping.Key.Base);
-            ordered.AddRange(grouping.Select(static setting => setting.Base));
-        }
+            List<ServerSpecificSettingBase> ordered = ListPool<ServerSpecificSettingBase>.Shared.Rent();
+            foreach (IGrouping<CustomHeader, CustomSetting> grouping in playerSettings.GroupBy(static setting => setting.Header))
+            {
+                ordered.Add(grouping.Key.Base);
+                ordered.AddRange(grouping.Select(static setting => setting.Base));
+            }
 
-        if (ServerSpecificSettingsSync.DefinedSettings != null)
             ordered.AddRange(ServerSpecificSettingsSync.DefinedSettings);
 
-        ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, ordered.ToArray(), version);
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, ordered.ToArray(), version);
+            ListPool<ServerSpecificSettingBase>.Shared.Return(ordered);
+        }
+        else
+        {
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, ServerSpecificSettingsSync.DefinedSettings, version);
+        }
 
         ListPool<CustomSetting>.Shared.Return(playerSettings);
-        ListPool<ServerSpecificSettingBase>.Shared.Return(ordered);
     }
 
     /// <summary>

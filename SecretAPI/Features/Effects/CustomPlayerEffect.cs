@@ -36,7 +36,6 @@ public abstract class CustomPlayerEffect : StatusEffectBase
     [CallOnLoad]
     internal static void Initialize()
     {
-        SecretApi.Harmony.PatchCategory(nameof(CustomPlayerEffect), SecretApi.Assembly);
         EffectsToRegister.Add(typeof(Energized));
         EffectsToRegister.Add(typeof(Depleted));
 
