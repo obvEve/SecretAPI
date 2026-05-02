@@ -13,10 +13,10 @@ public static partial class AdminToyExtensions
         where T : AdminToy
     {
         /// <summary>
-        /// Modify the position of the <see cref="T"/>.
+        /// Modify the position of this <see cref="AdminToy"/>.
         /// </summary>
         /// <param name="pos">The position to change to.</param>
-        /// <returns>The modified <see cref="T"/>.</returns>
+        /// <returns>The modified <see cref="AdminToy"/>.</returns>
         public T WithPosition(Vector3 pos)
         {
             toy.Position = pos;
@@ -24,10 +24,10 @@ public static partial class AdminToyExtensions
         }
 
         /// <summary>
-        /// Modify the rotation of the <see cref="T"/>.
+        /// Modify the rotation of this <see cref="AdminToy"/>.
         /// </summary>
         /// <param name="rot">The rotation to change to.</param>
-        /// <returns>The modified <see cref="T"/>.</returns>
+        /// <returns>The modified <see cref="AdminToy"/>.</returns>
         public T WithRotation(Quaternion rot)
         {
             toy.Rotation = rot;
@@ -35,10 +35,10 @@ public static partial class AdminToyExtensions
         }
 
         /// <summary>
-        /// Modify the scale of the <see cref="T"/>.
+        /// Modify the scale of this <see cref="AdminToy"/>.
         /// </summary>
         /// <param name="scale">The scale to change to.</param>
-        /// <returns>The modified <see cref="T"/>.</returns>
+        /// <returns>The modified <see cref="AdminToy"/>.</returns>
         public T WithScale(Vector3 scale)
         {
             toy.Scale = scale;
