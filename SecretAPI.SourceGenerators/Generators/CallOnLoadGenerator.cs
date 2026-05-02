@@ -2,12 +2,12 @@
 
 /// <summary>
 /// Code generator for CallOnLoad/CallOnUnload
+/// TODO: Implement IRegister source generation
 /// </summary>
 [Generator]
 public class CallOnLoadGenerator : IIncrementalGenerator
 {
-    private const string PluginNamespace = "LabApi.Loader.Features.Plugins";
-    private const string PluginBaseClassName = "Plugin";
+    private const string GeneratedClassName = "SecretApiGenerated";
     private const string CallOnLoadAttributeLocation = "SecretAPI.Attributes.CallOnLoadAttribute";
     private const string CallOnUnloadAttributeLocation = "SecretAPI.Attributes.CallOnUnloadAttribute";
 
@@ -27,19 +27,8 @@ public class CallOnLoadGenerator : IIncrementalGenerator
                     HasAttribute(method, CallOnLoadAttributeLocation),
                     HasAttribute(method, CallOnUnloadAttributeLocation)))
                 .Where(static m => m.Item2 || m.Item3);
-
-        IncrementalValuesProvider<(ClassDeclarationSyntax?, INamedTypeSymbol?)> pluginClassProvider =
-            context.SyntaxProvider.CreateSyntaxProvider(
-                    static (node, _) => node is ClassDeclarationSyntax,
-                    static (ctx, _) => (
-                            ctx.Node as ClassDeclarationSyntax, ctx.SemanticModel.GetDeclaredSymbol(ctx.Node) as INamedTypeSymbol))
-                .Where(static c => c.Item2 != null && !c.Item2.IsAbstract && c.Item2.BaseType?.Name == PluginBaseClassName &&
-                                   c.Item2.BaseType.ContainingNamespace.ToDisplayString() == PluginNamespace);
         
-        context.RegisterSourceOutput(pluginClassProvider.Combine(callProvider.Collect()), static (context, data) =>
-        {
-            Generate(context, new Tuple<ClassDeclarationSyntax?, INamedTypeSymbol?>(data.Left.Item1, data.Left.Item2), data.Right);
-        });
+        context.RegisterSourceOutput(callProvider.Collect(), Generate);
     }
     
     private static bool HasAttribute(IMethodSymbol? method, string attributeLocation)
@@ -101,22 +90,10 @@ public class CallOnLoadGenerator : IIncrementalGenerator
 
     private static void Generate(
         SourceProductionContext context,
-        Tuple<ClassDeclarationSyntax?, INamedTypeSymbol?> pluginInfo,
         ImmutableArray<(IMethodSymbol method, bool isLoad, bool isUnload)> methods)
     {
-        if (pluginInfo.Item1 == null || pluginInfo.Item2 == null || methods.IsEmpty)
+        if (methods.IsEmpty)
             return;
-
-        if (!pluginInfo.Item1.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
-        {
-            context.ReportDiagnostic(
-                Diagnostic.Create(
-                    Diagnostics.MustBePartialPluginClass,
-                    pluginInfo.Item1.GetLocation(),
-                    pluginInfo.Item1.Identifier.Text
-                )
-            );
-        }
 
         IMethodSymbol[] loadCalls = methods
             .Where(m => m.isLoad && ValidateMethod(context, m.method))
@@ -133,20 +110,21 @@ public class CallOnLoadGenerator : IIncrementalGenerator
         if (!loadCalls.Any() && !unloadCalls.Any())
             return;
 
-        ClassBuilder classBuilder = ClassBuilder.CreateBuilder(pluginInfo.Item2)
+        // ClassBuilder classBuilder = ClassBuilder.CreateBuilder(pluginInfo.Item2)
+        ClassBuilder classBuilder = ClassBuilder.CreateBuilder(ClassDeclaration(GeneratedClassName))
             .AddUsingStatements("System")
-            .AddModifiers(SyntaxKind.PartialKeyword);
+            .AddModifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword);
 
         classBuilder.StartMethodCreation("OnLoad", SyntaxKind.VoidKeyword)
-            .AddModifiers(SyntaxKind.PublicKeyword)
+            .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
             .AddStatements(MethodCallStatements(loadCalls))
             .FinishMethodBuild();
 
         classBuilder.StartMethodCreation("OnUnload", SyntaxKind.VoidKeyword)
-            .AddModifiers(SyntaxKind.PublicKeyword)
+            .AddModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
             .AddStatements(MethodCallStatements(unloadCalls))
             .FinishMethodBuild();
 
-        classBuilder.Build(context, $"{pluginInfo.Item2.Name}.g.cs");
+        classBuilder.Build(context, $"{GeneratedClassName}.g.cs");
     }
 }

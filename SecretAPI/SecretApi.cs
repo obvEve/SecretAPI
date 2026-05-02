@@ -48,7 +48,7 @@ public partial class SecretApi : Plugin
     /// <inheritdoc/>
     public override void Enable()
     {
-        OnLoad();
+        SecretApiGenerated.OnLoad();
     }
 
     /// <inheritdoc/>
