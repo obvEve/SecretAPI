@@ -35,20 +35,6 @@ public static partial class PickupExtensions
         }
     }
 
-    extension(Pickup pickup)
-    {
-        /// <summary>
-        /// Change this <see cref="Pickup"/> into a different pickup type, useful for the other extension methods that can be used.
-        /// </summary>
-        /// <typeparam name="T">The pickup type you want to change type to.</typeparam>
-        /// <returns>The changed pickup type.</returns>
-        public T As<T>()
-            where T : Pickup
-        {
-            return (T)pickup;
-        }
-    }
-
     /// <summary>
     /// Modifies the ammo in this <see cref="AmmoPickup"/>.
     /// </summary>
