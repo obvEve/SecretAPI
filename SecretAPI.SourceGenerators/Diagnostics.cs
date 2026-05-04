@@ -2,14 +2,6 @@
 
 internal static class Diagnostics
 {
-    internal static readonly DiagnosticDescriptor MustBePartialPluginClass = new(
-        "SG001",
-        "Plugin class must be partial",
-        "Plugin class '{0}' is missing partial modifier",
-        "Usage",
-        DiagnosticSeverity.Error,
-        true);
-
     internal static readonly DiagnosticDescriptor MustBeAccessibleMethod = new(
         "SG002",
         "Method must be accessible",
