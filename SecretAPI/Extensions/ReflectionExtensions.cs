@@ -12,6 +12,28 @@ using HarmonyLib;
 public static class ReflectionExtensions
 {
     /// <summary>
+    /// Casts an object into <typeparamref name="T"/>.
+    /// This will throw an exception if <paramref name="source"/> is not of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="source">The source object to cast from.</param>
+    /// <typeparam name="T">The new type to cast to.</typeparam>
+    /// <returns>The source after being cast to T.</returns>
+    public static T Cast<T>(this object source)
+        where T : class => (T)source;
+
+    /// <summary>
+    /// Casts an object of <typeparamref name="T1"/> to <typeparamref name="T2"/>.
+    /// This will require <typeparamref name="T2"/> to be derived from <typeparamref name="T1"/>.
+    /// </summary>
+    /// <param name="source">The source to cast from.</param>
+    /// <typeparam name="T1">The original type.</typeparam>
+    /// <typeparam name="T2">The type to cast to.</typeparam>
+    /// <returns>The source after being cast to <typeparamref name="T2"/>.</returns>
+    public static T2 CastTypeSafely<T1, T2>(this T1 source)
+        where T1 : class
+        where T2 : T1 => (T2)source;
+
+    /// <summary>
     /// Gets the long name of a function.
     /// </summary>
     /// <param name="type">The type containing the method.</param>
