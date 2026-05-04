@@ -13,5 +13,9 @@
 # Examples
 You can find examples inside the `SecretAPI.Examples` folder above, this contains some example settings, patches using categories and some more.
 
+# Source Generation
+- SecretAPI includes a SourceGenerator via the Nuget package ``SecretAPI.SourceGenerators``
+  - This will generate ``SecretApiGenerated.cs`` which can be used with ``CallOn(Un)LoadAttribute``
+
 # Support
 * For any issues create an [Issue](https://github.com/Misfiy/SecretAPI/issues/new) or contact me on [Discord](https://discord.gg/RYzahv3vfC).
