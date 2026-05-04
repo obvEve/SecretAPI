@@ -11,7 +11,7 @@ using SecretAPI.Attributes;
 /// <summary>
 /// Main class handling loading API.
 /// </summary>
-public partial class SecretApi : Plugin
+public class SecretApi : Plugin
 {
     /// <inheritdoc/>
     public override string Name => "SecretAPI";
