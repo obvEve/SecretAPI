@@ -11,6 +11,30 @@ using HarmonyLib;
 /// </summary>
 public static class ReflectionExtensions
 {
+    private static readonly Dictionary<(Type, MethodInfo), string> CachedLongFuncNames = new();
+
+    /// <summary>
+    /// Casts an object into <typeparamref name="T"/>.
+    /// This will throw an exception if <paramref name="source"/> is not of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="source">The source object to cast from.</param>
+    /// <typeparam name="T">The new type to cast to.</typeparam>
+    /// <returns>The source after being cast to T.</returns>
+    public static T Cast<T>(this object source)
+        where T : class => (T)source;
+
+    /// <summary>
+    /// Casts an object of <typeparamref name="T1"/> to <typeparamref name="T2"/>.
+    /// This will require <typeparamref name="T2"/> to be derived from <typeparamref name="T1"/>.
+    /// </summary>
+    /// <param name="source">The source to cast from.</param>
+    /// <typeparam name="T1">The original type.</typeparam>
+    /// <typeparam name="T2">The type to cast to.</typeparam>
+    /// <returns>The source after being cast to <typeparamref name="T2"/>.</returns>
+    public static T2 CastTypeSafely<T1, T2>(this T1 source)
+        where T1 : class
+        where T2 : T1 => (T2)source;
+
     /// <summary>
     /// Gets the long name of a function.
     /// </summary>
@@ -34,7 +58,12 @@ public static class ReflectionExtensions
     /// <returns>The long function name.</returns>
     public static string GetLongFuncName(Type type, MethodInfo method)
     {
-        return $"{method.ReturnType.FullName} {type.FullName}::{method.Name}({string.Join(",", method.GetParameters().Select(x => x.ParameterType.FullName))})";
+        if (CachedLongFuncNames.TryGetValue((type, method), out string? longFunc))
+            return longFunc;
+
+        longFunc = $"{method.ReturnType.FullName} {type.FullName}::{method.Name}({string.Join(",", method.GetParameters().Select(x => x.ParameterType.FullName))})";
+        CachedLongFuncNames.Add((type, method), longFunc);
+        return longFunc;
     }
 
     /// <summary>
