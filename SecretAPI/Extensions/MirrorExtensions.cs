@@ -17,9 +17,9 @@ using Logger = LabApi.Features.Console.Logger;
 public static class MirrorExtensions
 {
     private static readonly Dictionary<Type, Delegate> TypeToWriterCache = new();
-    private static readonly Dictionary<Type, ulong> SubWriteClassToMinULong = new()
+    private static readonly ExtraWriteInfo[] SubWriteInfos = new[]
     {
-        [typeof(AdminToyBase)] = 32,
+        new ExtraWriteInfo(typeof(AdminToyBase), 16UL /*Max written in AdminToyBase is 16*/, 1),
     };
 
     /// <summary>
@@ -106,19 +106,21 @@ public static class MirrorExtensions
             // Always write the dirty bit
             writer.WriteULong(dirtyBit);
 
-            ulong minDirtyBit = GetSubclassMinDirtyBit(behaviour.GetType());
+            ExtraWriteInfo info = GetExtraWriteInfo(behaviour.GetType());
             bool isWritten = false;
 
-            if (dirtyBit >= minDirtyBit)
+            // the current bit being written is higher than the max of the base, so we need to write extras before the value
+            if (dirtyBit > info.MaxDirtyBit)
             {
-                writer.WriteULong(dirtyBit);
+                WriteExtraDirtyBit(info, writer, dirtyBit);
                 isWritten = true;
             }
 
             writer.Write(value);
 
+            // bit is not higher than the max, and we must write more after the value is written
             if (!isWritten)
-                writer.WriteULong(dirtyBit);
+                WriteExtraDirtyBit(info, writer, dirtyBit);
         });
     }
 
@@ -137,7 +139,7 @@ public static class MirrorExtensions
 
         using NetworkWriterPooled pooledWriter = NetworkWriterPool.Get();
 
-        // write the compressed bitmask
+        // write the compressed bitmask of the behaviour index
         int index = behaviour.netIdentity.NetworkBehaviours.IndexOf(behaviour);
         ulong mask = (ulong)(1 << index);
         Compression.CompressVarUInt(pooledWriter, mask);
@@ -161,10 +163,7 @@ public static class MirrorExtensions
         {
             // dirty bit is always 0 in this case
             pooledWriter.WriteULong(0);
-
-            // write it again for subclass
-            if (GetSubclassMinDirtyBit(behaviour.GetType()) != ulong.MaxValue)
-                pooledWriter.WriteULong(0);
+            WriteExtraDirtyBit(GetExtraWriteInfo(behaviour.GetType()), pooledWriter);
         }
 
         // fill in length hash as the last byte of the 4 byte length
@@ -217,16 +216,24 @@ public static class MirrorExtensions
         dele.DynamicInvoke(writer, obj);
     }
 
-    private static ulong GetSubclassMinDirtyBit(Type type)
+    private static void WriteExtraDirtyBit(ExtraWriteInfo writeInfo, NetworkWriter writer, ulong dirtyBit = 0)
     {
-        // full credit to https://github.com/KadavasKingdom/LabApiExtensions/blob/main/LabApiExtensions/FakeExtension/FakeSyncVarExtension.cs#L17 for this
-        foreach (KeyValuePair<Type, ulong> kvp in SubWriteClassToMinULong)
+        if (!writeInfo.IsSet)
+            return;
+
+        for (int index = 0; index < writeInfo.ExtraWriteCount; ++index)
+            writer.WriteULong(dirtyBit);
+    }
+
+    private static ExtraWriteInfo GetExtraWriteInfo(Type type)
+    {
+        foreach (ExtraWriteInfo subWriteInfo in SubWriteInfos)
         {
-            if (type.IsSubclassOf(kvp.Key))
-                return kvp.Value;
+            if (type.IsSubclassOf(subWriteInfo.ClassType))
+                return subWriteInfo;
         }
 
-        return ulong.MaxValue;
+        return ExtraWriteInfo.None;
     }
 
     /// <summary>
@@ -250,5 +257,15 @@ public static class MirrorExtensions
         /// The value/item to use. Ignored when Operation is <see cref="SyncList{T}.Operation.OP_REMOVEAT"/> or <see cref="SyncList{T}.Operation.OP_CLEAR"/>.
         /// </summary>
         public T Item;
+    }
+
+    private readonly struct ExtraWriteInfo(Type classType, ulong dirtyBit, int writeCount)
+    {
+        public static readonly ExtraWriteInfo None = new(null!, 0, 0);
+
+        public readonly Type ClassType = classType;
+        public readonly ulong MaxDirtyBit = dirtyBit;
+        public readonly int ExtraWriteCount = writeCount;
+        public readonly bool IsSet = classType != null;
     }
 }
