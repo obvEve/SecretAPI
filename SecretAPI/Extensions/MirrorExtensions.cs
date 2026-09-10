@@ -233,7 +233,7 @@ public static class MirrorExtensions
                 return subWriteInfo;
         }
 
-        return ExtraWriteInfo.None;
+        return default;
     }
 
     /// <summary>
@@ -261,8 +261,6 @@ public static class MirrorExtensions
 
     private readonly struct ExtraWriteInfo(Type classType, ulong dirtyBit, int writeCount)
     {
-        public static readonly ExtraWriteInfo None = new(null!, 0, 0);
-
         public readonly Type ClassType = classType;
         public readonly ulong MaxDirtyBit = dirtyBit;
         public readonly int ExtraWriteCount = writeCount;
