@@ -16,7 +16,7 @@ public enum SettingResponseType
     Initial,
 
     /// <summary>
-    /// Indicates that this is an update, changing the value.
+    /// Indicates that this is an update, changing the value after initial response.
     /// </summary>
     Update,
 }

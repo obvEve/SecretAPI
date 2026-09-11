@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Patches.Features;
+﻿namespace SecretAPI.Patches.Features.Settings;
 
 using HarmonyLib;
 using SecretAPI.Attributes;

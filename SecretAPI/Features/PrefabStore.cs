@@ -2,16 +2,16 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using AdminToys;
 using Interactables.Interobjects;
 using Mirror;
-using NorthwoodLib.Pools;
 using UnityEngine;
 
 /// <summary>
 /// Handles the storing of a prefab.
 /// </summary>
 /// <typeparam name="TPrefab">The prefab to use.</typeparam>
-/// <remarks>For Doors use <see cref="PrefabManager"/>.</remarks>
+/// <remarks>For <see cref="BasicDoor"/> or <see cref="Scp079CameraToy"/> use <see cref="PrefabManager"/>.</remarks>
 public static class PrefabStore<TPrefab>
     where TPrefab : NetworkBehaviour
 {
@@ -43,18 +43,14 @@ public static class PrefabStore<TPrefab>
             if (field != null)
                 return field;
 
-            List<TPrefab> allPrefabs = ListPool<TPrefab>.Shared.Rent();
-
+            List<TPrefab> allPrefabs = new();
             foreach (GameObject gameObject in NetworkClient.prefabs.Values)
             {
                 if (gameObject.TryGetComponent(out TPrefab prefab))
                     allPrefabs.Add(prefab);
             }
 
-            field = allPrefabs.ToArray();
-            ListPool<TPrefab>.Shared.Return(allPrefabs);
-
-            return field;
+            return field = allPrefabs.ToArray();
         }
     }
 }

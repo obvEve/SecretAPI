@@ -403,7 +403,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     /// Checks if a player is able to view a setting.
     /// </summary>
     /// <param name="player">The player to check.</param>
-    /// <returns>A value indicating whether a player is able to view the setting.</returns>
+    /// <returns>A value indicating whether a player is able to view the setting. This is true by default.</returns>
     protected virtual bool CanView(Player player) => true;
 
     /// <summary>

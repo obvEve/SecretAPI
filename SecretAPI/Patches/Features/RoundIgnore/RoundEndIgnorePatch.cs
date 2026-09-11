@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Patches.Features;
+﻿namespace SecretAPI.Patches.Features.RoundIgnore;
 
 using System;
 using System.Collections.Generic;
