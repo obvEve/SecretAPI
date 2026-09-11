@@ -15,9 +15,7 @@ using Utils.Networking;
 /// </summary>
 public static class DecalHelpers
 {
-    private static bool hasData = false;
-    private static ItemType itemType = ItemType.None;
-    private static byte subcomponentIndex = 0;
+    private static AutoSyncData? autoSyncData;
 
     /// <summary>
     /// Creates an <see cref="AutosyncMessage"/> for spawning a decal that can be sent to players.
@@ -31,16 +29,16 @@ public static class DecalHelpers
         RelativePosition hitPoint = new(position);
         RelativePosition startRaycastPoint = new(startPosition);
 
-        (ItemType itemTypeId, byte moduleIndex) = GetItemData();
+        AutoSyncData data = GetAutoSyncData();
 
-        using NetworkWriterPooled? writer = NetworkWriterPool.Get();
-        writer.WriteByte(moduleIndex);
+        using NetworkWriterPooled writer = NetworkWriterPool.Get();
+        writer.WriteByte(data.SubcomponentIndex);
         writer.WriteSubheader(ImpactEffectsModule.RpcType.ImpactDecal);
         writer.WriteByte((byte)type);
         writer.WriteRelativePosition(hitPoint);
         writer.WriteRelativePosition(startRaycastPoint);
 
-        return new AutosyncMessage(writer, new ItemIdentifier(itemTypeId, 0));
+        return new AutosyncMessage(writer, new ItemIdentifier(data.ItemType, 0));
     }
 
     /// <summary>
@@ -88,24 +86,24 @@ public static class DecalHelpers
     public static void SpawnDecalFromDirection(Vector3 position, Quaternion direction, DecalPoolType type = DecalPoolType.Blood)
         => GetDecalMessage(position, position - (direction * Vector3.forward), type).SendToAuthenticated();
 
-    private static (ItemType ItemType, byte SubcomponentIndex) GetItemData()
+    private static AutoSyncData GetAutoSyncData()
     {
-        if (hasData)
-            return (itemType, subcomponentIndex);
+        if (autoSyncData != null)
+            return autoSyncData;
 
-        foreach (ModularAutosyncItem? autoItem in ModularAutosyncItem.AllTemplates)
+        foreach (ModularAutosyncItem autoItem in ModularAutosyncItem.AllTemplates)
         {
             for (byte b = 0; b < autoItem.AllSubcomponents.Length; b++)
             {
                 if (autoItem.AllSubcomponents[b] is not ImpactEffectsModule)
                     continue;
-                subcomponentIndex = b;
-                itemType = autoItem.ItemTypeId;
-                hasData = true;
-                return (itemType, subcomponentIndex);
+
+                return autoSyncData = new AutoSyncData(autoItem.ItemTypeId, b);
             }
         }
 
         throw new InvalidOperationException("Couldn't find the `InventorySystem.Items.Firearms.Modules.ImpactEffectsModule` in the any ModularAutosyncItem!");
     }
+
+    private sealed record AutoSyncData(ItemType ItemType, byte SubcomponentIndex);
 }

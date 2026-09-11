@@ -4,7 +4,7 @@ using CustomPlayerEffects;
 using UnityEngine;
 
 /// <summary>
-/// Custom Effect for <see cref="TickingEffectBase"/>.
+/// Custom version of <see cref="TickingEffectBase"/> for <see cref="CustomPlayerEffect"/>.
 /// </summary>
 public abstract class CustomTickingPlayerEffect : CustomPlayerEffect
 {
