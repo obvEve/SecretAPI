@@ -58,9 +58,8 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     public ServerSpecificSettingBase Base { get; }
 
     /// <summary>
-    /// Gets the known owner.
+    /// Gets the known owner or <see langword="null"/> on the initial object.
     /// </summary>
-    /// <remarks>This is null on the original object.</remarks>
     public Player? KnownOwner { get; private set; }
 
     /// <summary>
@@ -75,7 +74,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     public SettingResponseType LastUpdateType { get; private set; } = SettingResponseType.None;
 
     /// <summary>
-    /// Gets  a value indicating whether the current value received is different to that prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
+    /// Gets a value indicating whether the current value received is different to that prior to the most recent <see cref="CustomSetting.HandleSettingUpdate"/> call.
     /// </summary>
     public virtual bool HasValueChanged { get; } = false;
 
@@ -154,10 +153,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
         set => CollectionId = value ? byte.MinValue : byte.MaxValue;
     }
 
-    /// <summary>
-    /// Registers a collection of settings.
-    /// </summary>
-    /// <param name="settings">The settings to register.</param>
+    /// <inheritdoc cref="Register(IEnumerable{CustomSetting})"/>
     public static void Register(params CustomSetting[] settings) => Register((IEnumerable<CustomSetting>)settings);
 
     /// <summary>
@@ -173,17 +169,23 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
         }
     }
 
-    /// <summary>
-    /// Unregisters collection of settings.
-    /// </summary>
-    /// <param name="settings">The settings to unregister.</param>
-    public static void UnRegister(params CustomSetting[] settings) => CustomSettings.RemoveAll(settings.Contains);
+    /// <inheritdoc cref="UnRegister(IEnumerable{CustomSetting})"/>
+    public static void UnRegister(params CustomSetting[] settings) => UnRegister((IEnumerable<CustomSetting>)settings);
 
     /// <summary>
     /// Unregisters a collection of settings.
     /// </summary>
     /// <param name="settings">The settings to unregister.</param>
     public static void UnRegister(IEnumerable<CustomSetting> settings) => CustomSettings.RemoveAll(settings.Contains);
+
+    /// <inheritdoc cref="UnRegister(IEnumerable{Type})"/>
+    public static void UnRegister(params Type[] types) => UnRegister((IEnumerable<Type>)types);
+
+    /// <summary>
+    /// Unregisters a collection of setting based on their <see cref="Type"/>.
+    /// </summary>
+    /// <param name="types">A collection of setting types to unregister. This should be the exact type, not the base.</param>
+    public static void UnRegister(IEnumerable<Type> types) => CustomSettings.RemoveAll(s => types.Any(t => s.GetType() == t));
 
     /// <summary>
     /// Tries to get player specific setting.
