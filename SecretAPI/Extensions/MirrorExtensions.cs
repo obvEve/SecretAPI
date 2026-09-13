@@ -64,7 +64,10 @@ public static class MirrorExtensions
     public static void SendFakeSyncListData<T>(this Player target, NetworkBehaviour behaviour, ulong listIndex, SyncListChange<T> change)
     {
         if (listIndex <= 0)
+        {
             Logger.Warn($"[MirrorExtensions.SendFakeSyncListData] Index is {listIndex} - Expected 1 or higher!: + {new StackTrace()}");
+            return; // avoid client kick
+        }
 
         SendFakeState(target, behaviour, writer =>
         {

@@ -18,7 +18,6 @@ using Logger = LabApi.Features.Console.Logger;
 /// <summary>
 /// Debugs base-game prefabs by logging information about them.
 /// </summary>
-// ? Possibly write to file instead of server console?
 internal static class PrefabDebugger
 {
     /// <summary>
