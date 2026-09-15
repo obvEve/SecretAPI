@@ -7,6 +7,7 @@ using TMPro;
 /// <summary>
 /// Wrapper for <see cref="SSPlaintextSetting" />.
 /// </summary>
+// TODO: Make LastInputText nullable for 4.0
 public abstract class CustomPlainTextSetting : CustomSetting, ISetting<SSPlaintextSetting>
 {
     /// <summary>
@@ -108,7 +109,8 @@ public abstract class CustomPlainTextSetting : CustomSetting, ISetting<SSPlainte
     protected override void HandleBeforeSettingUpdate()
     {
         base.HandleBeforeSettingUpdate();
-        LastInputText = InputText;
+        if (LastUpdateType != SettingResponseType.Initial)
+            LastInputText = InputText;
     }
 
     /// <summary>

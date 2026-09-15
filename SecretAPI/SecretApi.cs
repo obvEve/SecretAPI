@@ -49,7 +49,7 @@ public class SecretApi : Plugin
     /// <summary>
     /// Gets the config directory within "SCP Secret Laboratory/LabAPI/configs/SecretAPI" for internal use.
     /// </summary>
-    internal static DirectoryInfo ConfigDirectory => PathManager.Configs.CreateSubdirectory("SecretAPI");
+    internal static DirectoryInfo ConfigDirectory => field ??= PathManager.Configs.CreateSubdirectory("SecretAPI");
 
     /// <inheritdoc/>
     public override void Enable()

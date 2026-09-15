@@ -10,10 +10,10 @@ using PlayerStatsSystem;
 public class BlastResistance : CustomPlayerEffect, IDamageModifierEffect
 {
     /// <inheritdoc />
-    public bool DamageModifierActive => IsEnabled;
+    public override byte MaxIntensity => 200;
 
     /// <inheritdoc />
-    public override byte MaxIntensity => 200;
+    public bool DamageModifierActive => IsEnabled;
 
     /// <inheritdoc />
     public float GetDamageModifier(float baseDamage, DamageHandlerBase handler, HitboxType hitboxType)
