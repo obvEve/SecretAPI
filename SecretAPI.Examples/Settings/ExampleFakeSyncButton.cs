@@ -1,5 +1,6 @@
 ﻿namespace SecretAPI.Examples.Settings;
 
+using System.Collections.Generic;
 using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
@@ -20,6 +21,16 @@ public class ExampleFakeSyncButton : CustomButtonSetting
     {
     }
 
+    /// <summary>
+    /// Gets a dictionary of <see cref="ReferenceHub"/> to theirfake synced ammos.
+    /// </summary>
+    public static Dictionary<ReferenceHub, ushort> FakeSyncs { get; } = new();
+
+    /// <summary>
+    /// Gets the <see cref="ItemType"/> who's ammo is being fake synced.
+    /// </summary>
+    public static ItemType AmmoFakeSync => ItemType.Ammo9x19;
+
     /// <inheritdoc />
     public override CustomHeader Header => CustomHeader.Examples;
 
@@ -34,6 +45,20 @@ public class ExampleFakeSyncButton : CustomButtonSetting
     {
         if (KnownOwner == null)
             return;
+
+        // fake syncing ammo limits
+        // you must patch the values on server-side too, refer to ExampleAmmoPatch.cs
+        FakeSyncs[KnownOwner.ReferenceHub] = ushort.MinValue;
+        KnownOwner.SendFakeSyncListData<ServerConfigSynchronizer.AmmoLimit>(ServerConfigSynchronizer.Singleton, 2, new()
+        {
+            Operation = SyncList<ServerConfigSynchronizer.AmmoLimit>.Operation.OP_SET,
+            Index = ServerConfigSynchronizer.Singleton.AmmoLimitsSync.FindIndex(limit => limit.AmmoType == AmmoFakeSync),
+            Item = new ServerConfigSynchronizer.AmmoLimit()
+            {
+                AmmoType = AmmoFakeSync,
+                Limit = ushort.MinValue,
+            },
+        });
 
         TextToy textToy = TextToy.Create(KnownOwner.Position, KnownOwner.Rotation);
         textToy.TextFormat = "{0}";
