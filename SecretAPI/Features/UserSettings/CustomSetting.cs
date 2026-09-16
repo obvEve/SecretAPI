@@ -12,7 +12,6 @@ using LabApi.Features.Enums;
 using LabApi.Features.Wrappers;
 using Mirror;
 using NorthwoodLib.Pools;
-using SecretAPI.Extensions;
 
 /// <summary>
 /// Wraps <see cref="ServerSpecificSettingBase"/>.
@@ -23,7 +22,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
 
     static CustomSetting()
     {
-        SecretApi.Harmony.PatchCategory(nameof(CustomSetting), SecretApi.Assembly);
+        SecretApi.Harmony.PatchCategory(SecretApi.Assembly, nameof(CustomSetting));
 
         ServerSpecificSettingsSync.SendOnJoinFilter = null;
         ServerSpecificSettingsSync.DefinedSettings ??= []; // fix null ref
