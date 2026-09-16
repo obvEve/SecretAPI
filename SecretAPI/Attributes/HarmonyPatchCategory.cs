@@ -1,4 +1,4 @@
-﻿namespace SecretAPI.Attributes;
+﻿/*namespace SecretAPI.Attributes;
 
 using System;
 using SecretAPI.Extensions;
@@ -22,4 +22,4 @@ public class HarmonyPatchCategory : Attribute
     /// Gets the patch category.
     /// </summary>
     public string Category { get; }
-}
+}*/

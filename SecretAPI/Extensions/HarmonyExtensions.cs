@@ -21,32 +21,36 @@ public static class HarmonyExtensions
         /// </summary>
         /// <param name="category">The category to patch.</param>
         /// <param name="assembly">The assembly to find patches in.</param>
+        [Obsolete("Use Harmony::PatchCategory(Assembly, string)")]
         public void PatchCategory(string category, Assembly? assembly = null)
         {
             assembly ??= Assembly.GetCallingAssembly();
+            harmony.PatchCategory(assembly, category);
 
-            assembly.GetTypes().Where(type =>
+            /*assembly.GetTypes().Where(type =>
                 {
                     IEnumerable<HarmonyPatchCategory> categories = type.GetCustomAttributes<HarmonyPatchCategory>();
-                    return categories.Any(c => c.Category == category);
+                    return categories.Any(c => c.info.category == category);
                 })
-                .Do(type => SafePatch(harmony, type));
+                .Do(type => SafePatch(harmony, type));*/
         }
 
         /// <summary>
         /// Patches all patches that don't have a <see cref="HarmonyPatchCategory"/>.
         /// </summary>
         /// <param name="assembly">The assembly to look for patches.</param>
+        [Obsolete("Use Harmony::PatchAllUncategorized(Assembly)")]
         public void PatchAllNoCategory(Assembly? assembly = null)
         {
             assembly ??= Assembly.GetCallingAssembly();
+            harmony.PatchAllUncategorized(assembly);
 
-            assembly.GetTypes().Where(type =>
+            /*assembly.GetTypes().Where(type =>
                 {
                     IEnumerable<HarmonyPatchCategory> categories = type.GetCustomAttributes<HarmonyPatchCategory>();
                     return !categories.Any();
                 })
-                .Do(type => SafePatch(harmony, type));
+                .Do(type => SafePatch(harmony, type));*/
         }
 
         /// <summary>
@@ -61,7 +65,7 @@ public static class HarmonyExtensions
             }
             catch (Exception ex)
             {
-                Logger.Error($"[HarmonyExtensions] failed to safely patch {harmony.Id} ({type.FullName}): {ex}");
+                Logger.Error($"[HarmonyExtensions] Failed to safely patch {harmony.Id} ({type.FullName}): {ex}");
             }
         }
     }
