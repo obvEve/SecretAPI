@@ -1,4 +1,11 @@
-﻿namespace SecretAPI.Examples;
+﻿/*
+    Temp until 4.0
+*/
+#pragma warning disable SA1200
+global using HarmonyPatchCategoryAttribute = HarmonyLib.HarmonyPatchCategory;
+#pragma warning restore SA1200
+
+namespace SecretAPI.Examples;
 
 using System;
 using System.Reflection;

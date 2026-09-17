@@ -1,4 +1,4 @@
-﻿/*namespace SecretAPI.Attributes;
+﻿namespace SecretAPI.Attributes;
 
 using System;
 using SecretAPI.Extensions;
@@ -7,13 +7,15 @@ using SecretAPI.Extensions;
 /// Category handling for <see cref="HarmonyExtensions"/>.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public class HarmonyPatchCategory : Attribute
+[Obsolete("Please use HarmonyLib.HarmonyPatchCategoryAttribute - This will be removed in 4.0")]
+public class HarmonyPatchCategory : HarmonyLib.HarmonyPatchCategory
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="HarmonyPatchCategory"/> class.
     /// </summary>
     /// <param name="category">The category of the patch.</param>
     public HarmonyPatchCategory(string category)
+        : base(category)
     {
         Category = category;
     }
@@ -22,4 +24,4 @@ public class HarmonyPatchCategory : Attribute
     /// Gets the patch category.
     /// </summary>
     public string Category { get; }
-}*/
+}
