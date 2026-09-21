@@ -1,7 +1,7 @@
 ﻿namespace SecretAPI.Features;
 
 /// <summary>
-/// Handles IPriority.
+/// Handles priority on certain things.
 /// </summary>
 public interface IPriority
 {
