@@ -55,6 +55,12 @@ public abstract class CustomPlayerEffect : StatusEffectBase
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
+        if (EffectsToRegister.Contains(type))
+        {
+            Logger.Error("[CustomPlayerEffect.Register] {type} is already registered!");
+            return;
+        }
+
         EffectsToRegister.Add(type);
     }
 
