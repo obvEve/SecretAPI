@@ -19,4 +19,9 @@
         <WriteLinesToFile File="$(Props)" Lines="$(Template)" Condition="!Exists($(Props))" />
         <Error Text="The ReferencePath property is not specified! Make sure to set the property in the ReferencePath.props.user file." />
     </Target>
+    
+    <!-- Output dlls into Build folder -->
+    <Target Name="CopyDll" AfterTargets="Build">
+        <Copy SourceFiles="$(OutDir)$(TargetFileName)" DestinationFolder="$(SolutionDir)/.builds" />
+    </Target>
 </Project>
