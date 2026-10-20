@@ -1,4 +1,11 @@
-﻿namespace SecretAPI;
+﻿/*
+    Temp until 4.0
+*/
+#pragma warning disable SA1200 // Using directive should appear within a namespace declaration
+global using HarmonyPatchCategoryAttribute = HarmonyLib.HarmonyPatchCategory;
+#pragma warning restore SA1200
+
+namespace SecretAPI;
 
 using System;
 using System.IO;

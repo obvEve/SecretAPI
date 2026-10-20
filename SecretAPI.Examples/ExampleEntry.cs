@@ -1,11 +1,18 @@
-﻿namespace SecretAPI.Examples;
+﻿/*
+    Temp until 4.0
+*/
+#pragma warning disable SA1200
+global using HarmonyPatchCategoryAttribute = HarmonyLib.HarmonyPatchCategory;
+#pragma warning restore SA1200
+
+namespace SecretAPI.Examples;
 
 using System;
+using System.Reflection;
 using HarmonyLib;
 using LabApi.Features.Console;
 using LabApi.Loader.Features.Plugins;
 using SecretAPI.Examples.Settings;
-using SecretAPI.Extensions;
 using SecretAPI.Features.UserSettings;
 using UserSettings.ServerSpecific;
 
@@ -31,11 +38,16 @@ public class ExampleEntry : Plugin
     /// <inheritdoc/>
     public override Version RequiredApiVersion { get; } = new(LabApi.Features.LabApiProperties.CompiledVersion);
 
+    /// <summary>
+    /// Gets the <see cref="Assembly"/> of SecretAPI.Examples.
+    /// </summary>
+    internal Assembly Assembly { get; } = typeof(ExampleEntry).Assembly;
+
     /// <inheritdoc/>
     public override void Enable()
     {
         CustomSetting.Register(new ExampleKeybindSetting(), new ExampleDropdownSetting(), new ExampleButtonSetting(), new ExampleFakeSyncButton());
-        harmony.PatchCategory(nameof(ExampleFakeSyncButton));
+        harmony.PatchCategory(Assembly, nameof(ExampleFakeSyncButton));
     }
 
     /// <inheritdoc/>
