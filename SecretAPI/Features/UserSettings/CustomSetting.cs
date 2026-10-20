@@ -163,7 +163,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     {
         foreach (CustomSetting setting in settings)
         {
-            if (ValidateSettingInternal(setting, null))
+            if (ValidateSettingInternal(setting, null, null))
                 CustomSettings.Add(setting);
         }
     }
@@ -345,9 +345,12 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
     /// </summary>
     /// <param name="setting">The <see cref="CustomSetting"/> to validate.</param>
     /// <param name="settingBase">The <see cref="ServerSpecificSettingBase"/> to validate.</param>
+    /// <param name="definedSettings">The current <see cref="ServerSpecificSettingsSync.DefinedSettings"/>.</param>
     /// <returns>Whether the setting is validated and considered fine.</returns>
-    internal static bool ValidateSettingInternal(CustomSetting? setting, ServerSpecificSettingBase? settingBase)
+    internal static bool ValidateSettingInternal(CustomSetting? setting, ServerSpecificSettingBase? settingBase, ServerSpecificSettingBase[]? definedSettings)
     {
+        definedSettings ??= ServerSpecificSettingsSync.DefinedSettings;
+
         if (settingBase == null && setting == null)
         {
             Logger.Error("[CustomSetting.TryValidateSetting] Failed to validate null setting! " + new StackTrace(1));
@@ -361,7 +364,7 @@ public abstract class CustomSetting : ISetting<ServerSpecificSettingBase>
         string validateSettingName = setting?.GetType().FullName ?? settingBase?.Label ?? "[Unknown]";
         int? id = setting?.Id ?? settingBase?.SettingId;
 
-        string? sharedIdInfo = CustomSettings.FirstOrDefault(s => s.Id == id)?.GetType().FullName ?? ServerSpecificSettingsSync.DefinedSettings.FirstOrDefault(s => s.SettingId == id && s is not SSGroupHeader)?.Label;
+        string? sharedIdInfo = CustomSettings.FirstOrDefault(s => s.Id == id && setting != s)?.GetType().FullName ?? definedSettings.FirstOrDefault(s => s.SettingId == id && s != settingBase && s is not SSGroupHeader)?.Label;
         if (sharedIdInfo != null)
         {
             Logger.Error($"[CustomSetting.TryValidateSetting] {validateSettingName} is being registered with a duplicate ID ({id}) shared by {sharedIdInfo} {new StackTrace(1)}");
