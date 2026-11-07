@@ -1,4 +1,11 @@
-﻿namespace SecretAPI;
+﻿/*
+    Temp until 4.0
+*/
+#pragma warning disable SA1200 // Using directive should appear within a namespace declaration
+global using HarmonyPatchCategoryAttribute = HarmonyLib.HarmonyPatchCategory;
+#pragma warning restore SA1200
+
+namespace SecretAPI;
 
 using System;
 using System.IO;
@@ -8,11 +15,12 @@ using LabApi.Features;
 using LabApi.Loader.Features.Paths;
 using LabApi.Loader.Features.Plugins;
 using LabApi.Loader.Features.Plugins.Enums;
+using SecretAPI.Patches.Features;
 
 /// <summary>
 /// Main class handling loading API.
 /// </summary>
-public class SecretApi : Plugin
+public class SecretApi : Plugin<Config>
 {
     /// <inheritdoc/>
     public override string Name => "SecretAPI";
@@ -54,6 +62,9 @@ public class SecretApi : Plugin
     /// <inheritdoc/>
     public override void Enable()
     {
+        if (Config.LogHarmonyReplaceThrow)
+            Harmony.CreateClassProcessor(typeof(HarmonyLogger)).Patch();
+
         SecretApiGenerated.OnLoad();
     }
 
