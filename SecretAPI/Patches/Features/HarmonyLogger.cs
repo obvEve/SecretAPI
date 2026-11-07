@@ -7,7 +7,7 @@ using HarmonyLib;
 using LabApi.Features.Console;
 
 /// <summary>
-/// Changes <see cref="PatchClassProcessor.ReportException"/> to log instead of throwing the exception.
+/// Changes <see cref="PatchClassProcessor"/>'s ReportException to log instead of throwing the exception.
 /// </summary>
 [HarmonyPatch(typeof(PatchClassProcessor), "ReportException")]
 internal static class HarmonyLogger
