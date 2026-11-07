@@ -57,6 +57,7 @@ public static class HarmonyExtensions
         /// Attempts to safely patch a <see cref="Type"/>, logging any errors.
         /// </summary>
         /// <param name="type">The <see cref="Type"/> to attempt to patch.</param>
+        [Obsolete]
         public void SafePatch(Type type)
         {
             try
