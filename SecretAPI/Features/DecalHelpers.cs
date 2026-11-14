@@ -101,7 +101,7 @@ public static class DecalHelpers
     /// <param name="player">The player to clean up decals for.</param>
     /// <param name="decalType">The <see cref="DecalPoolType"/> to cleanup.</param>
     /// <param name="amount">The amount of that decal to cleanup.</param>
-    public static void CleanUpDecals(this Player player, DecalPoolType decalType, int amount = int.MaxValue) => new DecalCleanupMessage(decalType, amount).SendToHubsConditionally(hub => hub == player.ReferenceHub);
+    public static void CleanupDecals(this Player player, DecalPoolType decalType, int amount = int.MaxValue) => new DecalCleanupMessage(decalType, amount).SendToHubsConditionally(hub => hub == player.ReferenceHub);
 
     private static AutoSyncData GetAutoSyncData()
     {
