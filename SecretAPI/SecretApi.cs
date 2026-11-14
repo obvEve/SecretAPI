@@ -1,11 +1,4 @@
-﻿/*
-    Temp until 4.0
-*/
-#pragma warning disable SA1200 // Using directive should appear within a namespace declaration
-global using HarmonyPatchCategoryAttribute = HarmonyLib.HarmonyPatchCategory;
-#pragma warning restore SA1200
-
-namespace SecretAPI;
+﻿namespace SecretAPI;
 
 using System;
 using System.IO;
@@ -16,12 +9,23 @@ using LabApi.Loader.Features.Paths;
 using LabApi.Loader.Features.Plugins;
 using LabApi.Loader.Features.Plugins.Enums;
 using SecretAPI.Patches.Features;
+using SecretAPI.Patches.Features.Settings;
 
 /// <summary>
 /// Main class handling loading API.
 /// </summary>
 public class SecretApi : Plugin<Config>
 {
+    /// <summary>
+    /// Whether conditional harmony patches should be forced. This is to simply things such as <see cref="ReportDefinedSettingPatch"/> and <see cref="HarmonyLogger"/>.
+    /// </summary>
+    internal const bool ForceHarmonyConditionTrue =
+#if DEBUG
+        true;
+#else
+        false;
+#endif
+
     /// <inheritdoc/>
     public override string Name => "SecretAPI";
 
@@ -55,6 +59,12 @@ public class SecretApi : Plugin<Config>
     internal static Assembly Assembly { get; } = typeof(SecretApi).Assembly;
 
     /// <summary>
+    /// Gets the current <see cref="Config"/> loaded.
+    /// </summary>
+    /// <remarks>This is null before <see cref="Enable"/> is called.</remarks>
+    internal static new Config Config { get; private set; } = null!;
+
+    /// <summary>
     /// Gets the config directory within "SCP Secret Laboratory/LabAPI/configs/SecretAPI" for internal use.
     /// </summary>
     internal static DirectoryInfo ConfigDirectory => field ??= PathManager.Configs.CreateSubdirectory("SecretAPI");
@@ -62,8 +72,8 @@ public class SecretApi : Plugin<Config>
     /// <inheritdoc/>
     public override void Enable()
     {
-        if (Config.LogHarmonyReplaceThrow)
-            Harmony.CreateClassProcessor(typeof(HarmonyLogger)).Patch();
+        Config = base.Config;
+        Harmony.PatchCategory(nameof(SecretAPI));
 
         SecretApiGenerated.OnLoad();
     }
