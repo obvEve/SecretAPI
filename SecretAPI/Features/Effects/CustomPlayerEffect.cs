@@ -74,9 +74,9 @@ public abstract class CustomPlayerEffect : StatusEffectBase
     [CallOnLoad]
     internal static void Initialize()
     {
-        EffectsToRegister.Add(typeof(Energized));
-        EffectsToRegister.Add(typeof(Depleted));
-        EffectsToRegister.Add(typeof(BlastResistance));
+        Register<Energized>();
+        Register<Depleted>();
+        Register<BlastResistance>();
 
         // it would probably be better to patch PlayerEffectsController::Awake instead of using sceneLoaded
         // this would also allow registering after players join

@@ -12,14 +12,12 @@ using UserSettings.ServerSpecific;
 [HarmonyPatch(typeof(ServerSpecificSettingsSync), nameof(ServerSpecificSettingsSync.ServerPrevalidateClientResponse))]
 internal static class SettingsSyncValidateFix
 {
-#pragma warning disable SA1313 // Parameter '__result' should begin with lower-case letter
-    private static void Postfix(SSSClientResponse msg, ref bool __result)
-#pragma warning restore SA1313
+    private static void Postfix(SSSClientResponse msg, [HarmonyArgument("__result")] ref bool result)
     {
         // prevent overriding already validated settings
-        if (__result)
+        if (result)
             return;
 
-        __result = CustomSetting.Get(msg.SettingType, msg.Id) != null;
+        result = CustomSetting.Get(msg.SettingType, msg.Id) != null;
     }
 }

@@ -21,7 +21,13 @@ jobs:
 
       - name: Build
         run: dotnet build -c Release --output ${{ env.BUILD_OUTPUT }}
+      
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: obvEve
 
       - name: Push NuGet package
         working-directory: ${{ env.BUILD_OUTPUT }}
-        run: dotnet nuget push SecretAPI.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push SecretAPI.*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

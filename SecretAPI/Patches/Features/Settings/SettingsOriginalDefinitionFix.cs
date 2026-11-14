@@ -12,14 +12,12 @@ using UserSettings.ServerSpecific;
 [HarmonyPatch(typeof(ServerSpecificSettingBase), nameof(ServerSpecificSettingBase.OriginalDefinition), MethodType.Getter)]
 internal static class SettingsOriginalDefinitionFix
 {
-#pragma warning disable SA1313 // Parameter '__result' should begin with lower-case letter
-    private static void Postfix(ServerSpecificSettingBase __instance, ref ServerSpecificSettingBase __result)
-#pragma warning restore SA1313
+    private static void Postfix([HarmonyArgument("__instance")] ServerSpecificSettingBase instance, [HarmonyArgument("__result")] ref ServerSpecificSettingBase result)
     {
         // Prevent handling non SecretAPI settings.
-        if (__result != null)
+        if (result != null)
             return;
 
-        __result = CustomSetting.Get(__instance.GetType(), __instance.SettingId)?.Base ?? null!;
+        result = CustomSetting.Get(instance.GetType(), instance.SettingId)?.Base ?? null!;
     }
 }

@@ -8,7 +8,7 @@ using SecretAPI.Features.UserSettings;
 using UserSettings.ServerSpecific;
 
 /// <summary>
-/// Logs issues with <see cref="ServerSpecificSettingsSync.DefinedSettings"/>.
+/// Logs issues with <see cref="ServerSpecificSettingsSync.DefinedSettings"/> and prevents them being registered.
 /// </summary>
 [HarmonyPatchCategory(nameof(CustomSetting))]
 [HarmonyPatch(typeof(ServerSpecificSettingsSync), nameof(ServerSpecificSettingsSync.DefinedSettings), MethodType.Setter)]

@@ -57,6 +57,11 @@ public abstract class CustomButtonSetting : CustomSetting, ISetting<SSButton>
     public bool EverPressed => LastPressWatch.IsRunning;
 
     /// <summary>
+    /// Gets the amount of times the button has been pressed.
+    /// </summary>
+    public uint TimesPressed { get; private set; }
+
+    /// <summary>
     /// Gets or sets the text of the button.
     /// </summary>
     public string Text
@@ -80,6 +85,13 @@ public abstract class CustomButtonSetting : CustomSetting, ISetting<SSButton>
             Base.HoldTimeSeconds = value;
             SendButtonUpdate();
         }
+    }
+
+    /// <inheritdoc/>
+    protected override void HandleBeforeSettingUpdate()
+    {
+        base.HandleBeforeSettingUpdate();
+        TimesPressed++;
     }
 
     /// <summary>

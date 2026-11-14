@@ -2,11 +2,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 /// <summary>
 /// Interface used to define a type that should auto register.
 /// </summary>
+/// <remarks>This supports <see cref="IPriority"/>, will default to 0 if not implemented.</remarks>
 // TODO: Source generate this
 public interface IRegister
 {
@@ -25,7 +27,7 @@ public interface IRegister
     /// </summary>
     public void TryUnregister()
     {
-        // default empty to prevent breaking change
+        // default to empty
     }
 
     /// <summary>
@@ -38,6 +40,7 @@ public interface IRegister
 
         registerables.TryAdd(assembly, new());
 
+        List<IRegister> registers = new();
         foreach (Type type in assembly.GetTypes())
         {
             if (type.IsAbstract || type.IsInterface)
@@ -46,10 +49,14 @@ public interface IRegister
             if (!typeof(IRegister).IsAssignableFrom(type))
                 continue;
 
-            object obj = Activator.CreateInstance(type);
-            if (obj is not IRegister register)
+            if (Activator.CreateInstance(type) is not IRegister register)
                 continue;
 
+            registers.Add(register);
+        }
+
+        foreach (IRegister register in registers.OrderBy(x => x is IPriority priority ? priority.Priority : 0))
+        {
             registerables[assembly].Add(register);
             register.TryRegister();
         }

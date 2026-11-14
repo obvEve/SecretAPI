@@ -1,10 +1,12 @@
 namespace SecretAPI.Features;
 
 using System;
+using CommandSystem.Commands.RemoteAdmin.Cleanup;
 using Decals;
 using InventorySystem.Items;
 using InventorySystem.Items.Autosync;
 using InventorySystem.Items.Firearms.Modules;
+using LabApi.Features.Wrappers;
 using Mirror;
 using RelativePositioning;
 using UnityEngine;
@@ -85,6 +87,21 @@ public static class DecalHelpers
     /// <param name="type">The type of decal to spawn.</param>
     public static void SpawnDecalFromDirection(Vector3 position, Quaternion direction, DecalPoolType type = DecalPoolType.Blood)
         => GetDecalMessage(position, position - (direction * Vector3.forward), type).SendToAuthenticated();
+
+    /// <summary>
+    /// Cleans up decals for all players.
+    /// </summary>
+    /// <param name="decalType">The <see cref="DecalPoolType"/> to cleanup.</param>
+    /// <param name="amount">The amount of that decal to cleanup.</param>
+    public static void CleanupDecals(DecalPoolType decalType, int amount = int.MaxValue) => new DecalCleanupMessage(decalType, amount).SendToAuthenticated();
+
+    /// <summary>
+    /// Cleans up decals for a specific player.
+    /// </summary>
+    /// <param name="player">The player to clean up decals for.</param>
+    /// <param name="decalType">The <see cref="DecalPoolType"/> to cleanup.</param>
+    /// <param name="amount">The amount of that decal to cleanup.</param>
+    public static void CleanUpDecals(this Player player, DecalPoolType decalType, int amount = int.MaxValue) => new DecalCleanupMessage(decalType, amount).SendToHubsConditionally(hub => hub == player.ReferenceHub);
 
     private static AutoSyncData GetAutoSyncData()
     {

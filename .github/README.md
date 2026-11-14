@@ -1,14 +1,26 @@
 # SecretAPI ![Downloads](https://img.shields.io/github/downloads/Misfiy/SecretAPI/total)
 * SecretAPI is a plugin that extends [LabAPI](https://github.com/northwood-studios/LabAPI) by providing extra features to help devs.
 
+# Dependencies
+- SecretAPI relies on Harmony to implement features
+  - You can find the latest version [here](https://github.com/pardeike/Harmony/releases/latest)
+  - You should download Harmony-Fat and put the **0harmony.dll** (found in /net48) into your dependencies folder! 
+
 # Features
-- CollectionExtensions: Extensions to provide utility for collections like lists and arrays.
-- RoomExtensions: Extensions to help with room specific tasks, like checking if a room is safe to teleport to.
-- HarmonyExtensions: Extensions to provide more utility to Harmony patching, like adding some updated Harmony features which can't be utilised, i.e. patching by category.
-- CustomPlayerEffect: Create custom status effects using the base-game system.
-- IRegister: Handle auto registering certain plugin features inheriting this interface and then running `IRegister.RegisterAll(Assembly)` in your plugin's initialise method.
-- CallOnLoadAttribute: Allows calling static initialize methods on enable via ``CallOnLoadAttribute.Load(Assembly)``
-- CustomSetting: Server Specific Settings without the management hassle, control everything for 1 setting in 1 class, including permissions. A better setting system overall.
+- **CustomPlayerEffect**: Create custom status effects using the base-game system.
+  - BlastResistance: Grants 0.5% resistance to explosion damage
+  - Depleted: Disables stamina and its regen
+  - Energized: Disables stamina usage
+- **IRegister**: Handle auto registering certain plugin features inheriting this interface and then running `IRegister.RegisterAll(Assembly)` in your plugin's initialize method.
+- **CallOnLoadAttribute**: Allows calling static initialize methods on enable via ``CallOnLoadAttribute.Load(Assembly)``
+- **CustomSetting**: Server Specific Settings without the management hassle, control everything for 1 setting in 1 class, including permissions. A better setting system overall.
+- **PrefabStore** and **PrefabManager**: Designed to help access prefabs in a clean way
+- Extensions:
+    - CodeMatcherExtensions: Extensions related to ``HarmonyLib.CodeMatcher``.
+    - CollectionExtensions: Extensions to provide utility for collections like lists and arrays.
+    - MirrorExtensions: Extensions providing help with fake-syncing ``SyncVar``, ``SyncList`` and ``Rpc``
+    - ReflectionExtensions: Extensions related to C# Reflection
+    - RoomExtensions: Extensions to help with room specific tasks, like checking if a room is safe to teleport to.
 
 # Examples
 You can find examples inside the `SecretAPI.Examples` folder above, this contains some example settings, patches using categories and some more.
