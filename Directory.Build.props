@@ -1,7 +1,7 @@
 ﻿<Project>
     <PropertyGroup>
         <Nullable>enable</Nullable>
-        <Version>3.5.0-beta1</Version>
+        <Version>3.5.0-beta.3</Version> <!-- BetaX = Incorrect (3.5.0-beta3) | Beta.X = Correct (3.5.0-beta.3) -->
     </PropertyGroup>
 
     <PropertyGroup Label="Nuget">

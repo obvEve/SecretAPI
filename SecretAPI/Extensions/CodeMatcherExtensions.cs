@@ -25,11 +25,8 @@ public static class CodeMatcherExtensions
         /// <param name="localType">The <see cref="Type"/> of the local to declare.</param>
         /// <param name="localBuilder">The <see cref="LocalBuilder"/> declared.</param>
         /// <returns>The current <see cref="CodeMatcher"/>.</returns>
-        public CodeMatcher DeclareLocal(Type localType, out LocalBuilder localBuilder)
-        {
-            localBuilder = matcher.generator.DeclareLocal(localType);
-            return matcher;
-        }
+        [Obsolete("Use CodeMatcher::DeclareLocal(Type, out LocalBuilder)")]
+        public CodeMatcher DeclareLocal(Type localType, out LocalBuilder localBuilder) => matcher.DeclareLocal(localType, out localBuilder);
 
         /// <summary>
         /// Declares a local to be used of a certain <see cref="Type"/>.
@@ -39,7 +36,7 @@ public static class CodeMatcherExtensions
         /// <returns>The current <see cref="CodeMatcher"/>.</returns>
         public CodeMatcher DeclareLocal(Type localType, out int localIndex)
         {
-            DeclareLocal(matcher, localType, out LocalBuilder builder);
+            matcher.DeclareLocal(localType, out LocalBuilder builder);
             localIndex = builder.LocalIndex;
             return matcher;
         }
@@ -63,7 +60,7 @@ public static class CodeMatcherExtensions
         /// <returns>The current <see cref="CodeMatcher"/>.</returns>
         public CodeMatcher GetFirstLabelAt(int position, out Label label)
         {
-            label = matcher.codes[position].labels.FirstOrDefault();
+            label = matcher.Instructions()[position].labels.FirstOrDefault();
             return matcher;
         }
     }
