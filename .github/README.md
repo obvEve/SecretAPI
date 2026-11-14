@@ -3,7 +3,7 @@
 
 # Dependencies
 - SecretAPI relies on Harmony to implement features
-  - You can find the latest version [here](https://github.com/pardeike/Harmony/releases/latest)
+  - You can find the current version used [here](https://github.com/pardeike/Harmony/releases/tag/v2.4.3)
   - You should download Harmony-Fat and put the **0harmony.dll** (found in /net48) into your dependencies folder! 
 
 # Features
