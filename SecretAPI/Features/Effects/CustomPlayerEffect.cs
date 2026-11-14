@@ -42,19 +42,25 @@ public abstract class CustomPlayerEffect : StatusEffectBase
     /// <param name="type">The <see cref="Type"/> to register. May not be abstract and must inherit <see cref="StatusEffectBase"/>.</param>
     public static void Register(Type type)
     {
-        if (!type.IsAssignableFrom(typeof(StatusEffectBase)))
+        if (type.IsAbstract)
+        {
+            Logger.Error($"[CustomPlayerEffect.Register] {type.FullName} is abstract and cannot be registered!");
+            return;
+        }
+
+        if (!typeof(StatusEffectBase).IsAssignableFrom(type))
         {
             Logger.Error($"[CustomPlayerEffect.Register] {type.FullName} does not inherit StatusEffectBase!");
             return;
         }
 
-        if (type.IsAbstract)
+#pragma warning disable CS0618 // Type or member is obsolete
+        if (EffectsToRegister.Contains(type))
         {
-            Logger.Error($"[CustomPlayerEffect.Register] {type.FullName} is abstract!");
+            Logger.Error($"[CustomPlayerEffect.Register] {type.FullName} is already registered!");
             return;
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
         EffectsToRegister.Add(type);
     }
 
