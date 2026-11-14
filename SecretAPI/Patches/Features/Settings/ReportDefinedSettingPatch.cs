@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
 using NorthwoodLib.Pools;
-using SecretAPI.Attributes;
 using SecretAPI.Features.UserSettings;
 using UserSettings.ServerSpecific;
 
@@ -14,6 +13,8 @@ using UserSettings.ServerSpecific;
 [HarmonyPatch(typeof(ServerSpecificSettingsSync), nameof(ServerSpecificSettingsSync.DefinedSettings), MethodType.Setter)]
 internal static class ReportDefinedSettingPatch
 {
+    private static bool Prepare() => SecretApi.Config.ValidateDefinedSettings || SecretApi.ForceHarmonyConditionTrue;
+
     private static void Prefix(ref ServerSpecificSettingBase[] value)
     {
         List<ServerSpecificSettingBase> settings = ListPool<ServerSpecificSettingBase>.Shared.Rent();

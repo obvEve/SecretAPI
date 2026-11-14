@@ -9,9 +9,12 @@ using LabApi.Features.Console;
 /// <summary>
 /// Changes <see cref="PatchClassProcessor"/>'s ReportException to log instead of throwing the exception.
 /// </summary>
+[HarmonyPatchCategory(nameof(SecretAPI))]
 [HarmonyPatch(typeof(PatchClassProcessor), "ReportException")]
 internal static class HarmonyLogger
 {
+    private static bool Prepare() => SecretApi.Config.LogHarmonyReplaceThrow || SecretApi.ForceHarmonyConditionTrue;
+
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
         CodeMatcher matcher = new(instructions);

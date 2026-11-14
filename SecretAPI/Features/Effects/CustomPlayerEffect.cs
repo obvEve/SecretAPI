@@ -18,11 +18,12 @@ using Logger = LabApi.Features.Console.Logger;
 /// </summary>
 public abstract class CustomPlayerEffect : StatusEffectBase
 {
+    private static HashSet<Type> registeredEffects = new();
+
     /// <summary>
-    /// Gets a list of types to register (Must inherit <see cref="StatusEffectBase"/>).
+    /// Gets a readonly collection of all the registered effects.
     /// </summary>
-    [Obsolete("This is becoming readonly in 4.0 - Use Register<T>()")]
-    public static List<Type> EffectsToRegister { get; } = []; // TODO 4.0: private static HashSet<Type> RegisteredEffects
+    public static IReadOnlyCollection<Type> RegisteredEffects => registeredEffects;
 
     /// <summary>
     /// Gets the <see cref="Player"/> with this effect.
@@ -54,21 +55,18 @@ public abstract class CustomPlayerEffect : StatusEffectBase
             return;
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        if (EffectsToRegister.Contains(type))
+        if (!registeredEffects.Add(type))
         {
             Logger.Error($"[CustomPlayerEffect.Register] {type.FullName} is already registered!");
             return;
         }
-
-        EffectsToRegister.Add(type);
     }
 
     /// <inheritdoc/>
     public override string ToString() => $"{GetType().Name}: Owner ({Owner}) - Intensity ({Intensity}) - Duration {Duration}";
 
     /// <summary>
-    /// Initializes the <see cref="CustomPlayerEffect"/> to implement <see cref="EffectsToRegister"/>.
+    /// Initializes the <see cref="CustomPlayerEffect"/> to implement <see cref="RegisteredEffects"/>.
     /// </summary>
     /// <remarks>The effects must be loaded on before <see cref="Server.Host"/> is created.</remarks>
     [CallOnLoad]
@@ -89,7 +87,7 @@ public abstract class CustomPlayerEffect : StatusEffectBase
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
         Transform playerEffects = PrefabStore<ReferenceHub>.Prefab.playerEffectsController.effectsGameObject.transform;
-        foreach (Type type in EffectsToRegister)
+        foreach (Type type in RegisteredEffects)
         {
             if (!typeof(StatusEffectBase).IsAssignableFrom(type))
             {

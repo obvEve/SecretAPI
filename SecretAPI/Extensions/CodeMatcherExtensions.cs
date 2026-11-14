@@ -23,15 +23,6 @@ public static class CodeMatcherExtensions
         /// Declares a local to be used of a certain <see cref="Type"/>.
         /// </summary>
         /// <param name="localType">The <see cref="Type"/> of the local to declare.</param>
-        /// <param name="localBuilder">The <see cref="LocalBuilder"/> declared.</param>
-        /// <returns>The current <see cref="CodeMatcher"/>.</returns>
-        [Obsolete("Use CodeMatcher::DeclareLocal(Type, out LocalBuilder)")]
-        public CodeMatcher DeclareLocal(Type localType, out LocalBuilder localBuilder) => matcher.DeclareLocal(localType, out localBuilder);
-
-        /// <summary>
-        /// Declares a local to be used of a certain <see cref="Type"/>.
-        /// </summary>
-        /// <param name="localType">The <see cref="Type"/> of the local to declare.</param>
         /// <param name="localIndex">The index of the local declared.</param>
         /// <returns>The current <see cref="CodeMatcher"/>.</returns>
         public CodeMatcher DeclareLocal(Type localType, out int localIndex)
